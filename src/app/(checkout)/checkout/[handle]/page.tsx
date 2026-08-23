@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BagShopping, CheckCircle } from "@/components/icons";
+import { BagShopping } from "@/components/icons";
 import LogoSquare from "@/components/logo-square";
 import Price from "@/components/price";
 import { Button } from "@/components/ui/button";
@@ -61,10 +61,6 @@ export default async function CheckoutProductPage(props: {
             <LogoSquare size="sm" />
             <span>স্বাস্থ্যকর</span>
           </Link>
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-full border border-border/60">
-            <CheckCircle className="size-4 text-emerald-600 dark:text-emerald-400" />
-            <span>নিরাপদ ও দ্রুত চেকআউট</span>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
