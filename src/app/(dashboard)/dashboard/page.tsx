@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { BagShopping, Box, CheckCircle, Receipt } from "@/components/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCurrentUser } from "@/lib/auth/session";
 
 export const metadata = {
   title: "ড্যাশবোর্ড | স্বাস্থ্যকর",
   description: "আপনার স্বাস্থ্যকর অ্যাকাউন্ট ড্যাশবোর্ড।",
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
   const stats = [
     {
       title: "মোট অর্ডার",
@@ -121,25 +123,35 @@ export default function DashboardPage() {
             </p>
             <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border mb-4">
               <div className="size-10 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold">
-                স্ব
+                {user?.name ? user.name[0].toUpperCase() : "স্ব"}
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-bold text-foreground truncate">
-                  গ্রাহক অ্যাকাউন্ট
+                  {user?.name || "গ্রাহক অ্যাকাউন্ট"}
                 </span>
                 <span className="text-xs text-muted-foreground truncate">
-                  contact@swasthyokor.com
+                  {user?.email || "contact@swasthyokor.com"}
                 </span>
               </div>
             </div>
           </div>
 
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors w-full"
-          >
-            মূল ওয়েবসাইটে ফিরুন
-          </Link>
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors w-full"
+            >
+              মূল ওয়েবসাইটে ফিরুন
+            </Link>
+            <form action="/api/auth/logout" method="POST">
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-xl text-destructive hover:bg-destructive/10 px-4 py-2 text-xs font-semibold transition-colors w-full cursor-pointer"
+              >
+                লগআউট করুন
+              </button>
+            </form>
+          </div>
         </Card>
       </div>
     </div>
