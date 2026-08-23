@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -52,9 +53,19 @@ export default function Shell({ children, dict, lang }: ShellProps) {
               </button>
               <Link
                 href={`/`}
-                className="flex flex-row items-center"
+                className="flex flex-row items-center gap-2"
                 onClick={() => setIsSidebarOpen(false)}
               >
+                <div className="relative size-6 shrink-0">
+                  <Image
+                    src="/icon.png"
+                    alt="স্বাস্থ্যকর"
+                    width={24}
+                    height={24}
+                    className="size-full object-contain"
+                    priority
+                  />
+                </div>
                 <h3 className="text-[18px] font-[800] text-foreground whitespace-nowrap mt-[1px]">
                   স্বাস্থ্যকর
                 </h3>

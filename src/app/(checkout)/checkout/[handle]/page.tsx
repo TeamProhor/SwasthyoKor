@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BagShopping, CheckCircle, Leaf } from "@/components/icons";
+import { BagShopping, CheckCircle } from "@/components/icons";
+import LogoSquare from "@/components/logo-square";
 import Price from "@/components/price";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,9 +56,9 @@ export default async function CheckoutProductPage(props: {
         <div className="flex items-center justify-between pb-6 border-b border-border/80 mb-8">
           <Link
             href="/"
-            className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-extrabold text-xl tracking-tight"
+            className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-extrabold text-xl tracking-tight"
           >
-            <Leaf className="size-6" />
+            <LogoSquare size="sm" />
             <span>স্বাস্থ্যকর</span>
           </Link>
           <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-full border border-border/60">

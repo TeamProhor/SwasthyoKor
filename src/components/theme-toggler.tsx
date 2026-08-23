@@ -39,7 +39,7 @@ export function ThemeToggler({
       onClick={toggleTheme}
       aria-label="Toggle Theme"
       className={cn(
-        "flex size-8 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-xs hover:bg-muted active:scale-95 transition-all cursor-pointer",
+        "flex size-8 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-xs hover:bg-muted active:scale-95 transition-all cursor-pointer shrink-0",
         className,
       )}
       {...props}

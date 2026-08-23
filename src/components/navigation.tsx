@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Category, Leaf } from "@/components/icons";
+import { Category, User as UserIcon } from "@/components/icons";
 import { ThemeToggler } from "@/components/theme-toggler";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -30,7 +31,7 @@ export function Sidebar({ onClose, dict, lang }: SidebarProps) {
 
   return (
     <aside
-      className={`w-full h-full lg:h-[calc(100vh-40px)] lg:m-[20px] shrink-0 z-10 flex flex-col pt-0 lg:pt-[16px] justify-between overflow-x-hidden overflow-y-auto no-scrollbar transition-all duration-[300ms] ease-[cubic-bezier(0.83,0,0.17,1)] ${isCollapsed ? "lg:w-[40px]" : "lg:w-[192px]"}`}
+      className={`w-full h-full lg:h-[calc(100vh-40px)] lg:m-[20px] shrink-0 z-10 flex flex-col pt-0 lg:pt-[16px] gap-4 overflow-x-hidden overflow-y-auto no-scrollbar transition-all duration-[300ms] ease-[cubic-bezier(0.83,0,0.17,1)] ${isCollapsed ? "lg:w-[40px]" : "lg:w-[192px]"}`}
     >
       <div className="flex flex-col gap-[24px]">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-[48px] lg:gap-0">
@@ -40,8 +41,15 @@ export function Sidebar({ onClose, dict, lang }: SidebarProps) {
               onClick={onClose}
               className="flex items-center px-[8px] py-[4px] rounded-[8px] hover:bg-accent transition-colors overflow-hidden shrink-0"
             >
-              <div className="flex size-7 items-center justify-center rounded-lg border border-emerald-600/20 bg-emerald-50 text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-950/40 dark:text-emerald-400 shrink-0 mr-[12px]">
-                <Leaf className="size-4" />
+              <div className="relative flex size-6 items-center justify-center rounded-md border border-emerald-600/20 bg-emerald-50 dark:border-emerald-500/20 dark:bg-emerald-950/40 shrink-0 mr-[8px] overflow-hidden p-0.5">
+                <Image
+                  src="/icon.png"
+                  alt="স্বাস্থ্যকর"
+                  width={24}
+                  height={24}
+                  className="size-full object-contain"
+                  priority
+                />
               </div>
               <h3
                 className={`font-[800] text-[18px] lg:text-[16px] whitespace-nowrap mt-[3px] text-foreground transition-opacity duration-200 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
@@ -160,7 +168,13 @@ export function Sidebar({ onClose, dict, lang }: SidebarProps) {
               title={isCollapsed ? "অ্যাডমিন প্যানেল" : undefined}
             >
               <div className="flex items-center gap-[8px]">
-                <Leaf size={24} className="shrink-0" />
+                <Image
+                  src="/icon.png"
+                  alt="অ্যাডমিন"
+                  width={20}
+                  height={20}
+                  className="size-5 object-contain shrink-0"
+                />
                 <span
                   className={`text-[14px] whitespace-nowrap transition-opacity duration-200 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
                 >
@@ -199,36 +213,68 @@ export function Sidebar({ onClose, dict, lang }: SidebarProps) {
         </Link>
       </div>
 
-      <div className="flex flex-col gap-[12px] mt-[24px] lg:mt-[32px] px-[8px] items-center lg:items-stretch border-t border-border/50 pt-[16px]">
-        <div
-          className={`flex transition-all duration-300 ${
-            isCollapsed
-              ? "flex-col items-center gap-[16px] px-0"
-              : "flex-row items-center gap-[12px] px-[8px]"
-          }`}
-        >
+      <div
+        className={`flex flex-col gap-2 border-t border-border/50 pt-2.5 mt-1 transition-all duration-300 ${
+          isCollapsed ? "items-center px-0" : "px-[8px]"
+        }`}
+      >
+        <div className="flex items-center justify-between">
           <ThemeToggler variant="circle" />
         </div>
 
-        <a
-          href={user ? "#" : "mailto:contact@swasthyokor.com"}
-          onClick={
-            user
-              ? (e) => {
-                  e.preventDefault();
-                  logoutMutation.mutate();
-                }
-              : undefined
-          }
-          title={user ? "ক্লিক করে লগআউট করুন" : undefined}
-          className="py-[4px] rounded-[8px] hover:bg-accent transition-colors overflow-hidden whitespace-nowrap"
-        >
-          <span
-            className={`text-[14px] text-foreground transition-opacity duration-200 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
+        {user ? (
+          <div
+            className={`flex items-center gap-2.5 p-1.5 rounded-xl bg-accent/50 hover:bg-accent transition-all ${
+              isCollapsed ? "justify-center p-1" : ""
+            }`}
           >
-            {user?.email ?? "contact@swasthyokor.com"}
-          </span>
-        </a>
+            <Avatar className="size-8 rounded-full border border-border shrink-0">
+              {user.avatarUrl && (
+                <AvatarImage
+                  src={user.avatarUrl}
+                  alt={user.name || "User"}
+                  className="rounded-full object-cover"
+                />
+              )}
+              <AvatarFallback className="rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-xs">
+                {user.name ? user.name[0].toUpperCase() : "স্ব"}
+              </AvatarFallback>
+            </Avatar>
+
+            <div
+              className={`flex flex-col min-w-0 transition-opacity duration-200 ${
+                isCollapsed ? "hidden opacity-0" : "flex-1 opacity-100"
+              }`}
+            >
+              <span className="text-xs font-bold text-foreground truncate">
+                {user.name || "গ্রাহক"}
+              </span>
+              <button
+                type="button"
+                onClick={() => logoutMutation.mutate()}
+                className="text-[10px] text-destructive hover:underline text-left cursor-pointer font-medium"
+              >
+                লগআউট
+              </button>
+            </div>
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className={`flex items-center gap-2 py-[4px] px-[6px] rounded-[8px] hover:bg-accent transition-all text-xs font-semibold text-foreground ${
+              isCollapsed ? "justify-center p-1" : ""
+            }`}
+          >
+            <UserIcon className="size-4 shrink-0" />
+            <span
+              className={`whitespace-nowrap transition-opacity duration-200 ${
+                isCollapsed ? "hidden opacity-0" : "opacity-100"
+              }`}
+            >
+              লগইন করুন
+            </span>
+          </Link>
+        )}
       </div>
     </aside>
   );
