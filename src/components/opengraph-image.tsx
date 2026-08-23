@@ -7,7 +7,7 @@ export type Props = {
 export default function OpengraphImage(props?: Props): React.ReactElement {
   const { title } = {
     ...{
-      title: process.env.SITE_NAME || "স্বস্থ্যকর",
+      title: process.env.SITE_NAME || "স্বাস্থ্যকর",
     },
     ...props,
   };
@@ -42,7 +42,7 @@ export default function OpengraphImage(props?: Props): React.ReactElement {
             fontWeight: 600,
           }}
         >
-          {process.env.SITE_NAME || "স্বস্থ্যকর"}
+          {process.env.SITE_NAME || "স্বাস্থ্যকর"}
         </p>
       </div>
       <div

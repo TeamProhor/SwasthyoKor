@@ -181,10 +181,10 @@ const COLLECTIONS = [
 
 const MENUS = [
   { handle: "header", title: "হোম", path: "/" },
-  { handle: "header", title: "খাঁটি পণ্য", path: "/search/organic-essentials" },
-  { handle: "header", title: "সুপারফুড", path: "/search/superfoods-wellness" },
-  { handle: "header", title: "নতুন সংগ্রহ", path: "/search/new-arrivals" },
-  { handle: "header", title: "আমাদের কথা", path: "/about" },
+  { handle: "header", title: "আম", path: "/search?q=আম" },
+  { handle: "header", title: "মধু", path: "/search?q=মধু" },
+  { handle: "header", title: "প্যান্ট্রি", path: "/search/organic-essentials" },
+  { handle: "header", title: "হেলথ", path: "/search/superfoods-wellness" },
   { handle: "footer", title: "হোম", path: "/" },
   { handle: "footer", title: "আমাদের কথা", path: "/about" },
   { handle: "footer", title: "খাঁটি পণ্য", path: "/search/organic-essentials" },
@@ -198,12 +198,12 @@ const PAGES = [
   {
     handle: "about",
     title: "আমাদের কথা (About Swasthyokor)",
-    body: `<p><strong>স্বস্থ্যকর (Swasthyokor)</strong> হলো বিশুদ্ধ, স্বাস্থ্যকর এবং প্রাকৃতিক পণ্যের একটি আধুনিক ই-কমার্স প্ল্যাটফর্ম। আমরা কোনো ভেজাল বা কৃত্রিম উপাদান ছাড়া সরাসরি খামার ও প্রকৃতি থেকে সংগৃহীত সেরা মানের খাদ্যসামগ্রী আপনাদের দ্বারে পৌঁছে দিতে অঙ্গীকারবদ্ধ।</p><p>আমাদের পুরো প্ল্যাটফর্মটি তৈরি হয়েছে Next.js 16 এবং PostgreSQL এর সর্বাধুনিক আর্কিটেকচার দ্বারা, যা গ্রাহককে প্রদান করে নিরাপদ ও নির্ভরযোগ্য শপিং অভিজ্ঞতা।</p>`,
+    body: `<p><strong>স্বাস্থ্যকর (Swasthyokor)</strong> হলো বিশুদ্ধ, স্বাস্থ্যকর এবং প্রাকৃতিক পণ্যের একটি আধুনিক ই-কমার্স প্ল্যাটফর্ম। আমরা কোনো ভেজাল বা কৃত্রিম উপাদান ছাড়া সরাসরি খামার ও প্রকৃতি থেকে সংগৃহীত সেরা মানের খাদ্যসামগ্রী আপনাদের দ্বারে পৌঁছে দিতে অঙ্গীকারবদ্ধ।</p><p>আমাদের পুরো প্ল্যাটফর্মটি তৈরি হয়েছে Next.js 16 এবং PostgreSQL এর সর্বাধুনিক আর্কিটেকচার দ্বারা, যা গ্রাহককে প্রদান করে নিরাপদ ও নির্ভরযোগ্য শপিং অভিজ্ঞতা।</p>`,
   },
   {
     handle: "terms",
     title: "ব্যবহারের নিয়ম ও শর্তাবলী (Terms & Conditions)",
-    body: `<p>স্বস্থ্যকর স্টোরফ্রন্টে আপনাকে স্বাগতম। এই প্ল্যাটফর্ম ব্যবহার করে আপনি খাঁটি অর্গানিক পণ্য অর্ডার করতে পারেন। অর্ডার কনফার্মেশনের পর আপনার প্রদত্ত ঠিকানায় দ্রুত ডেলিভারি নিশ্চিত করা হয়।</p>`,
+    body: `<p>স্বাস্থ্যকর স্টোরফ্রন্টে আপনাকে স্বাগতম। এই প্ল্যাটফর্ম ব্যবহার করে আপনি খাঁটি অর্গানিক পণ্য অর্ডার করতে পারেন। অর্ডার কনফার্মেশনের পর আপনার প্রদত্ত ঠিকানায় দ্রুত ডেলিভারি নিশ্চিত করা হয়।</p>`,
   },
   {
     handle: "privacy",

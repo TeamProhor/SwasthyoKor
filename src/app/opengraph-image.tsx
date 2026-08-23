@@ -10,7 +10,7 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
-  const siteName = process.env.SITE_NAME || "স্বস্থ্যকর";
+  const siteName = process.env.SITE_NAME || "স্বাস্থ্যকর";
 
   return new ImageResponse(
     <div

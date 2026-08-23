@@ -1,12 +1,14 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/components/ui/toast";
 import {
   addItem,
   getCartFromCookie,
   removeItem,
   updateItemQuantity,
 } from "@/lib/actions/cart";
+import { MESSAGES } from "@/lib/messages";
 import type { Cart, CartItem, Product, ProductVariant } from "@/lib/types";
 
 type UpdateType = "plus" | "minus" | "delete";
@@ -205,10 +207,20 @@ export function useCart() {
       );
       return { previous };
     },
+    onSuccess: () => {
+      toast.add({
+        type: "success",
+        title: MESSAGES.cart.addedSuccess,
+      });
+    },
     onError: (_error, _variables, context) => {
       if (context?.previous) {
         queryClient.setQueryData(CART_KEY, context.previous);
       }
+      toast.add({
+        type: "error",
+        title: MESSAGES.cart.addError,
+      });
     },
     onSettled: () => invalidateCart(),
   });
@@ -235,10 +247,25 @@ export function useCart() {
       );
       return { previous };
     },
-    onError: (_error, _variables, context) => {
+    onSuccess: (_data, variables) => {
+      if (variables.type === "delete") {
+        toast.add({
+          type: "info",
+          title: MESSAGES.cart.deleteSuccess,
+        });
+      }
+    },
+    onError: (_error, variables, context) => {
       if (context?.previous) {
         queryClient.setQueryData(CART_KEY, context.previous);
       }
+      toast.add({
+        type: "error",
+        title:
+          variables.type === "delete"
+            ? MESSAGES.cart.deleteError
+            : MESSAGES.cart.updateError,
+      });
     },
     onSettled: () => invalidateCart(),
   });

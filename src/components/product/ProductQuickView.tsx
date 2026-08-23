@@ -1,0 +1,169 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import * as React from "react";
+import { BagShopping } from "@/components/icons";
+import Price from "@/components/price";
+import { ResponsiveDialog } from "@/components/shared";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { useCart } from "@/hooks/use-cart";
+import { useIsMobile } from "@/hooks/use-mobile";
+import type { Product } from "@/lib/types";
+
+interface ProductQuickViewProps {
+  product: Product;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function ProductQuickView({
+  product,
+  children,
+  className,
+}: ProductQuickViewProps) {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
+  const { addCartItem } = useCart();
+
+  const defaultVariant = product.variants?.[0];
+  const isAvailable =
+    product.availableForSale && (defaultVariant?.availableForSale ?? true);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!defaultVariant) return;
+    addCartItem.mutate(
+      { variant: defaultVariant, product },
+      {
+        onSuccess: () => {
+          setOpen(false);
+        },
+      },
+    );
+  };
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Only intercept and open Drawer on mobile
+    if (isMobile) {
+      e.preventDefault();
+      setOpen(true);
+    }
+  };
+
+  return (
+    <>
+      <div onClickCapture={handleCardClick} className={className}>
+        {children}
+      </div>
+
+      {isMobile && (
+        <ResponsiveDialog
+          open={open}
+          onOpenChange={setOpen}
+          className="max-h-[85vh]"
+        >
+          <div className="flex flex-col gap-4">
+            {/* Product Header: Image & Main Info */}
+            <div className="flex items-center gap-4">
+              <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-neutral-100 dark:bg-neutral-900">
+                {product.featuredImage?.url ? (
+                  <Image
+                    src={product.featuredImage.url}
+                    alt={product.title}
+                    fill
+                    sizes="80px"
+                    className="size-full object-cover"
+                  />
+                ) : null}
+              </div>
+
+              <div className="flex flex-col min-w-0">
+                <h3 className="line-clamp-2 text-base font-bold text-foreground">
+                  {product.title}
+                </h3>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    <Price
+                      amount={
+                        defaultVariant?.price.amount ??
+                        product.priceRange.minVariantPrice.amount
+                      }
+                      currencyCode={
+                        defaultVariant?.price.currencyCode ??
+                        product.priceRange.minVariantPrice.currencyCode
+                      }
+                    />
+                  </span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                      isAvailable
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                        : "bg-red-500/10 text-red-500"
+                    }`}
+                  >
+                    {isAvailable ? "ইন স্টক" : "স্টক শেষ"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Description snippet */}
+            {product.description && (
+              <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
+                {product.description}
+              </p>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-2 pt-2">
+              <Button
+                render={
+                  <Link href={`/checkout/${product.handle}`}>
+                    সরাসরি অর্ডার করুন
+                  </Link>
+                }
+                size="lg"
+                className="w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed shadow-xs"
+                disabled={!isAvailable}
+                onClick={() => setOpen(false)}
+              />
+
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full rounded-xl border-border font-medium"
+                disabled={!isAvailable || addCartItem.isPending}
+                onClick={handleAddToCart}
+              >
+                {addCartItem.isPending ? (
+                  <Spinner className="size-4 text-current" />
+                ) : (
+                  <BagShopping data-icon="inline-start" />
+                )}
+                {isAvailable
+                  ? addCartItem.isPending
+                    ? "কার্টে যুক্ত হচ্ছে..."
+                    : "কার্টে যোগ করুন"
+                  : "স্টক শেষ"}
+              </Button>
+
+              <Button
+                render={
+                  <Link href={`/product/${product.handle}`}>
+                    সম্পূর্ণ বিবরণ ও রিভিউ দেখুন
+                  </Link>
+                }
+                variant="ghost"
+                size="sm"
+                className="w-full text-xs text-muted-foreground"
+                onClick={() => setOpen(false)}
+              />
+            </div>
+          </div>
+        </ResponsiveDialog>
+      )}
+    </>
+  );
+}

@@ -3,24 +3,25 @@ import { cn } from "@/lib/utils";
 export default function Price({
   amount,
   className,
-  currencyCode = "USD",
+  currencyCode = "BDT",
   currencyCodeClassName,
 }: {
   amount: string;
   className?: string;
-  currencyCode: string;
+  currencyCode?: string;
   currencyCodeClassName?: string;
 } & React.ComponentProps<"p">) {
+  const numericAmount = parseFloat(amount);
+  const formatted = isNaN(numericAmount)
+    ? "০"
+    : new Intl.NumberFormat("bn-BD", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 0,
+      }).format(numericAmount);
+
   return (
     <p suppressHydrationWarning={true} className={className}>
-      {`${new Intl.NumberFormat(undefined, {
-        style: "currency",
-        currency: currencyCode,
-        currencyDisplay: "narrowSymbol",
-      }).format(parseFloat(amount))}`}
-      <span
-        className={cn("ml-1 inline", currencyCodeClassName)}
-      >{`${currencyCode}`}</span>
+      <span>৳{formatted}</span>
     </p>
   );
 }

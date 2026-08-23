@@ -42,3 +42,53 @@ export async function checkout(): Promise<void> {
 
   redirect(`/order/${orderId}`);
 }
+
+export async function checkoutDirectProduct(formData: FormData): Promise<void> {
+  const handle = formData.get("handle") as string;
+  const quantity = Number(formData.get("quantity") || 1);
+  const name = formData.get("name") as string;
+  const phone = formData.get("phone") as string;
+  const address = formData.get("address") as string;
+
+  if (!handle) {
+    redirect("/search");
+  }
+
+  const { getProduct } = await import("@/lib/db/queries");
+  const product = await getProduct(handle);
+
+  if (!product) {
+    redirect("/search");
+  }
+
+  const variant = product.variants[0];
+  const priceAmount = variant
+    ? Number(variant.price.amount)
+    : Number(product.priceRange.minVariantPrice.amount);
+  const priceCurrency = variant
+    ? variant.price.currencyCode
+    : product.priceRange.minVariantPrice.currencyCode;
+
+  const now = new Date();
+  const orderId = crypto.randomUUID();
+
+  await db.insert(orders).values({
+    id: orderId,
+    totalAmount: priceAmount * quantity,
+    totalCurrency: priceCurrency,
+    status: "confirmed",
+    items: [
+      {
+        productHandle: product.handle,
+        productTitle: product.title,
+        variantTitle: variant?.title || "Default Title",
+        quantity,
+        priceAmount,
+        priceCurrency,
+      },
+    ],
+    createdAt: now,
+  });
+
+  redirect(`/order/${orderId}`);
+}
