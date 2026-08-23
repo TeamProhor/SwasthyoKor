@@ -1,6 +1,4 @@
-import Link from "next/link";
-import { BagShopping, Leaf } from "@/components/icons";
-import { Button } from "@/components/ui/button";
+import { Leaf } from "@/components/icons";
 
 export function HeroSection() {
   return (
@@ -24,21 +22,10 @@ export function HeroSection() {
           </span>
         </h1>
 
-        <p className="mx-auto mb-8 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
+        <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
           আমাদের নিজস্ব বাগান ও বিশ্বস্ত সোর্স থেকে বাছাইকৃত। রাসায়নিক ও ফরমালিন মুক্ত বিশুদ্ধতার
           নিশ্চয়তা।
         </p>
-
-        <div className="flex justify-center">
-          <Button
-            render={<Link href="#collection-section" />}
-            size="lg"
-            className="rounded-full bg-emerald-700 px-8 font-bold text-white shadow-lg hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700"
-          >
-            <BagShopping data-icon="inline-start" />
-            পণ্য দেখুন
-          </Button>
-        </div>
       </div>
     </section>
   );

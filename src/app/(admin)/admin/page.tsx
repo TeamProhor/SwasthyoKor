@@ -2,13 +2,13 @@ import Link from "next/link";
 import { CreateProductDialog, StatsCards } from "@/components/admin";
 import { Box, Receipt } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { db } from "@/lib/db";
 import { collections, orders, products, users } from "@/lib/db/schema";
 
@@ -130,7 +130,9 @@ export default async function AdminOverviewPage() {
               <Empty>
                 <EmptyHeader>
                   <EmptyTitle>কোনো অর্ডার নেই</EmptyTitle>
-                  <EmptyDescription>নতুন অর্ডার আসলে এখানে দেখা যাবে।</EmptyDescription>
+                  <EmptyDescription>
+                    নতুন অর্ডার আসলে এখানে দেখা যাবে।
+                  </EmptyDescription>
                 </EmptyHeader>
               </Empty>
             ) : (

@@ -151,6 +151,24 @@ export function Sidebar({ onClose, dict, lang }: SidebarProps) {
               </Link>
             );
           })}
+
+          {user?.isAdmin && !isAdmin && (
+            <Link
+              href="/admin"
+              onClick={onClose}
+              className="relative flex items-center px-[8px] py-[4px] rounded-[8px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors overflow-hidden shrink-0 mt-2 font-bold"
+              title={isCollapsed ? "অ্যাডমিন প্যানেল" : undefined}
+            >
+              <div className="flex items-center gap-[8px]">
+                <Leaf size={24} className="shrink-0" />
+                <span
+                  className={`text-[14px] whitespace-nowrap transition-opacity duration-200 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
+                >
+                  অ্যাডমিন প্যানেল 🛡️
+                </span>
+              </div>
+            </Link>
+          )}
         </nav>
 
         <Link

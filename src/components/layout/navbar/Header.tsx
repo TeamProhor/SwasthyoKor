@@ -4,6 +4,7 @@ import { CartModal } from "@/components/cart";
 import LogoSquare from "@/components/logo-square";
 import { getMenu } from "@/lib/db/queries";
 import type { Menu } from "@/lib/types";
+import { HeaderAuth } from "./HeaderAuth";
 import MobileMenu from "./MobileMenu";
 import Search, { SearchSkeleton } from "./Search";
 
@@ -51,7 +52,8 @@ export async function Header() {
             <Search />
           </Suspense>
         </div>
-        <div className="flex justify-end md:w-1/3">
+        <div className="flex items-center justify-end gap-2.5 sm:gap-3 md:w-1/3">
+          <HeaderAuth />
           <CartModal />
         </div>
       </div>

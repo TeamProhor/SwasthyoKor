@@ -1,7 +1,11 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { BagShopping, Box, CheckCircle, Receipt } from "@/components/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/auth/session";
+import { db } from "@/lib/db";
+import { getCart } from "@/lib/db/queries";
+import { orders } from "@/lib/db/schema";
 
 export const metadata = {
   title: "ড্যাশবোর্ড | স্বাস্থ্যকর",
@@ -10,16 +14,25 @@ export const metadata = {
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
+
+  const cookieStore = await cookies();
+  const cartId = cookieStore.get("cartId")?.value;
+  const cart = cartId ? await getCart(cartId) : null;
+  const cartItemCount =
+    cart?.lines.reduce((acc, line) => acc + line.quantity, 0) || 0;
+
+  const allOrders = await db.select().from(orders);
+
   const stats = [
     {
       title: "মোট অর্ডার",
-      value: "০",
+      value: allOrders.length.toLocaleString("bn-BD"),
       icon: Box,
       description: "আপনার সকল সক্রিয় ও সম্পন্ন অর্ডার",
     },
     {
       title: "কার্ট আইটেম",
-      value: "০",
+      value: cartItemCount.toLocaleString("bn-BD"),
       icon: BagShopping,
       description: "বর্তমানে আপনার কার্টে থাকা পণ্য",
     },
@@ -31,9 +44,9 @@ export default async function DashboardPage() {
     },
     {
       title: "অ্যাকাউন্ট স্ট্যাটাস",
-      value: "সক্রিয়",
+      value: user?.isBanned ? "স্থগিত" : "সক্রিয়",
       icon: CheckCircle,
-      description: "যাচাইকৃত গ্রাহক অ্যাকাউন্ট",
+      description: user?.isAdmin ? "এডমিনিস্ট্রেটর অ্যাকাউন্ট" : "যাচাইকৃত গ্রাহক অ্যাকাউন্ট",
     },
   ];
 
@@ -96,21 +109,54 @@ export default async function DashboardPage() {
           <h2 className="text-lg font-bold text-foreground mb-4">
             সাম্প্রতিক অর্ডারসমূহ
           </h2>
-          <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-dashed border-border bg-muted/20">
-            <Box className="size-10 text-muted-foreground/50 mb-3" />
-            <p className="text-sm font-semibold text-foreground">
-              এখনো কোনো অর্ডার নেই
-            </p>
-            <p className="text-xs text-muted-foreground mt-1 mb-4">
-              খাঁটি মধু, ঘি বা অর্গানিক তেল সংগ্রহ করতে ব্রাউজ করুন।
-            </p>
-            <Link
-              href="/search"
-              className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
-            >
-              পণ্য তালিকা দেখুন
-            </Link>
-          </div>
+          {allOrders.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-dashed border-border bg-muted/20">
+              <Box className="size-10 text-muted-foreground/50 mb-3" />
+              <p className="text-sm font-semibold text-foreground">
+                এখনো কোনো অর্ডার নেই
+              </p>
+              <p className="text-xs text-muted-foreground mt-1 mb-4">
+                খাঁটি মধু, ঘি বা অর্গানিক তেল সংগ্রহ করতে ব্রাউজ করুন।
+              </p>
+              <Link
+                href="/search"
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                পণ্য তালিকা দেখুন
+              </Link>
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {allOrders.slice(0, 5).map((ord) => (
+                <div
+                  key={ord.id}
+                  className="py-3 flex items-center justify-between text-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-muted text-foreground font-bold text-xs">
+                      #{ord.id.slice(0, 6)}
+                    </div>
+                    <div>
+                      <div className="font-bold text-foreground">
+                        {ord.items.length}টি আইটেম
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(ord.createdAt).toLocaleDateString("bn-BD")}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400">
+                      ৳{ord.totalAmount.toLocaleString("bn-BD")}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground uppercase font-semibold">
+                      {ord.status}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
 
         <Card className="rounded-2xl border-border bg-card shadow-xs p-6 flex flex-col justify-between">
