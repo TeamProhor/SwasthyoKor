@@ -19,11 +19,14 @@ export function HeroSection() {
 
         <h1 className="mb-5 text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl leading-[1.2]">
           খাঁটি পণ্যের <br />
-          <span className="text-emerald-700 dark:text-amber-400">বিশ্বস্ত গন্তব্য</span>
+          <span className="text-emerald-700 dark:text-amber-400">
+            বিশ্বস্ত গন্তব্য
+          </span>
         </h1>
 
         <p className="mx-auto mb-8 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
-          আমাদের নিজস্ব বাগান ও বিশ্বস্ত সোর্স থেকে বাছাইকৃত। রাসায়নিক ও ফরমালিন মুক্ত বিশুদ্ধতার নিশ্চয়তা।
+          আমাদের নিজস্ব বাগান ও বিশ্বস্ত সোর্স থেকে বাছাইকৃত। রাসায়নিক ও ফরমালিন মুক্ত বিশুদ্ধতার
+          নিশ্চয়তা।
         </p>
 
         <div className="flex justify-center">

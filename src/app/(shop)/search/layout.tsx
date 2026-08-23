@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { sorting } from "@/lib/constants";
 import { CollectionsList, FilterList } from "@/components/collection";
+import { sorting } from "@/lib/constants";
 
 export default function SearchLayout({
   children,

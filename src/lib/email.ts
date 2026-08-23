@@ -24,7 +24,8 @@ export async function sendMagicLinkEmail({
       const { Resend } = await import("resend");
       const resend = new Resend(apiKey);
 
-      const from = process.env.EMAIL_FROM ?? "SwasthyoKor <onboarding@resend.dev>";
+      const from =
+        process.env.EMAIL_FROM ?? "SwasthyoKor <onboarding@resend.dev>";
 
       const { error } = await resend.emails.send({
         from,

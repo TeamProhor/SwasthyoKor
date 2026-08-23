@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-
 export default function Price({
   amount,
   className,
@@ -12,7 +10,7 @@ export default function Price({
   currencyCodeClassName?: string;
 } & React.ComponentProps<"p">) {
   const numericAmount = parseFloat(amount);
-  const formatted = isNaN(numericAmount)
+  const formatted = Number.isNaN(numericAmount)
     ? "০"
     : new Intl.NumberFormat("bn-BD", {
         maximumFractionDigits: 2,

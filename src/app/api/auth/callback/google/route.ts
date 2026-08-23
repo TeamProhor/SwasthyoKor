@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
   const redirectUri = getOAuthRedirectUri(origin);
 
-  let profile;
+  let profile: Awaited<ReturnType<typeof exchangeGoogleCode>> | null = null;
   try {
     profile = await exchangeGoogleCode(code, redirectUri);
   } catch (err: unknown) {

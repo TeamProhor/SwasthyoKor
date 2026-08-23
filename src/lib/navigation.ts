@@ -24,10 +24,23 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { name: "সেটিংস", path: "/dashboard/settings", exact: false, icon: Setting },
 ];
 
+export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
+  { name: "ওভারভিউ", path: "/admin", exact: true, icon: Home },
+  { name: "পণ্যসমূহ", path: "/admin/products", exact: false, icon: Box },
+  { name: "অর্ডারসমূহ", path: "/admin/orders", exact: false, icon: Receipt },
+  { name: "কালেকশন", path: "/admin/collections", exact: false, icon: Category },
+  { name: "গ্রাহকবৃন্দ", path: "/admin/customers", exact: false, icon: User },
+  { name: "শপ দেখুন", path: "/", exact: true, icon: BagShopping },
+];
+
 export function getNavItems(
   dict?: Dictionary,
-  _isAdmin: boolean = false,
+  isAdmin: boolean = false,
 ): readonly NavItem[] {
+  if (isAdmin) {
+    return ADMIN_NAV_ITEMS;
+  }
+
   if (dict?.sidebar) {
     const d = dict.sidebar;
     return [

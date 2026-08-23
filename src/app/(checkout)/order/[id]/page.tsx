@@ -70,7 +70,8 @@ export default async function OrderSuccessPage({
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 text-xs text-emerald-800 dark:text-emerald-300">
               <p className="font-semibold text-sm mb-0.5">পরবর্তী ধাপ:</p>
               <p>
-                আমাদের প্রতিনিধি দ্রুত আপনার নম্বরে কল দিয়ে অর্ডারটি কনফার্ম করবেন এবং খুব শীঘ্রই আপনার ঠিকানায় পণ্য পৌঁছে দেওয়া হবে।
+                আমাদের প্রতিনিধি দ্রুত আপনার নম্বরে কল দিয়ে অর্ডারটি কনফার্ম করবেন এবং খুব
+                শীঘ্রই আপনার ঠিকানায় পণ্য পৌঁছে দেওয়া হবে।
               </p>
             </div>
 
@@ -153,7 +154,10 @@ export default async function OrderSuccessPage({
       </div>
 
       <div className="text-center py-6 text-xs text-muted-foreground">
-        <p>© {new Date().getFullYear()} স্বাস্থ্যকর — খাঁটি ও প্রাকৃতিক পণ্যের নির্ভরযোগ্য প্রতিষ্ঠান</p>
+        <p>
+          © {new Date().getFullYear()} স্বাস্থ্যকর — খাঁটি ও প্রাকৃতিক পণ্যের নির্ভরযোগ্য
+          প্রতিষ্ঠান
+        </p>
       </div>
     </div>
   );

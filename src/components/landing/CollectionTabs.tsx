@@ -24,8 +24,6 @@ export function CollectionTabsSection() {
         </Button>
       </div>
 
-
-
       {/* Carousel */}
       <Suspense
         fallback={

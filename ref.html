@@ -396,7 +396,7 @@
 
     // Format Money
     function taka(num) {
-      return "৳ " + Math.round(num).toLocaleString('en-IN');
+      return `৳ ${Math.round(num).toLocaleString('en-IN')}`;
     }
 
     // Storage
@@ -666,7 +666,7 @@
       `).join('');
     }
 
-    function filterCategory(cat) {
+    function _filterCategory(cat) {
       activeCat = cat;
       renderHomePills();
       renderHomeCarousel();
@@ -703,7 +703,7 @@
       el.innerHTML = generateCarouselItems(filtered);
     }
 
-    function addToCart(id) {
+    function _addToCart(id) {
       const p = db.find(x => x.id === id);
       cart[id] = p.moq;
       saveCart();
@@ -711,7 +711,7 @@
       showToast(`${p.name} যোগ করা হয়েছে`);
     }
 
-    function updateQty(id, change) {
+    function _updateQty(id, change) {
       if(!cart[id]) return;
       const newQty = cart[id] + change;
       if (newQty < 1) { delete cart[id]; } else { cart[id] = newQty; }
@@ -719,7 +719,7 @@
       renderCart();
     }
 
-    function removeCartItem(id) {
+    function _removeCartItem(id) {
       delete cart[id];
       saveCart();
       renderCart();
@@ -727,7 +727,7 @@
 
     function getCartDetails() {
       return Object.entries(cart).map(([id, qty]) => {
-        const item = db.find(p => p.id == id);
+        const item = db.find(p => p.id === id);
         return { ...item, qty, subtotal: item.price * qty };
       });
     }
@@ -787,7 +787,7 @@
       const main = document.getElementById('mainContent');
       if (main.innerHTML.includes('id="pdpAction_')) {
          const match = main.innerHTML.match(/id="pdpAction_(\d+)"/);
-         if(match) showProductDetails(parseInt(match[1]));
+         if(match) showProductDetails(parseInt(match[1], 10));
       }
     }
 
@@ -801,7 +801,7 @@
     }
     document.getElementById("cartToggle").addEventListener("click", openCart);
 
-    function openCheckout() {
+    function _openCheckout() {
       if (getCartTotal() === 0) return;
       closeCart();
       const items = getCartDetails();
@@ -823,7 +823,7 @@
       document.getElementById("checkoutOverlay").classList.remove("flex");
     }
 
-    function sendOrder(platform) {
+    function _sendOrder(platform) {
       const name = document.getElementById("custName").value.trim();
       const phone = document.getElementById("custPhone").value.trim();
       const addr = document.getElementById("custAddr").value.trim();
@@ -837,7 +837,7 @@
       getCartDetails().forEach(i => { msg += `• ${i.name} (${i.qty} ${i.unit}) = ${taka(i.subtotal)}\n`; });
       msg += `\n*সর্বমোট:* ${taka(getCartTotal())}`;
 
-      let url = platform === 'wa' 
+      const url = platform === 'wa' 
         ? `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`
         : `https://t.me/${TG_USERNAME}?text=${encodeURIComponent(msg)}`;
 
@@ -854,7 +854,7 @@
       }
     }
 
-    function copyFallback() {
+    function _copyFallback() {
       navigator.clipboard.writeText(document.getElementById("fallbackText").value);
       showToast("কপি করা হয়েছে!");
     }

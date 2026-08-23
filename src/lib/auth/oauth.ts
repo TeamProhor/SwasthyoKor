@@ -9,9 +9,7 @@ export interface OAuthUserProfile {
 
 export function getOAuthRedirectUri(origin?: string): string {
   const base =
-    origin ||
-    process.env.NEXT_PUBLIC_APP_URL ||
-    "http://localhost:3000";
+    origin || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   return `${base.replace(/\/$/, "")}/api/auth/callback/google`;
 }
 

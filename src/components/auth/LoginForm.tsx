@@ -122,17 +122,11 @@ export function LoginForm() {
 
       <p className="w-11/12 text-pretty text-center text-muted-foreground text-[11px] leading-relaxed">
         এগিয়ে যাওয়ার মাধ্যমে আপনি আমাদের{" "}
-        <a
-          href="/terms-conditions"
-          className="underline hover:text-foreground"
-        >
+        <a href="/terms-conditions" className="underline hover:text-foreground">
           শর্তাবলী
         </a>{" "}
         এবং{" "}
-        <a
-          href="/privacy-policy"
-          className="underline hover:text-foreground"
-        >
+        <a href="/privacy-policy" className="underline hover:text-foreground">
           গোপনীয়তা নীতিতে
         </a>{" "}
         সম্মত হচ্ছেন।

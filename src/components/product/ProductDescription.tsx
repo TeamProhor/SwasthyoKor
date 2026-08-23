@@ -58,7 +58,9 @@ export function ProductDescription({ product }: { product: Product }) {
 
       <div className="flex flex-col gap-2.5">
         <Button
-          render={<Link href={`/checkout/${product.handle}`}>সরাসরি অর্ডার করুন</Link>}
+          render={
+            <Link href={`/checkout/${product.handle}`}>সরাসরি অর্ডার করুন</Link>
+          }
           size="lg"
           className="w-full rounded-xl bg-emerald-600 text-base font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed shadow-xs"
           disabled={!product.availableForSale || !variant?.availableForSale}

@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
-import { type Session, type User, sessions, users } from "@/lib/db/schema";
+import { type Session, sessions, type User, users } from "@/lib/db/schema";
 
 const SESSION_COOKIE = "swasthyokor_session";
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -28,7 +28,9 @@ export async function createSession(
   // 1. Clean up expired sessions for this user
   await db
     .delete(sessions)
-    .where(and(eq(sessions.userId, userId), lt(sessions.expiresAt, new Date())));
+    .where(
+      and(eq(sessions.userId, userId), lt(sessions.expiresAt, new Date())),
+    );
 
   // 2. Clean up previous session token if present
   if (oldToken) {

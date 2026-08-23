@@ -12,13 +12,7 @@ function isPathFilterItem(item: Item): item is PathFilterItem {
   return "path" in item;
 }
 
-export function FilterList({
-  list,
-  title,
-}: {
-  list: Item[];
-  title?: string;
-}) {
+export function FilterList({ list, title }: { list: Item[]; title?: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 

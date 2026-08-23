@@ -26,7 +26,10 @@ export function FeatureBar() {
         {features.map((feature) => {
           const Icon = feature.icon;
           return (
-            <div key={feature.label} className="flex flex-col items-center gap-2">
+            <div
+              key={feature.label}
+              className="flex flex-col items-center gap-2"
+            >
               <div className="flex size-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
                 <Icon className="size-5" />
               </div>

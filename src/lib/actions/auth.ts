@@ -4,12 +4,12 @@ import { randomBytes } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { createSession, deleteSession, getCurrentSession } from "@/lib/auth/session";
+import { deleteSession, getCurrentSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
-import { accounts, magicLinkTokens, users } from "@/lib/db/schema";
+import { magicLinkTokens } from "@/lib/db/schema";
 import { sendMagicLinkEmail } from "@/lib/email";
 
-async function getRequestMeta() {
+async function _getRequestMeta() {
   const headersList = await headers();
   const rawIp =
     headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ??

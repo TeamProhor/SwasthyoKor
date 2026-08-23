@@ -11,7 +11,10 @@ const categories = [
 
 export function BentoShowcase() {
   return (
-    <section id="collection-section" className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-12">
+    <section
+      id="collection-section"
+      className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-12"
+    >
       <div className="mb-8 text-center sm:mb-10">
         <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl md:text-4xl">
           আমাদের কালেকশন

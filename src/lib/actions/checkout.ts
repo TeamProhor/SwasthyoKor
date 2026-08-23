@@ -46,9 +46,9 @@ export async function checkout(): Promise<void> {
 export async function checkoutDirectProduct(formData: FormData): Promise<void> {
   const handle = formData.get("handle") as string;
   const quantity = Number(formData.get("quantity") || 1);
-  const name = formData.get("name") as string;
-  const phone = formData.get("phone") as string;
-  const address = formData.get("address") as string;
+  const _name = formData.get("name") as string;
+  const _phone = formData.get("phone") as string;
+  const _address = formData.get("address") as string;
 
   if (!handle) {
     redirect("/search");

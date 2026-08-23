@@ -145,7 +145,9 @@ export function CartModal() {
                                 <Price
                                   className="text-xs font-bold text-emerald-600 dark:text-emerald-400"
                                   amount={item.cost.totalAmount.amount}
-                                  currencyCode={item.cost.totalAmount.currencyCode}
+                                  currencyCode={
+                                    item.cost.totalAmount.currencyCode
+                                  }
                                 />
                               </div>
                             </div>
@@ -192,7 +194,9 @@ export function CartModal() {
                 <Separator className="my-2" />
 
                 <div className="my-3 flex items-center justify-between">
-                  <span className="text-sm font-bold text-foreground">সর্বমোট</span>
+                  <span className="text-sm font-bold text-foreground">
+                    সর্বমোট
+                  </span>
                   <Price
                     className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400"
                     amount={cart.cost.totalAmount.amount}
@@ -234,4 +238,3 @@ function CheckoutButton() {
 }
 
 export default CartModal;
-
