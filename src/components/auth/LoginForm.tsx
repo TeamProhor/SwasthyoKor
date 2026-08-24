@@ -54,12 +54,12 @@ export function LoginForm() {
     <div className="w-full max-w-sm flex flex-col items-center gap-6 mx-auto">
       {/* ─── Header ─── */}
       <div className="flex flex-col items-center gap-2 text-center">
-        <div className="relative size-14 rounded-2xl overflow-hidden shadow-xs border border-border bg-card p-1.5 flex items-center justify-center">
+        <div className="relative size-14 overflow-hidden flex items-center justify-center">
           <Image
             src="/icon.png"
             alt="স্বাস্থ্যকর"
-            width={48}
-            height={48}
+            width={56}
+            height={56}
             className="size-full object-contain"
             priority
           />

@@ -12,6 +12,7 @@ import {
   productVariants,
 } from "@/lib/db/schema";
 import { uploadObject } from "@/lib/storage";
+import { compressFileToWebp } from "@/lib/image";
 
 // ─── Products ─────────────────────────────────────────────────────────────
 
@@ -33,15 +34,14 @@ export async function createProductAction(formData: FormData) {
 
     let finalImageUrl = imageUrlInput || "";
 
-    // Upload to Neon S3 Object Storage if file is provided
+    // Compress to WebP and upload if file is provided
     if (imageFile && imageFile.size > 0) {
-      const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const ext = imageFile.name.split(".").pop() || "png";
-      const s3Key = `products/${id}-${Date.now()}.${ext}`;
+      const { buffer, contentType, extension } = await compressFileToWebp(imageFile);
+      const s3Key = `products/${id}-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
         body: buffer,
-        contentType: imageFile.type,
+        contentType,
       });
     }
 
@@ -98,6 +98,132 @@ export async function createProductAction(formData: FormData) {
     return {
       success: false,
       error: err instanceof Error ? err.message : "পণ্য তৈরি করতে সমস্যা হয়েছে।",
+    };
+  }
+}
+
+export async function updateProductAction(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    if (!id) {
+      return { success: false, error: "পণ্যের আইডি পাওয়া যায়নি।" };
+    }
+
+    const title = formData.get("title") as string;
+    const handle = (formData.get("handle") as string)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-");
+    const description = (formData.get("description") as string) || "";
+    const priceAmount = Number(formData.get("price") || 0);
+    const categoryId = formData.get("collectionId") as string;
+    const availableForSale = formData.get("availableForSale") === "true";
+    const imageFile = formData.get("image") as File | null;
+    const imageUrlInput = formData.get("imageUrl") as string;
+
+    const now = new Date();
+
+    // 1. Update product table
+    await db
+      .update(products)
+      .set({
+        title,
+        handle,
+        description,
+        availableForSale,
+        updatedAt: now,
+      })
+      .where(eq(products.id, id));
+
+    // 2. Update variant price & status
+    const existingVariants = await db
+      .select()
+      .from(productVariants)
+      .where(eq(productVariants.productId, id));
+
+    if (existingVariants.length > 0) {
+      await db
+        .update(productVariants)
+        .set({
+          priceAmount,
+          availableForSale,
+        })
+        .where(eq(productVariants.productId, id));
+    } else {
+      await db.insert(productVariants).values({
+        id: `var_${crypto.randomUUID().slice(0, 8)}`,
+        productId: id,
+        title: "Default",
+        priceAmount,
+        priceCurrency: "USD",
+        availableForSale,
+        position: 0,
+        selectedOptions: [],
+      });
+    }
+
+    // 3. Update image if new file or URL is provided
+    let finalImageUrl = imageUrlInput || "";
+    if (imageFile && imageFile.size > 0) {
+      const { buffer, contentType, extension } = await compressFileToWebp(imageFile);
+      const s3Key = `products/${id}-${Date.now()}.${extension}`;
+      finalImageUrl = await uploadObject({
+        key: s3Key,
+        body: buffer,
+        contentType,
+      });
+    }
+
+    if (finalImageUrl) {
+      const existingImages = await db
+        .select()
+        .from(productImages)
+        .where(eq(productImages.productId, id));
+
+      if (existingImages.length > 0) {
+        await db
+          .update(productImages)
+          .set({
+            url: finalImageUrl,
+            altText: title,
+          })
+          .where(eq(productImages.productId, id));
+      } else {
+        await db.insert(productImages).values({
+          id: `img_${crypto.randomUUID().slice(0, 8)}`,
+          productId: id,
+          url: finalImageUrl,
+          altText: title,
+          width: 800,
+          height: 800,
+          position: 0,
+        });
+      }
+    }
+
+    // 4. Update collection association
+    await db
+      .delete(productCollections)
+      .where(eq(productCollections.productId, id));
+
+    if (categoryId) {
+      await db.insert(productCollections).values({
+        productId: id,
+        collectionId: categoryId,
+      });
+    }
+
+    revalidatePath("/admin/products");
+    revalidatePath("/search");
+    revalidatePath(`/product/${handle}`);
+    revalidatePath("/");
+
+    return { success: true, message: "পণ্য সফলভাবে আপডেট করা হয়েছে।" };
+  } catch (err: unknown) {
+    console.error("Update product error:", err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "পণ্য আপডেট করতে সমস্যা হয়েছে।",
     };
   }
 }

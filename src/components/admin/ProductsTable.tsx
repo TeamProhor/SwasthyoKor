@@ -21,16 +21,15 @@ import {
 } from "@/components/ui/table";
 import { deleteProductAction } from "@/lib/actions/admin";
 
-interface ProductItem {
-  id: string;
-  title: string;
-  handle: string;
-  price: string;
-  imageUrl?: string;
-  available: boolean;
-}
+import { EditProductDialog, type EditProductItem } from "./EditProductDialog";
 
-export function ProductsTable({ products }: { products: ProductItem[] }) {
+export function ProductsTable({
+  products,
+  collections = [],
+}: {
+  products: EditProductItem[];
+  collections?: { id: string; title: string }[];
+}) {
   const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -102,15 +101,22 @@ export function ProductsTable({ products }: { products: ProductItem[] }) {
                   </Badge>
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    disabled={isPending && deletingId === item.id}
-                    onClick={() => handleDelete(item.id)}
-                    className="text-destructive hover:bg-destructive/10 cursor-pointer rounded-xl"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
+                  <div className="flex items-center justify-end gap-1">
+                    <EditProductDialog
+                      product={item}
+                      collections={collections}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={isPending && deletingId === item.id}
+                      onClick={() => handleDelete(item.id)}
+                      className="text-destructive hover:bg-destructive/10 cursor-pointer rounded-xl"
+                      title="মুছে ফেলুন"
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))

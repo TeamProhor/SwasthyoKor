@@ -5,9 +5,9 @@ export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
   return (
     <div
       className={cn(
-        "relative flex size-10 overflow-hidden items-center justify-center rounded-xl border border-emerald-600/20 bg-emerald-50 dark:border-emerald-500/20 dark:bg-emerald-950/40",
+        "relative flex size-10 overflow-hidden items-center justify-center shrink-0",
         {
-          "size-8 rounded-lg": size === "sm",
+          "size-8": size === "sm",
         },
       )}
     >
@@ -16,7 +16,7 @@ export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
         alt="স্বাস্থ্যকর"
         fill
         sizes="40px"
-        className="object-contain p-0.5"
+        className="object-contain"
         priority
       />
     </div>

@@ -30,7 +30,7 @@ export default async function AdminCustomersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-            গ্রাহকবৃন্দ 👥
+            গ্রাহকবৃন্দ
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             মোট {allUsers.length} জন নিবন্ধিত গ্রাহক রয়েছেন।

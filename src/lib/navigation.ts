@@ -12,7 +12,6 @@ import type { Dictionary, NavItem, SidebarAnnouncement } from "@/types";
 export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { name: "ড্যাশবোর্ড", path: "/dashboard", exact: true, icon: Home },
   { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Box },
-  { name: "শপ ব্রাউজ", path: "/search", exact: false, icon: BagShopping },
   {
     name: "পেমেন্ট হিস্ট্রি",
     path: "/dashboard/payments",
@@ -20,7 +19,6 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
     icon: Receipt,
   },
   { name: "প্রোফাইল", path: "/dashboard/profile", exact: false, icon: User },
-  { name: "ক্যাটাগরি", path: "/search", exact: false, icon: Category },
   { name: "সেটিংস", path: "/dashboard/settings", exact: false, icon: Setting },
 ];
 
@@ -51,7 +49,6 @@ export function getNavItems(
         icon: Home,
       },
       { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Box },
-      { name: "শপ ব্রাউজ", path: "/search", exact: false, icon: BagShopping },
       {
         name: "পেমেন্ট হিস্ট্রি",
         path: "/dashboard/payments",
@@ -59,7 +56,6 @@ export function getNavItems(
         icon: Receipt,
       },
       { name: "প্রোফাইল", path: "/dashboard/profile", exact: false, icon: User },
-      { name: "ক্যাটাগরি", path: "/search", exact: false, icon: Category },
       {
         name: "সেটিংস",
         path: "/dashboard/settings",

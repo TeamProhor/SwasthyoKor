@@ -109,7 +109,7 @@ export function CreateProductDialog({
 
           <Field>
             <FieldLabel htmlFor="prod-image">
-              পণ্যের ছবি (Neon S3 Object Storage)
+              পণ্যের ছবি
             </FieldLabel>
             <Input
               id="prod-image"

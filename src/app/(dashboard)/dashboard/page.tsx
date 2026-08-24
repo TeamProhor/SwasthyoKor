@@ -56,7 +56,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-            স্বাগতম, স্বাস্থ্যকর ড্যাশবোর্ডে! 👋
+            স্বাগতম, স্বাস্থ্যকর ড্যাশবোর্ডে!
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             আপনার অর্ডার, ডেলিভারি ট্র্যাকিং এবং প্রোফাইল এক জায়গা থেকেই পরিচালনা করুন।

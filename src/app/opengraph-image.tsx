@@ -35,7 +35,7 @@ export default async function Image() {
           marginBottom: 16,
         }}
       >
-        {`🌿 ${siteName}`}
+        {`SwasthyoKor - ${siteName}`}
       </div>
       <div
         style={{

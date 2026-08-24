@@ -1,9 +1,9 @@
-import { OrdersTable } from "@/components/admin";
+import { OrdersList } from "@/components/admin";
 import { db } from "@/lib/db";
 import { orders } from "@/lib/db/schema";
 
 export const metadata = {
-  title: "অর্ডার পরিচালনা | অ্যাডমিন",
+  title: "অর্ডার পরিচালনা| অ্যাডমিন",
   description: "গ্রাহকদের সমস্ত অর্ডার ট্র্যাকিং ও স্ট্যাটাস আপডেট।",
 };
 
@@ -17,6 +17,7 @@ export default async function AdminOrdersPage() {
     status: order.status,
     createdAt: order.createdAt,
     itemsCount: order.items.reduce((sum, item) => sum + item.quantity, 0),
+    items: order.items,
     email: order.email,
   }));
 
@@ -25,7 +26,7 @@ export default async function AdminOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-            অর্ডার পরিচালনা 🧾
+            অর্ডার পরিচালনা
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             মোট {formattedOrders.length}টি অর্ডার পাওয়া গিয়েছে।
@@ -33,7 +34,7 @@ export default async function AdminOrdersPage() {
         </div>
       </div>
 
-      <OrdersTable orders={formattedOrders} />
+      <OrdersList orders={formattedOrders} />
     </div>
   );
 }

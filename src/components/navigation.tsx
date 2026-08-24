@@ -41,7 +41,7 @@ export function Sidebar({ onClose, dict, lang }: SidebarProps) {
               onClick={onClose}
               className="flex items-center px-[8px] py-[4px] rounded-[8px] hover:bg-accent transition-colors overflow-hidden shrink-0"
             >
-              <div className="relative flex size-6 items-center justify-center rounded-md border border-emerald-600/20 bg-emerald-50 dark:border-emerald-500/20 dark:bg-emerald-950/40 shrink-0 mr-[8px] overflow-hidden p-0.5">
+              <div className="relative flex size-6 items-center justify-center shrink-0 mr-[8px] overflow-hidden">
                 <Image
                   src="/icon.png"
                   alt="স্বাস্থ্যকর"
@@ -178,7 +178,7 @@ export function Sidebar({ onClose, dict, lang }: SidebarProps) {
                 <span
                   className={`text-[14px] whitespace-nowrap transition-opacity duration-200 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
                 >
-                  অ্যাডমিন প্যানেল 🛡️
+                  অ্যাডমিন প্যানেল
                 </span>
               </div>
             </Link>

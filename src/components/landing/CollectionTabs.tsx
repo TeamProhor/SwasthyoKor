@@ -8,7 +8,7 @@ export function CollectionTabsSection() {
       <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row sm:mb-8">
         <div>
           <h2 className="text-xl font-extrabold tracking-tight text-foreground sm:text-2xl md:text-3xl">
-            🌿 সকল অর্গানিক পণ্য ও সুপারফুড
+            সকল অর্গানিক পণ্য ও সুপারফুড
           </h2>
           <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
             সেরা কোয়ালিটির বাছাইকৃত পণ্য সম্ভার

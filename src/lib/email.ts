@@ -70,7 +70,7 @@ export async function sendMagicLinkEmail({
                     </table>
 
                     <p style="font-size: 12px; color: #a1a1aa; line-height: 1.5; margin: 0;">
-                      ⏱️ নিরাপত্তার স্বার্থে এই লিংকটি ১৫ মিনিট পর্যন্ত কার্যকর থাকবে।
+                      নিরাপত্তার স্বার্থে এই লিংকটি ১৫ মিনিট পর্যন্ত কার্যকর থাকবে।
                     </p>
                   </td>
                 </tr>

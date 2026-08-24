@@ -36,7 +36,7 @@ export default async function AdminOverviewPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-            অ্যাডমিন প্যানেল 🛡️
+            অ্যাডমিন প্যানেল
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             স্বাস্থ্যকর স্টোরফ্রন্টের পণ্য, স্টক, অর্ডার ও ডেটাবেস পরিচালনা করুন।
