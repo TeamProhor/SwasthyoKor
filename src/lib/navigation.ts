@@ -1,17 +1,34 @@
 import {
-  BagShopping,
-  Box,
-  Category,
   Home,
+  Package,
   Receipt,
-  Setting,
   User,
-} from "@/components/icons";
+  Settings,
+  MapPin,
+  Heart,
+  Tag,
+  Boxes,
+  Store,
+  ShoppingBag,
+  Layers,
+} from "lucide-react";
 import type { Dictionary, NavItem, SidebarAnnouncement } from "@/types";
 
 export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { name: "ড্যাশবোর্ড", path: "/dashboard", exact: true, icon: Home },
-  { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Box },
+  { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Package },
+  {
+    name: "সংরক্ষিত ঠিকানা",
+    path: "/dashboard/addresses",
+    exact: false,
+    icon: MapPin,
+  },
+  {
+    name: "পছন্দের তালিকা",
+    path: "/dashboard/wishlist",
+    exact: false,
+    icon: Heart,
+  },
   {
     name: "পেমেন্ট হিস্ট্রি",
     path: "/dashboard/payments",
@@ -19,16 +36,19 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
     icon: Receipt,
   },
   { name: "প্রোফাইল", path: "/dashboard/profile", exact: false, icon: User },
-  { name: "সেটিংস", path: "/dashboard/settings", exact: false, icon: Setting },
+  { name: "সেটিংস", path: "/dashboard/settings", exact: false, icon: Settings },
 ];
 
 export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { name: "ওভারভিউ", path: "/admin", exact: true, icon: Home },
-  { name: "পণ্যসমূহ", path: "/admin/products", exact: false, icon: Box },
+  { name: "পণ্যসমূহ", path: "/admin/products", exact: false, icon: Package },
+  { name: "ইনভেন্টরি ও স্টক", path: "/admin/inventory", exact: false, icon: Boxes },
   { name: "অর্ডারসমূহ", path: "/admin/orders", exact: false, icon: Receipt },
-  { name: "কালেকশন", path: "/admin/collections", exact: false, icon: Category },
+  { name: "কালেকশন", path: "/admin/collections", exact: false, icon: Layers },
+  { name: "কুপন ও প্রোমো", path: "/admin/coupons", exact: false, icon: Tag },
   { name: "গ্রাহকবৃন্দ", path: "/admin/customers", exact: false, icon: User },
-  { name: "শপ দেখুন", path: "/", exact: true, icon: BagShopping },
+  { name: "স্টোর সেটিংস", path: "/admin/settings", exact: false, icon: Store },
+  { name: "শপ দেখুন", path: "/", exact: true, icon: ShoppingBag },
 ];
 
 export function getNavItems(
@@ -37,32 +57,6 @@ export function getNavItems(
 ): readonly NavItem[] {
   if (isAdmin) {
     return ADMIN_NAV_ITEMS;
-  }
-
-  if (dict?.sidebar) {
-    const d = dict.sidebar;
-    return [
-      {
-        name: d.dashboard || "ড্যাশবোর্ড",
-        path: "/dashboard",
-        exact: true,
-        icon: Home,
-      },
-      { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Box },
-      {
-        name: "পেমেন্ট হিস্ট্রি",
-        path: "/dashboard/payments",
-        exact: false,
-        icon: Receipt,
-      },
-      { name: "প্রোফাইল", path: "/dashboard/profile", exact: false, icon: User },
-      {
-        name: "সেটিংস",
-        path: "/dashboard/settings",
-        exact: false,
-        icon: Setting,
-      },
-    ];
   }
 
   return DEFAULT_NAV_ITEMS;

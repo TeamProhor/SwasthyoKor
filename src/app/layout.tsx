@@ -4,13 +4,29 @@ import { QueryProvider } from "@/components/query-provider";
 import { Toaster } from "@/components/ui/toast";
 import { WelcomeToast } from "@/components/welcome-toast";
 import "./globals.css";
-import { Hind_Siliguri } from "next/font/google";
+import localFont from "next/font/local";
 import { baseUrl, cn } from "@/lib/utils";
 
-const hindSiliguri = Hind_Siliguri({
-  subsets: ["bengali", "latin"],
-  weight: ["400", "500", "600", "700"],
+const hindSiliguri = localFont({
+  src: [
+    {
+      path: "../fonts/HindSiliguri-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/HindSiliguri-SemiBold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../fonts/HindSiliguri-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-sans",
+  display: "swap",
 });
 
 const siteName = process.env.SITE_NAME || "স্বাস্থ্যকর";

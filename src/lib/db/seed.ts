@@ -22,7 +22,7 @@ type SeedProduct = {
   tags: string[];
   availableForSale?: boolean;
   sizes?: string[];
-  images?: number;
+  imageUrls: string[];
 };
 
 const now = new Date();
@@ -35,7 +35,11 @@ const PRODUCTS: SeedProduct[] = [
       "১০০% খাঁটি ও প্রাকৃতিক সুন্দরবনের কাঁচা মধু। কোনো কৃত্রিম মিষ্টি বা প্রিজারভেটিভ ছাড়া সংগৃহীত উচ্চ পুষ্টিগুণ সমৃদ্ধ অর্গানিক মধু।",
     price: 15,
     tags: ["organic", "new", "food"],
-    images: 3,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1471943311424-646960669fbc?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-cold-pressed-mustard-oil",
@@ -44,7 +48,10 @@ const PRODUCTS: SeedProduct[] = [
       "কাঠের ঘানিতে ভাঙা খাঁটি দেশি সরিষার তেল। খাঁটি ঝাঁঝ ও প্রাকৃতিক পুষ্টিতে ভরপুর স্বাস্থ্যকর রান্নার তেল।",
     price: 12,
     tags: ["organic", "oil", "food"],
-    images: 3,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-organic-ghee",
@@ -53,7 +60,10 @@ const PRODUCTS: SeedProduct[] = [
       "দেশি গরুর খাঁটি দুধের মালাই থেকে ঐতিহ্যবাহী পদ্ধতিতে তৈরি সুগন্ধি দানাদার গাওয়া ঘি।",
     price: 25,
     tags: ["dairy", "new", "food"],
-    images: 3,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-moringa-powder",
@@ -62,7 +72,10 @@ const PRODUCTS: SeedProduct[] = [
       "প্রাকৃতিক মাল্টিভিটামিন ও সুপারফুড। রোগ প্রতিরোধ ক্ষমতা বৃদ্ধি ও শারীরিক শক্তি যোগাতে অতুলনীয়।",
     price: 10,
     tags: ["superfood", "wellness"],
-    images: 2,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-chia-seeds",
@@ -71,7 +84,10 @@ const PRODUCTS: SeedProduct[] = [
       "ওমেগা-৩ ফ্যাটি অ্যাসিড, ফাইবার ও অ্যান্টিঅক্সিডেন্ট সমৃদ্ধ প্রিমিয়াম গ্রেডের অর্গানিক চিয়া সিড।",
     price: 8,
     tags: ["superfood", "weight-management"],
-    images: 2,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-black-seed-oil",
@@ -80,7 +96,10 @@ const PRODUCTS: SeedProduct[] = [
       "১০০% খাঁটি কোল্ড-প্রেসড কালোজিরা তেল। প্রাকৃতিক আরোগ্য ও ইমিউনিটি বৃদ্ধির মহৌষধ।",
     price: 14,
     tags: ["oil", "wellness"],
-    images: 2,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-mixed-dry-fruits",
@@ -89,7 +108,11 @@ const PRODUCTS: SeedProduct[] = [
       "কাঠবাদাম, কাজুবাদাম, পেস্তা, আখরোট ও কিশমিশের সেরা মিশ্রণ। স্বাস্থ্যকর স্ন্যাক্স হিসেবে আদর্শ।",
     price: 22,
     tags: ["nuts", "snack"],
-    images: 3,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1536591375315-1b838865f24a?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-herbal-tulsi-green-tea",
@@ -98,7 +121,10 @@ const PRODUCTS: SeedProduct[] = [
       "অর্গানিক গ্রিন টি এবং রাম, কৃষ্ণ ও বন তুলসীর সংমিশ্রণ। মানসিক প্রশান্তি ও সতেজতার জন্য সেরা।",
     price: 9,
     tags: ["tea", "beverage"],
-    images: 2,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-pink-himalayan-salt",
@@ -107,7 +133,10 @@ const PRODUCTS: SeedProduct[] = [
       "৮৪টি প্রাকৃতিক খনিজ সমৃদ্ধ খাঁটি হিমালয়ান পিংক রক সল্ট। সাধারণ লবণের স্বাস্থ্যকর বিকল্প।",
     price: 6,
     tags: ["grocery", "wellness"],
-    images: 2,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1607672632458-9eb56696346b?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=800&auto=format&fit=crop&q=85",
+    ],
   },
   {
     handle: "swasthyo-apple-cider-vinegar",
@@ -116,7 +145,10 @@ const PRODUCTS: SeedProduct[] = [
       "অর্গানিক আপেল থেকে তৈরি আনফিল্টার্ড এবং কাঁচা অ্যাপল সিডার ভিনেগার যাতে উইথ দ্য মাদার বিদ্যমান।",
     price: 16,
     tags: ["wellness", "organic"],
-    images: 2,
+    imageUrls: [
+      "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1568651779193-e60136e1d2b4?w=800&auto=format&fit=crop&q=85",
+    ],
   },
 ];
 
@@ -254,16 +286,15 @@ async function seed() {
       updatedAt: now,
     });
 
-    const imageCount = seedProduct.images ?? 2;
-    for (let i = 1; i <= imageCount; i++) {
+    for (let i = 0; i < seedProduct.imageUrls.length; i++) {
       await db.insert(productImages).values({
         id: crypto.randomUUID(),
         productId,
-        url: `https://picsum.photos/seed/${seedProduct.handle}-${i}/800/800`,
-        altText: `${seedProduct.title} ছবি ${i}`,
+        url: seedProduct.imageUrls[i],
+        altText: `${seedProduct.title} ছবি ${i + 1}`,
         width: 800,
         height: 800,
-        position: i,
+        position: i + 1,
       });
     }
 

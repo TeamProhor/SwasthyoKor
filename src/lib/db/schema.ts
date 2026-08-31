@@ -304,8 +304,88 @@ export const magicLinkTokens = pgTable(
   ],
 );
 
+export const userAddresses = pgTable(
+  "user_addresses",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    label: varchar("label", { length: 100 }).notNull().default("বাসা / Home"),
+    fullName: varchar("full_name", { length: 255 }).notNull(),
+    phone: varchar("phone", { length: 50 }).notNull(),
+    district: varchar("district", { length: 100 }).notNull(),
+    thana: varchar("thana", { length: 100 }).notNull(),
+    streetAddress: text("street_address").notNull(),
+    isDefault: boolean("is_default").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("user_addresses_user_idx").on(table.userId)],
+);
+
+export const coupons = pgTable(
+  "coupons",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    code: varchar("code", { length: 50 }).notNull().unique(),
+    discountType: varchar("discount_type", { length: 20 })
+      .notNull()
+      .default("percentage"), // 'percentage' | 'fixed'
+    discountValue: real("discount_value").notNull(),
+    minOrderAmount: real("min_order_amount").notNull().default(0),
+    maxDiscountAmount: real("max_discount_amount"),
+    usageLimit: integer("usage_limit"),
+    usedCount: integer("used_count").notNull().default(0),
+    isActive: boolean("is_active").notNull().default(true),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("coupons_code_idx").on(table.code)],
+);
+
+export const storeSettings = pgTable("store_settings", {
+  id: varchar("id", { length: 50 }).primaryKey().default("default"),
+  storeName: varchar("store_name", { length: 255 })
+    .notNull()
+    .default("স্বাস্থ্যকর"),
+  storePhone: varchar("store_phone", { length: 50 })
+    .notNull()
+    .default("01812345678"),
+  whatsappNumber: varchar("whatsapp_number", { length: 50 })
+    .notNull()
+    .default("8801812345678"),
+  storeEmail: varchar("store_email", { length: 255 })
+    .notNull()
+    .default("support@swasthyokor.com"),
+  storeAddress: text("store_address")
+    .notNull()
+    .default("ঢাকা, বাংলাদেশ"),
+  insideDhakaFee: real("inside_dhaka_fee").notNull().default(60),
+  outsideDhakaFee: real("outside_dhaka_fee").notNull().default(120),
+  freeShippingMinAmount: real("free_shipping_min_amount")
+    .notNull()
+    .default(1500),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export type User = typeof users.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
+export type UserAddress = typeof userAddresses.$inferSelect;
+export type Coupon = typeof coupons.$inferSelect;
+export type StoreSettings = typeof storeSettings.$inferSelect;
 
 // ---- relations ----
 

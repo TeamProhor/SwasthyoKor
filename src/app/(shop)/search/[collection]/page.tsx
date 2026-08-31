@@ -58,7 +58,7 @@ export default async function CollectionPage(props: {
       {products.length === 0 ? (
         <p className="py-8 text-neutral-500">এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি।</p>
       ) : (
-        <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <Grid className="grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
           {products.map((product) => (
             <Grid.Item key={product.handle} className="animate-fadeIn">
               <ProductQuickView product={product} className="size-full">

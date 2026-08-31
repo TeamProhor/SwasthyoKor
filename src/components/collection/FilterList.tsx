@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { SortFilterItem } from "@/lib/constants";
-import { createUrl } from "@/lib/utils";
+import { cn, createUrl } from "@/lib/utils";
 
 type PathFilterItem = { title: string; path: string };
 type Item = SortFilterItem | PathFilterItem;
@@ -17,15 +17,15 @@ export function FilterList({ list, title }: { list: Item[]; title?: string }) {
   const searchParams = useSearchParams();
 
   return (
-    <nav>
+    <nav className="w-full">
       {title ? (
-        <h3 className="hidden text-xs font-semibold uppercase tracking-wider text-neutral-500 md:block dark:text-neutral-400">
+        <h3 className="hidden text-xs font-bold uppercase tracking-wider text-muted-foreground md:block mb-3">
           {title}
         </h3>
       ) : null}
 
       {/* Mobile Horizontal Pill Scroll */}
-      <ul className="flex md:hidden gap-2 overflow-x-auto pb-2 [scrollbar-width:none]">
+      <ul className="flex md:hidden gap-1.5 overflow-x-auto pb-1.5 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {list.map((item: Item) => {
           let href = "";
           let active = false;
@@ -51,11 +51,12 @@ export function FilterList({ list, title }: { list: Item[]; title?: string }) {
               <Link
                 prefetch={true}
                 href={href}
-                className={`inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium border transition-colors ${
+                className={cn(
+                  "inline-block whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold border transition-all duration-150",
                   active
-                    ? "bg-emerald-600 text-white border-emerald-600"
-                    : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700"
-                }`}
+                    ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
+                    : "bg-muted/40 text-foreground/80 border-border/80 hover:bg-muted hover:text-foreground",
+                )}
               >
                 {item.title}
               </Link>
@@ -65,8 +66,8 @@ export function FilterList({ list, title }: { list: Item[]; title?: string }) {
       </ul>
 
       {/* Desktop Vertical List */}
-      <ul className="hidden md:block py-2">
-        {list.map((item: Item, _i) => {
+      <ul className="hidden md:flex flex-col gap-1.5 py-1">
+        {list.map((item: Item) => {
           let href = "";
           let active = false;
 
@@ -87,18 +88,16 @@ export function FilterList({ list, title }: { list: Item[]; title?: string }) {
           }
 
           return (
-            <li
-              key={"path" in item ? item.path : (item.slug ?? "default")}
-              className="mt-2 flex text-sm text-neutral-600 dark:text-neutral-400"
-            >
+            <li key={"path" in item ? item.path : (item.slug ?? "default")}>
               <Link
                 prefetch={true}
                 href={href}
-                className={`w-full hover:underline underline-offset-4 ${
+                className={cn(
+                  "block rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
                   active
-                    ? "font-semibold text-emerald-600 dark:text-emerald-400"
-                    : "hover:text-black dark:hover:text-white"
-                }`}
+                    ? "bg-emerald-50 text-emerald-700 font-bold dark:bg-emerald-950/50 dark:text-emerald-300"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
               >
                 {item.title}
               </Link>

@@ -1,31 +1,211 @@
-import { Leaf } from "@/components/icons";
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useRef, useState, type TouchEvent } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+interface BannerSlide {
+  title: string;
+  highlight: string;
+  subtitle: string;
+  link: string;
+  accentColor: string;
+  image: string;
+}
+
+const HERO_SLIDES: BannerSlide[] = [
+  {
+    title: "১০০% খাঁটি সুন্দরবন মধু ও",
+    highlight: "গাওয়া ঘি",
+    subtitle:
+      "প্রকৃতির নিখাদ দান, কোনো কৃত্রিম মিষ্টি বা প্রিজারভেটিভ ছাড়া সরাসরি সুন্দরবন ও খামার থেকে সংগৃহীত।",
+    link: "/search?q=মধু",
+    accentColor: "text-amber-400",
+    image:
+      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1600&auto=format&fit=crop&q=85",
+  },
+  {
+    title: "ঘানি ভাঙা সরিষার তেল ও",
+    highlight: "কালোজিরা তেল",
+    subtitle:
+      "কাঠের ঘানিতে ভাঙা প্রাকৃতিক ঝাঁঝ ও খাঁটি পুষ্টিতে ভরপুর স্বাস্থ্যকর রান্নার শ্রেষ্ঠ উপাদান।",
+    link: "/search?q=তেল",
+    accentColor: "text-emerald-400",
+    image:
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1600&auto=format&fit=crop&q=85",
+  },
+  {
+    title: "প্রিমিয়াম অর্গানিক চিয়া সিড ও",
+    highlight: "সুপারফুড সংগ্রহ",
+    subtitle:
+      "প্রতিদিনের সুস্থতা ও রোগ প্রতিরোধ ক্ষমতা বৃদ্ধিতে খাঁটি সুপারফুডের সমাহার।",
+    link: "/search/superfoods-wellness",
+    accentColor: "text-teal-400",
+    image:
+      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=1600&auto=format&fit=crop&q=85",
+  },
+  {
+    title: "সেরা বাছাইকৃত ড্রাই ফ্রুটস ও",
+    highlight: "পুষ্টিকর বাদাম",
+    subtitle:
+      "আমন্ড, কাজু, পেস্তা, আখরোট ও প্রিমিয়াম কিশমিশের সেরা স্বাস্থ্যকর স্ন্যাক্স।",
+    link: "/search?q=বাদাম",
+    accentColor: "text-amber-300",
+    image:
+      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1600&auto=format&fit=crop&q=85",
+  },
+];
 
 export function HeroSection() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isHovered]);
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+  };
+
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 45;
+
+    if (distance > minSwipeDistance) {
+      nextSlide();
+    } else if (distance < -minSwipeDistance) {
+      prevSlide();
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   return (
-    <section className="relative overflow-hidden border-b border-border/60 py-12 sm:py-16 md:py-24">
-      {/* Glowing Ambient Blobs */}
-      <div className="pointer-events-none absolute inset-0 flex justify-center opacity-30 dark:opacity-20">
-        <div className="size-[420px] sm:size-[500px] rounded-full bg-emerald-300 mix-blend-multiply blur-3xl dark:bg-emerald-900" />
-        <div className="-ml-32 mt-12 size-[380px] sm:size-[450px] rounded-full bg-amber-200 mix-blend-multiply blur-3xl dark:bg-amber-900" />
-      </div>
+    <section className="w-full py-2 sm:py-4 md:py-5">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6">
+        <div
+          className="relative aspect-video w-full overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl border border-border/50 shadow-md sm:shadow-lg"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {HERO_SLIDES.map((slide, idx) => (
+            <Link
+              key={slide.title}
+              href={slide.link}
+              className={cn(
+                "absolute inset-0 block transition-opacity duration-700 ease-in-out cursor-pointer",
+                idx === currentSlide
+                  ? "opacity-100 z-10 pointer-events-auto"
+                  : "opacity-0 z-0 pointer-events-none",
+              )}
+            >
+              {/* Background Image */}
+              <Image
+                src={slide.image}
+                alt={slide.title}
+                fill
+                priority={idx === 0}
+                sizes="(min-width: 1280px) 1200px, 100vw"
+                className="object-cover object-center select-none"
+              />
 
-      <div className="relative z-10 mx-auto max-w-3xl px-4 text-center">
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-bold text-emerald-700 backdrop-blur-xs dark:border-emerald-400/30 dark:bg-emerald-950/60 dark:text-emerald-300">
-          <Leaf className="size-3.5" />
-          <span>১০০% প্রাকৃতিক ও কেমিক্যালমুক্ত</span>
+              {/* Bottom Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+              {/* Slide Content positioned at bottom */}
+              <div className="relative z-20 flex h-full flex-col justify-end px-3.5 pb-4 sm:px-8 sm:pb-7 md:px-12 md:pb-9 lg:px-14 lg:pb-10 max-w-3xl text-white">
+                <h1 className="text-sm sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-snug sm:leading-tight">
+                  {slide.title}{" "}
+                  <span className={slide.accentColor}>{slide.highlight}</span>
+                </h1>
+
+                <p className="mt-0.5 sm:mt-1.5 text-[10px] sm:text-xs md:text-sm lg:text-base text-neutral-200 leading-relaxed max-w-lg line-clamp-1 sm:line-clamp-2">
+                  {slide.subtitle}
+                </p>
+              </div>
+            </Link>
+          ))}
+
+          {/* Navigation Controls */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              prevSlide();
+            }}
+            aria-label="Previous slide"
+            className="absolute top-1/2 left-2 sm:left-4 z-30 size-7 sm:size-9 -translate-y-1/2 rounded-full bg-black/35 text-white hover:bg-black/60 hover:text-white active:scale-90"
+          >
+            <ChevronLeft />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              nextSlide();
+            }}
+            aria-label="Next slide"
+            className="absolute top-1/2 right-2 sm:right-4 z-30 size-7 sm:size-9 -translate-y-1/2 rounded-full bg-black/35 text-white hover:bg-black/60 hover:text-white active:scale-90"
+          >
+            <ChevronRight />
+          </Button>
+
+          {/* Indicator Dots */}
+          <div className="absolute bottom-2.5 sm:bottom-3.5 right-4 sm:right-10 z-30 flex items-center gap-1.5 sm:gap-2">
+            {HERO_SLIDES.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setCurrentSlide(i);
+                }}
+                aria-label={`Go to slide ${i + 1}`}
+                className={cn(
+                  "h-1.5 sm:h-2 transition-all rounded-full cursor-pointer",
+                  i === currentSlide
+                    ? "w-5 sm:w-7 bg-emerald-400"
+                    : "w-1.5 sm:w-2 bg-white/40 hover:bg-white/70",
+                )}
+              />
+            ))}
+          </div>
         </div>
-
-        <h1 className="mb-5 text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl leading-[1.2]">
-          খাঁটি পণ্যের <br />
-          <span className="text-emerald-700 dark:text-amber-400">
-            বিশ্বস্ত গন্তব্য
-          </span>
-        </h1>
-
-        <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
-          আমাদের নিজস্ব বাগান ও বিশ্বস্ত সোর্স থেকে বাছাইকৃত। রাসায়নিক ও ফরমালিন মুক্ত বিশুদ্ধতার
-          নিশ্চয়তা।
-        </p>
       </div>
     </section>
   );

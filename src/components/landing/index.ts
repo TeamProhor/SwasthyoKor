@@ -1,5 +1,6 @@
 export * from "./BentoShowcase";
 export { BentoShowcase as BentoGrid } from "./BentoShowcase";
+export * from "./CategorySlider";
 export * from "./CollectionTabs";
 export { CollectionTabsSection as CollectionTabs } from "./CollectionTabs";
 export * from "./FeatureBar";

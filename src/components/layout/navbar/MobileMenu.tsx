@@ -1,22 +1,49 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { Menu as MenuIcon, X } from "@/components/icons";
+import {
+  Menu as MenuIcon,
+  X,
+  Home,
+  ShoppingBag,
+  Sparkles,
+  User,
+  Package,
+  MessageCircle,
+  ChevronRight,
+  Info,
+  ShieldCheck,
+} from "lucide-react";
+import LogoSquare from "@/components/logo-square";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { useUser } from "@/hooks/use-auth";
 import type { Menu } from "@/lib/types";
+import { cn, createUrl } from "@/lib/utils";
 import Search, { SearchSkeleton } from "./Search";
 
+const POPULAR_CATEGORIES = [
+  { label: "খাঁটি মধু", href: "/search?q=মধু", icon: "🍯" },
+  { label: "তেল ও গাওয়া ঘি", href: "/search?q=তেল", icon: "🧈" },
+  { label: "অর্গানিক চিয়া সিড", href: "/search/superfoods-wellness", icon: "🌱" },
+  { label: "ড্রাই ফ্রুটস ও বাদাম", href: "/search?q=বাদাম", icon: "🥜" },
+  { label: "তুলসী গ্রিন টি", href: "/search?q=চা", icon: "🍵" },
+  { label: "হিমালয়ান পিংক সল্ট", href: "/search?q=লবণ", icon: "🧂" },
+];
+
 export default function MobileMenu({ menu }: { menu: Menu[] }) {
-  const _pathname = usePathname();
-  const _searchParams = useSearchParams();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { data: user } = useUser();
+
   const openMobileMenu = () => setIsOpen(true);
   const closeMobileMenu = () => setIsOpen(false);
 
@@ -30,61 +57,202 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, []);
+  const whatsappNumber = "8801812345678";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("আসসালামু আলাইকুম, আমি স্বাস্থ্যকর থেকে পণ্য কিনতে চাই।")}`;
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon"
         onClick={openMobileMenu}
         aria-label="মেনু খুলুন"
-        className="flex size-9 sm:size-10 md:size-11 items-center justify-center rounded-lg border border-neutral-200 text-black transition-colors md:hidden dark:border-neutral-700 dark:text-white"
+        className="size-9 sm:size-10 text-foreground md:hidden cursor-pointer"
       >
-        <MenuIcon className="size-4 sm:size-5" />
-      </button>
+        <MenuIcon className="size-5 sm:size-6" />
+      </Button>
+
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent
           side="left"
           showCloseButton={false}
-          className="flex h-full w-full flex-col bg-white p-6 text-black dark:bg-black dark:text-white"
+          className="flex h-full w-full max-w-[310px] sm:max-w-xs flex-col bg-background p-0 text-foreground"
         >
-          <div className="flex items-center justify-between border-b pb-4 dark:border-neutral-800">
-            <SheetTitle className="text-lg font-bold">মেনু (Menu)</SheetTitle>
-            <button
+          {/* Drawer Header */}
+          <div className="flex items-center justify-between border-b border-border/60 p-4">
+            <Link
+              href="/"
+              onClick={closeMobileMenu}
+              className="flex items-center gap-2"
+            >
+              <LogoSquare />
+              <span className="text-base font-bold text-emerald-800 dark:text-emerald-300">
+                স্বাস্থ্যকর
+              </span>
+            </Link>
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={closeMobileMenu}
               aria-label="মেনু বন্ধ করুন"
-              className="flex size-9 items-center justify-center rounded-md border border-neutral-200 text-black hover:bg-neutral-100 dark:border-neutral-800 dark:text-white dark:hover:bg-neutral-900"
+              className="size-8 rounded-full text-muted-foreground hover:text-foreground"
             >
-              <X className="size-5" />
-            </button>
+              <X className="size-4 sm:size-5" />
+            </Button>
           </div>
+
+          <SheetTitle className="sr-only">ন্যাভিগেশন মেনু</SheetTitle>
           <SheetDescription className="sr-only">
-            ন্যাভিগেশন মেনু এবং ক্যাটাগরি
+            মোবাইল মেনু ও ক্যাটাগরি তালিকা
           </SheetDescription>
 
-          <div className="mt-4 mb-4">
-            <Suspense fallback={<SearchSkeleton />}>
-              <Search />
-            </Suspense>
-          </div>
+          {/* Scrollable Body */}
+          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-5 [scrollbar-width:none]">
+            {/* Search Input */}
+            <div>
+              <Suspense fallback={<SearchSkeleton />}>
+                <Search />
+              </Suspense>
+            </div>
 
-          {menu.length ? (
-            <ul className="flex w-full flex-col gap-4 py-2">
-              {menu.map((item: Menu) => (
-                <li
-                  className="border-b border-neutral-200 pb-2 text-xl text-black transition-colors hover:text-emerald-600 dark:border-neutral-700 dark:text-white dark:hover:text-emerald-400"
-                  key={item.title}
-                >
-                  <Link href={item.path} onClick={closeMobileMenu}>
-                    {item.title}
+            {/* Quick Navigation Links */}
+            <div>
+              <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-1">
+                মেনু
+              </div>
+              <ul className="space-y-0.5">
+                <li>
+                  <Link
+                    href="/"
+                    onClick={closeMobileMenu}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+                      pathname === "/"
+                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
+                        : "text-foreground/90 hover:bg-muted/70",
+                    )}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Home className="size-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>হোম</span>
+                    </div>
+                    <ChevronRight className="size-3.5 text-muted-foreground" />
                   </Link>
                 </li>
-              ))}
-            </ul>
-          ) : null}
+                <li>
+                  <Link
+                    href="/search"
+                    onClick={closeMobileMenu}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+                      pathname === "/search"
+                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
+                        : "text-foreground/90 hover:bg-muted/70",
+                    )}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <ShoppingBag className="size-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>সকল পণ্য</span>
+                    </div>
+                    <ChevronRight className="size-3.5 text-muted-foreground" />
+                  </Link>
+                </li>
+                {menu.map((item: Menu) => (
+                  <li key={item.title}>
+                    <Link
+                      href={item.path}
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted/70 transition-colors"
+                    >
+                      <span>{item.title}</span>
+                      <ChevronRight className="size-3.5 text-muted-foreground" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <Separator className="bg-border/60" />
+
+            {/* Popular Categories */}
+            <div>
+              <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-1">
+                জনপ্রিয় ক্যাটাগরি
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {POPULAR_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.label}
+                    href={cat.href}
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-2 rounded-xl border border-border/70 bg-muted/30 p-2.5 text-xs font-semibold text-foreground/90 transition-all hover:border-emerald-500/40 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30"
+                  >
+                    <span className="text-base">{cat.icon}</span>
+                    <span className="line-clamp-1">{cat.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <Separator className="bg-border/60" />
+
+            {/* User Account / Orders */}
+            <div>
+              <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-1">
+                অ্যাকাউন্ট
+              </div>
+              <ul className="space-y-0.5">
+                <li>
+                  <Link
+                    href={user ? (user.isAdmin ? "/admin" : "/dashboard") : "/login"}
+                    onClick={closeMobileMenu}
+                    className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted/70 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <User className="size-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>{user ? user.name || "ড্যাশবোর্ড" : "লগইন / রেজিস্টার"}</span>
+                    </div>
+                    <ChevronRight className="size-3.5 text-muted-foreground" />
+                  </Link>
+                </li>
+                {user && (
+                  <li>
+                    <Link
+                      href="/dashboard/orders"
+                      onClick={closeMobileMenu}
+                      className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted/70 transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Package className="size-4 text-emerald-600 dark:text-emerald-400" />
+                        <span>আমার অর্ডারসমূহ</span>
+                      </div>
+                      <ChevronRight className="size-3.5 text-muted-foreground" />
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </div>
+
+            {/* Support Callout */}
+            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3.5">
+              <div className="flex items-center gap-2 mb-1 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                <MessageCircle className="size-4 text-emerald-600" />
+                <span>যেকোনো প্রয়োজনে সহায়তা</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground mb-2.5">
+                অর্ডার বা পণ্য সম্পর্কিত তথ্যের জন্য সরাসরি হোয়াটসঅ্যাপে মেসেজ দিন।
+              </p>
+              <Button
+                render={<Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+                size="sm"
+                className="w-full rounded-lg bg-emerald-600 font-bold text-white shadow-xs hover:bg-emerald-500"
+              >
+                হোয়াটসঅ্যাপে চ্যাট করুন
+              </Button>
+            </div>
+          </div>
         </SheetContent>
       </Sheet>
     </>
