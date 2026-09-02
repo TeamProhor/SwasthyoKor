@@ -6,6 +6,22 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
+        allow: "/",
+        disallow: ["/admin", "/admin/*", "/api/*", "/checkout/*"],
+      },
+      {
+        userAgent: [
+          "Googlebot",
+          "Bingbot",
+          "GPTBot",
+          "ChatGPT-User",
+          "ClaudeBot",
+          "anthropic-ai",
+          "PerplexityBot",
+          "Applebot",
+        ],
+        allow: "/",
+        disallow: ["/admin", "/admin/*", "/api/*", "/checkout/*"],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

@@ -20,7 +20,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { CheckIcon } from "lucide-react"
+import { Check as CheckIcon } from "@/components/icons"
 
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   return (

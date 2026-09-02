@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Search as SearchIcon, ArrowRight } from "lucide-react";
+import { Loader, Search as SearchIcon, ArrowRight } from "@/components/icons";
 import {
   InputGroup,
   InputGroupAddon,
@@ -106,7 +106,7 @@ export default function Search() {
           />
           <InputGroupAddon align="inline-end" className="pr-3">
             {isLoading ? (
-              <Loader2 className="size-4 animate-spin text-emerald-600" />
+              <Loader className="size-4 animate-spin text-emerald-600" />
             ) : (
               <button type="submit" aria-label="Search" className="cursor-pointer">
                 <SearchIcon className="size-4 text-muted-foreground hover:text-foreground" />

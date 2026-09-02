@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Grid, GridTileImage } from "@/components/grid";
-import { ProductQuickView } from "@/components/product";
+import { ProductCard } from "@/components/product";
 import { defaultSort, sorting } from "@/lib/constants";
 import { getCollection, getCollectionProducts } from "@/lib/db/queries";
 
@@ -58,32 +56,15 @@ export default async function CollectionPage(props: {
       {products.length === 0 ? (
         <p className="py-8 text-neutral-500">এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি।</p>
       ) : (
-        <Grid className="grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
-          {products.map((product) => (
-            <Grid.Item key={product.handle} className="animate-fadeIn">
-              <ProductQuickView product={product} className="size-full">
-                <Link
-                  className="relative inline-block size-full"
-                  href={`/product/${product.handle}`}
-                  prefetch={true}
-                >
-                  <GridTileImage
-                    alt={product.title}
-                    label={{
-                      title: product.title,
-                      amount: product.priceRange.maxVariantPrice.amount,
-                      currencyCode:
-                        product.priceRange.maxVariantPrice.currencyCode,
-                    }}
-                    src={product.featuredImage?.url ?? ""}
-                    fill
-                    sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  />
-                </Link>
-              </ProductQuickView>
-            </Grid.Item>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+          {products.map((product, idx) => (
+            <ProductCard
+              key={product.handle}
+              product={product}
+              priority={idx < 4}
+            />
           ))}
-        </Grid>
+        </div>
       )}
     </section>
   );

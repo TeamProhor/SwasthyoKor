@@ -29,7 +29,7 @@ export function OrdersList({ orders }: { orders: AdminOrderItem[] }) {
     return orders.filter((ord) => {
       const matchSearch =
         ord.id.toLowerCase().includes(query.toLowerCase()) ||
-        (ord.email && ord.email.toLowerCase().includes(query.toLowerCase())) ||
+        (ord.email?.toLowerCase().includes(query.toLowerCase())) ||
         String(ord.totalAmount).includes(query);
 
       const matchStatus =

@@ -1,7 +1,7 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 
 import { cn } from "@/lib/utils"
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { ArrowDown2 as ChevronDownIcon, ArrowUp2 as ChevronUpIcon } from "@/components/icons"
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (

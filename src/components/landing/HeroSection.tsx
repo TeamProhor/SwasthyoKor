@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type TouchEvent } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft2, ArrowRight2 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -59,26 +59,32 @@ const HERO_SLIDES: BannerSlide[] = [
   },
 ];
 
-export function HeroSection() {
+export function HeroSection({
+  slides = HERO_SLIDES,
+}: {
+  slides?: BannerSlide[];
+}) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
   useEffect(() => {
-    if (isHovered) return;
+    if (isHovered || !slides.length) return;
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [isHovered]);
+  }, [isHovered, slides.length]);
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    if (!slides.length) return;
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    if (!slides.length) return;
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
@@ -105,19 +111,21 @@ export function HeroSection() {
   };
 
   return (
-    <section className="w-full py-2 sm:py-4 md:py-5">
+    <div className="w-full py-2 sm:py-4 md:py-5">
       <div className="mx-auto max-w-7xl px-3 sm:px-6">
-        <div
+        <section
           className="relative aspect-video w-full overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl border border-border/50 shadow-md sm:shadow-lg"
+          aria-roledescription="carousel"
+          aria-label="ফিচার্ড ব্যানার স্লাইডার"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {HERO_SLIDES.map((slide, idx) => (
+          {slides.map((slide, idx) => (
             <Link
-              key={slide.title}
+              key={`${slide.title}-${idx}`}
               href={slide.link}
               className={cn(
                 "absolute inset-0 block transition-opacity duration-700 ease-in-out cursor-pointer",
@@ -166,7 +174,7 @@ export function HeroSection() {
             aria-label="Previous slide"
             className="absolute top-1/2 left-2 sm:left-4 z-30 size-7 sm:size-9 -translate-y-1/2 rounded-full bg-black/35 text-white hover:bg-black/60 hover:text-white active:scale-90"
           >
-            <ChevronLeft />
+            <ArrowLeft2 className="size-4" />
           </Button>
 
           <Button
@@ -181,14 +189,14 @@ export function HeroSection() {
             aria-label="Next slide"
             className="absolute top-1/2 right-2 sm:right-4 z-30 size-7 sm:size-9 -translate-y-1/2 rounded-full bg-black/35 text-white hover:bg-black/60 hover:text-white active:scale-90"
           >
-            <ChevronRight />
+            <ArrowRight2 className="size-4" />
           </Button>
 
           {/* Indicator Dots */}
           <div className="absolute bottom-2.5 sm:bottom-3.5 right-4 sm:right-10 z-30 flex items-center gap-1.5 sm:gap-2">
-            {HERO_SLIDES.map((_, i) => (
+            {slides.map((slide, i) => (
               <button
-                key={i}
+                key={`${slide.title}-${i}`}
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
@@ -199,14 +207,14 @@ export function HeroSection() {
                 className={cn(
                   "h-1.5 sm:h-2 transition-all rounded-full cursor-pointer",
                   i === currentSlide
-                    ? "w-5 sm:w-7 bg-emerald-400"
-                    : "w-1.5 sm:w-2 bg-white/40 hover:bg-white/70",
+                    ? "w-6 sm:w-8 bg-emerald-500"
+                    : "w-1.5 sm:w-2 bg-white/60 hover:bg-white/90",
                 )}
               />
             ))}
           </div>
-        </div>
+        </section>
       </div>
-    </section>
+    </div>
   );
 }

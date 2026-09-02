@@ -1,21 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import {
-  Menu as MenuIcon,
-  X,
+  Menu,
+  CloseCircle,
   Home,
   ShoppingBag,
   Sparkles,
   User,
-  Package,
+  Box,
   MessageCircle,
-  ChevronRight,
-  Info,
-  ShieldCheck,
-} from "lucide-react";
+  ArrowRight2,
+  Drop,
+  Leaf,
+  Tree,
+  Coffee,
+} from "@/components/icons";
 import LogoSquare from "@/components/logo-square";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,20 +28,20 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/hooks/use-auth";
-import type { Menu } from "@/lib/types";
-import { cn, createUrl } from "@/lib/utils";
+import type { Menu as MenuType } from "@/lib/types";
+import { cn, } from "@/lib/utils";
 import Search, { SearchSkeleton } from "./Search";
 
 const POPULAR_CATEGORIES = [
-  { label: "খাঁটি মধু", href: "/search?q=মধু", icon: "🍯" },
-  { label: "তেল ও গাওয়া ঘি", href: "/search?q=তেল", icon: "🧈" },
-  { label: "অর্গানিক চিয়া সিড", href: "/search/superfoods-wellness", icon: "🌱" },
-  { label: "ড্রাই ফ্রুটস ও বাদাম", href: "/search?q=বাদাম", icon: "🥜" },
-  { label: "তুলসী গ্রিন টি", href: "/search?q=চা", icon: "🍵" },
-  { label: "হিমালয়ান পিংক সল্ট", href: "/search?q=লবণ", icon: "🧂" },
+  { label: "খাঁটি মধু", href: "/search?q=মধু", icon: Sparkles },
+  { label: "তেল ও গাওয়া ঘি", href: "/search?q=তেল", icon: Drop },
+  { label: "অর্গানিক চিয়া সিড", href: "/search/superfoods-wellness", icon: Leaf },
+  { label: "ড্রাই ফ্রুটস ও বাদাম", href: "/search?q=বাদাম", icon: Tree },
+  { label: "তুলসী গ্রিন টি", href: "/search?q=চা", icon: Coffee },
+  { label: "হিমালয়ান পিংক সল্ট", href: "/search?q=লবণ", icon: Box },
 ];
 
-export default function MobileMenu({ menu }: { menu: Menu[] }) {
+export default function MobileMenu({ menu }: { menu: MenuType[] }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { data: user } = useUser();
@@ -70,7 +72,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
         aria-label="মেনু খুলুন"
         className="size-9 sm:size-10 text-foreground md:hidden cursor-pointer"
       >
-        <MenuIcon className="size-5 sm:size-6" />
+        <Menu className="size-5 sm:size-6" />
       </Button>
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -99,7 +101,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
               aria-label="মেনু বন্ধ করুন"
               className="size-8 rounded-full text-muted-foreground hover:text-foreground"
             >
-              <X className="size-4 sm:size-5" />
+              <CloseCircle className="size-4 sm:size-5" />
             </Button>
           </div>
 
@@ -138,7 +140,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                       <Home className="size-4 text-emerald-600 dark:text-emerald-400" />
                       <span>হোম</span>
                     </div>
-                    <ChevronRight className="size-3.5 text-muted-foreground" />
+                    <ArrowRight2 className="size-3.5 text-muted-foreground" />
                   </Link>
                 </li>
                 <li>
@@ -156,10 +158,10 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                       <ShoppingBag className="size-4 text-emerald-600 dark:text-emerald-400" />
                       <span>সকল পণ্য</span>
                     </div>
-                    <ChevronRight className="size-3.5 text-muted-foreground" />
+                    <ArrowRight2 className="size-3.5 text-muted-foreground" />
                   </Link>
                 </li>
-                {menu.map((item: Menu) => (
+                {menu.map((item: MenuType) => (
                   <li key={item.title}>
                     <Link
                       href={item.path}
@@ -167,7 +169,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                       className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted/70 transition-colors"
                     >
                       <span>{item.title}</span>
-                      <ChevronRight className="size-3.5 text-muted-foreground" />
+                      <ArrowRight2 className="size-3.5 text-muted-foreground" />
                     </Link>
                   </li>
                 ))}
@@ -182,17 +184,20 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                 জনপ্রিয় ক্যাটাগরি
               </div>
               <div className="grid grid-cols-2 gap-2">
-                {POPULAR_CATEGORIES.map((cat) => (
-                  <Link
-                    key={cat.label}
-                    href={cat.href}
-                    onClick={closeMobileMenu}
-                    className="flex items-center gap-2 rounded-xl border border-border/70 bg-muted/30 p-2.5 text-xs font-semibold text-foreground/90 transition-all hover:border-emerald-500/40 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30"
-                  >
-                    <span className="text-base">{cat.icon}</span>
-                    <span className="line-clamp-1">{cat.label}</span>
-                  </Link>
-                ))}
+                {POPULAR_CATEGORIES.map((cat) => {
+                  const Icon = cat.icon;
+                  return (
+                    <Link
+                      key={cat.label}
+                      href={cat.href}
+                      onClick={closeMobileMenu}
+                      className="flex items-center gap-2 rounded-xl border border-border/70 bg-muted/30 p-2.5 text-xs font-semibold text-foreground/90 transition-all hover:border-emerald-500/40 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/30"
+                    >
+                      <Icon className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span className="line-clamp-1">{cat.label}</span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -214,7 +219,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                       <User className="size-4 text-emerald-600 dark:text-emerald-400" />
                       <span>{user ? user.name || "ড্যাশবোর্ড" : "লগইন / রেজিস্টার"}</span>
                     </div>
-                    <ChevronRight className="size-3.5 text-muted-foreground" />
+                    <ArrowRight2 className="size-3.5 text-muted-foreground" />
                   </Link>
                 </li>
                 {user && (
@@ -225,10 +230,10 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
                       className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted/70 transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
-                        <Package className="size-4 text-emerald-600 dark:text-emerald-400" />
+                        <Box className="size-4 text-emerald-600 dark:text-emerald-400" />
                         <span>আমার অর্ডারসমূহ</span>
                       </div>
-                      <ChevronRight className="size-3.5 text-muted-foreground" />
+                      <ArrowRight2 className="size-3.5 text-muted-foreground" />
                     </Link>
                   </li>
                 )}

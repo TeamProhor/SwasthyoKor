@@ -6,12 +6,19 @@ const connectionString =
   process.env.DATABASE_URL ||
   "postgresql://postgres:postgres@localhost:5433/swasthyokor";
 
-// Cache connection in development to prevent exhausting pool on hot reload
+// Cache connection globally to prevent exhausting pool on hot reload and parallel build workers
 const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
 };
 
-const conn = globalForDb.conn ?? postgres(connectionString, { max: 10 });
-if (process.env.NODE_ENV !== "production") globalForDb.conn = conn;
+const conn =
+  globalForDb.conn ??
+  postgres(connectionString, {
+    max: 3,
+    idle_timeout: 20,
+    connect_timeout: 15,
+  });
+
+globalForDb.conn = conn;
 
 export const db = drizzle(conn, { schema });

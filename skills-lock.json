@@ -31,6 +31,12 @@
       "skillPath": "skills/postgres-drizzle/SKILL.md",
       "computedHash": "26754316f0d7698c323c5130d89ba04d49fabd1bf960c1a38c23b4d2bbe0424d"
     },
+    "seo-geo": {
+      "source": "resciencelab/opc-skills",
+      "sourceType": "github",
+      "skillPath": "skills/seo-geo/SKILL.md",
+      "computedHash": "56f90ba46b36563bb5461feb8462aed9283e74dfc4cdac2a98c42c4bc86a95be"
+    },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",

@@ -32,6 +32,7 @@ export type ProductVariant = {
   availableForSale: boolean;
   selectedOptions: SelectedOption[];
   price: Money;
+  compareAtPrice?: Money;
 };
 
 export type Product = {
@@ -42,11 +43,25 @@ export type Product = {
   descriptionHtml?: string;
   tags: string[];
   availableForSale: boolean;
+  brand?: string;
+  productType?: string;
+  deliveryInfo?: string;
+  rating?: number;
+  reviewCount?: number;
+  category?: {
+    id: string;
+    handle: string;
+    title: string;
+  };
   createdAt: string;
   updatedAt: string;
   priceRange: {
     minVariantPrice: Money;
     maxVariantPrice: Money;
+  };
+  compareAtPriceRange?: {
+    minVariantPrice?: Money;
+    maxVariantPrice?: Money;
   };
   featuredImage?: Image;
   images: Image[];

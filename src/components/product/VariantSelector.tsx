@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ProductOption, ProductVariant } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -13,13 +12,14 @@ type Combination = {
 export function VariantSelector({
   options,
   variants,
+  selectedOptions,
+  onOptionSelect,
 }: {
   options: ProductOption[];
   variants: ProductVariant[];
+  selectedOptions: Record<string, string>;
+  onOptionSelect: (optionName: string, value: string) => void;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const hasNoOptionsOrJustOneOption =
     !options.length ||
     (options.length === 1 && options[0]?.values.length === 1);
@@ -42,27 +42,28 @@ export function VariantSelector({
   });
 
   return options.map((option) => (
-    <dl className="mb-8" key={option.id}>
-      <dt className="mb-4 text-sm uppercase tracking-wide font-medium">
-        {option.name}
+    <dl className="mb-4" key={option.id}>
+      <dt className="mb-2 text-xs font-bold text-foreground">
+        {option.name}:
       </dt>
-      <dd className="flex flex-wrap gap-3">
+      <dd className="flex flex-wrap gap-2.5">
         {option.values.map((value) => {
           const optionNameLowerCase = option.name.toLowerCase();
 
-          const optionSearchParams = new URLSearchParams(
-            searchParams.toString(),
-          );
-          optionSearchParams.set(optionNameLowerCase, value);
+          // Calculate tentative options to check availability
+          const currentCombination = {
+            ...selectedOptions,
+            [optionNameLowerCase]: value,
+          };
 
-          const isAvailableForSale = combinations.find((combination) =>
-            Array.from(optionSearchParams.entries()).every(
+          const isAvailableForSale = combinations.some((combination) =>
+            Object.entries(currentCombination).every(
               ([key, val]) =>
                 combination[key] === val && combination.availableForSale,
             ),
           );
 
-          const isActive = searchParams.get(optionNameLowerCase) === value;
+          const isActive = selectedOptions[optionNameLowerCase] === value;
 
           return (
             <button
@@ -70,24 +71,18 @@ export function VariantSelector({
               key={value}
               aria-disabled={!isAvailableForSale}
               disabled={!isAvailableForSale}
-              onClick={() => {
-                const params = new URLSearchParams(searchParams.toString());
-                params.set(optionNameLowerCase, value);
-                router.replace(`${pathname}?${params.toString()}`, {
-                  scroll: false,
-                });
-              }}
+              onClick={() => onOptionSelect(optionNameLowerCase, value)}
               title={`${option.name} ${value}${
                 !isAvailableForSale ? " (স্টক শেষ)" : ""
               }`}
               className={cn(
-                "flex min-w-[48px] items-center justify-center rounded-full border px-4 py-2 text-sm transition-colors",
+                "flex min-w-[48px] items-center justify-center rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer",
                 {
-                  "cursor-default ring-2 ring-emerald-600 bg-emerald-600 text-white":
+                  "border-emerald-600 bg-emerald-600 text-white shadow-xs":
                     isActive,
-                  "ring-1 ring-transparent hover:ring-neutral-400 dark:hover:ring-neutral-600":
+                  "border-border bg-card hover:border-emerald-500/50 hover:bg-muted text-foreground":
                     !isActive && isAvailableForSale,
-                  "relative z-10 cursor-not-allowed overflow-hidden bg-neutral-100 text-neutral-500 ring-1 ring-neutral-300 dark:bg-neutral-900 dark:text-neutral-500 dark:ring-neutral-700":
+                  "relative z-10 cursor-not-allowed opacity-40 bg-muted text-muted-foreground border-dashed":
                     !isAvailableForSale,
                 },
               )}
@@ -100,3 +95,4 @@ export function VariantSelector({
     </dl>
   ));
 }
+

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Tag, Trash2, CheckCircle2, Percent, DollarSign, Calendar, Copy, Check } from "lucide-react";
+import { Add as Plus, Tag, Trash2, Copy, Check } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared/ResponsiveDialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -57,8 +57,8 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
         maxDiscountAmount: "",
         usageLimit: "",
       });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "কুপন তৈরি ব্যর্থ হয়েছে।");
     } finally {
       setIsLoading(false);
     }

@@ -19,7 +19,10 @@ export default function Price({
 
   return (
     <p suppressHydrationWarning={true} className={className}>
-      <span>৳{formatted}</span>
+      <span className={currencyCodeClassName}>
+        {currencyCode === "BDT" ? "৳" : `${currencyCode} `}
+      </span>
+      <span>{formatted}</span>
     </p>
   );
 }

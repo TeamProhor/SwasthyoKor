@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
@@ -57,9 +57,14 @@ export async function POST(req: NextRequest) {
       .returning();
 
     return NextResponse.json({ coupon: created }, { status: 201 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Coupon create error:", err);
-    if (err.code === "23505") {
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      err.code === "23505"
+    ) {
       return NextResponse.json(
         { error: "এই নামের কুপন কোড ইতিমধ্যে বিদ্যমান।" },
         { status: 400 },

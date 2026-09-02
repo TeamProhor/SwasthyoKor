@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { AlertTriangle, CheckCircle2, XCircle, Search, ArrowUpRight } from "lucide-react";
+import { AlertTriangle, CheckCircle as CheckCircle2, CloseCircle as XCircle, Search, ArrowUpRight } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 

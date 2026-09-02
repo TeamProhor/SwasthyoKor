@@ -1,20 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import {
   Star,
   Plus,
   Minus,
-  MessageCircle,
   Truck,
   ShieldCheck,
-  RotateCcw,
-  Sparkles,
+  RestartSquare,
   ShoppingBag,
-} from "lucide-react";
-import Price from "@/components/price";
+  WhatsAppIcon,
+} from "@/components/icons";
 import { Prose } from "@/components/prose";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -23,24 +20,46 @@ import type { Product } from "@/lib/types";
 import { VariantSelector } from "./VariantSelector";
 
 export function ProductDescription({ product }: { product: Product }) {
-  const searchParams = useSearchParams();
   const { addCartItem } = useCart();
   const [quantity, setQuantity] = useState(1);
+
+  // Initialize selectedOptions with the first variant's options
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {};
+    const defaultVariant = product.variants[0];
+    if (defaultVariant) {
+      for (const opt of defaultVariant.selectedOptions) {
+        initial[opt.name.toLowerCase()] = opt.value;
+      }
+    }
+    return initial;
+  });
+
+  const handleOptionSelect = (optionName: string, value: string) => {
+    setSelectedOptions((prev) => ({
+      ...prev,
+      [optionName]: value,
+    }));
+  };
 
   const variant =
     product.variants.find((variant) =>
       variant.selectedOptions.every(
         (option) =>
-          searchParams.get(option.name.toLowerCase()) === option.value,
+          selectedOptions[option.name.toLowerCase()] === option.value,
       ),
     ) ?? product.variants[0];
 
   const currentPriceNum = Number(
     variant?.price.amount ?? product.priceRange.minVariantPrice.amount,
   );
-  // Calculate regular strikethrough price with ~15-20% discount illusion
-  const originalPriceNum = Math.round(currentPriceNum * 1.18);
-  const savingsNum = originalPriceNum - currentPriceNum;
+  const compareAtPriceNum = variant?.compareAtPrice?.amount
+    ? Number(variant.compareAtPrice.amount)
+    : undefined;
+  const savingsNum =
+    compareAtPriceNum && compareAtPriceNum > currentPriceNum
+      ? compareAtPriceNum - currentPriceNum
+      : 0;
 
   const productSku = `SW-${product.handle.slice(0, 6).toUpperCase()}`;
 
@@ -76,63 +95,98 @@ export function ProductDescription({ product }: { product: Product }) {
           {product.title}
         </h1>
 
-        {/* Rating & Reviews Bar */}
+        {/* Reviews Navigation */}
         <div className="mt-2.5 flex items-center gap-3">
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((s) => (
-              <Star key={s} className="size-3.5 fill-amber-400 text-amber-400" />
+              <Star
+                key={s}
+                className={`size-3.5 ${
+                  product.rating && s <= Math.round(product.rating)
+                    ? "fill-amber-400 text-amber-400"
+                    : "fill-amber-400/30 text-amber-400/40"
+                }`}
+              />
             ))}
-            <span className="ml-1 text-xs font-bold text-foreground">4.9 / 5</span>
+            <span className="ml-1 text-xs font-bold text-foreground">
+              {product.rating ? `${product.rating.toFixed(1)} / ৫` : "০.০ / ৫"}
+            </span>
           </div>
           <button
             type="button"
             onClick={scrollToReviews}
             className="text-xs text-emerald-600 dark:text-emerald-400 underline underline-offset-4 hover:text-emerald-700 cursor-pointer font-medium"
           >
-            ২৪টি রিভিউ দেখুন
+            {product.reviewCount && product.reviewCount > 0
+              ? `${product.reviewCount.toLocaleString("bn-BD")}টি রিভিউ দেখুন`
+              : "রিভিউ ও মতামত দেখুন"}
           </button>
         </div>
 
-        {/* Price & Savings Display */}
+        {/* Dynamic Price Display */}
         <div className="mt-4 flex flex-wrap items-baseline gap-3">
           <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
-            ৳{currentPriceNum}
+            ৳{currentPriceNum.toLocaleString("bn-BD")}
           </span>
-          <span className="text-sm sm:text-base text-muted-foreground line-through decoration-rose-500/70 font-semibold">
-            ৳{originalPriceNum}
-          </span>
-          <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
-            ৳{savingsNum} সাশ্রয়
-          </span>
+          {compareAtPriceNum && compareAtPriceNum > currentPriceNum && (
+            <>
+              <span className="text-sm sm:text-base text-muted-foreground line-through decoration-rose-500/70 font-semibold">
+                ৳{compareAtPriceNum.toLocaleString("bn-BD")}
+              </span>
+              <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                ৳{savingsNum.toLocaleString("bn-BD")} সাশ্রয়
+              </span>
+            </>
+          )}
         </div>
       </div>
 
       {/* Product Meta Specs */}
-      <div className="grid grid-cols-2 gap-2 rounded-xl border border-border/60 bg-muted/20 p-3 text-xs">
+      <div className="grid grid-cols-2 gap-2.5 rounded-xl border border-border/60 bg-muted/20 p-3 text-xs">
         <div>
           <span className="text-muted-foreground">ব্র্যান্ড: </span>
-          <span className="font-bold text-foreground">স্বাস্থ্যকর</span>
+          <span className="font-bold text-foreground">
+            {product.brand || "স্বাস্থ্যকর"}
+          </span>
+        </div>
+        <div>
+          <span className="text-muted-foreground">ক্যাটাগরি: </span>
+          {product.category ? (
+            <Link
+              href={`/search/${product.category.handle}`}
+              className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+            >
+              {product.category.title}
+            </Link>
+          ) : (
+            <span className="font-bold text-foreground">অর্গানিক ফুড</span>
+          )}
         </div>
         <div>
           <span className="text-muted-foreground">পণ্য ধরন: </span>
-          <span className="font-bold text-foreground">১০০% প্রাকৃতিক খাদ্য</span>
-        </div>
-        <div>
-          <span className="text-muted-foreground">পরিমাণ (Unit): </span>
-          <span className="font-bold text-foreground">{variant?.title || "স্ট্যান্ডার্ড প্যাক"}</span>
+          <span className="font-bold text-foreground">
+            {product.productType || "১০০% প্রাকৃতিক খাদ্য"}
+          </span>
         </div>
         <div>
           <span className="text-muted-foreground">ডেলিভারি: </span>
-          <span className="font-bold text-foreground">সারা দেশে ক্যাশ অন ডেলিভারি</span>
+          <span className="font-bold text-foreground">
+            {product.deliveryInfo || "সারা দেশে ক্যাশ অন ডেলিভারি"}
+          </span>
         </div>
       </div>
 
       {/* Variant Selector (if multiple variants exist) */}
-      <VariantSelector options={product.options} variants={product.variants} />
+      <VariantSelector
+        options={product.options}
+        variants={product.variants}
+        selectedOptions={selectedOptions}
+        onOptionSelect={handleOptionSelect}
+      />
 
       {/* Quantity Increment/Decrement Selector */}
       <div className="flex items-center gap-3 pt-1">
-        <span className="text-xs font-bold text-foreground">পরিমাণ:</span>
+        <span className="text-xs font-bold text-foreground">অর্ডার সংখ্যা (পিস/প্যাক):</span>
         <div className="flex items-center rounded-xl border border-border bg-card p-1 shadow-2xs">
           <button
             type="button"
@@ -216,7 +270,7 @@ export function ProductDescription({ product }: { product: Product }) {
             size="lg"
             className="w-full rounded-xl border-emerald-500/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-xs sm:text-sm font-bold"
           >
-            <MessageCircle className="size-4 text-emerald-600" />
+            <WhatsAppIcon className="size-4.5 shrink-0" />
             <span>হোয়াটসঅ্যাপে অর্ডার</span>
           </Button>
         </div>
@@ -235,7 +289,7 @@ export function ProductDescription({ product }: { product: Product }) {
           <span className="text-[9px] text-muted-foreground">ল্যাব টেস্টেড</span>
         </div>
         <div className="flex flex-col items-center gap-1 rounded-xl p-2 bg-muted/20">
-          <RotateCcw className="size-4 text-emerald-600" />
+          <RestartSquare className="size-4 text-emerald-600" />
           <span className="text-[10px] font-bold text-foreground">ক্যাশ অন ডেলিভারি</span>
           <span className="text-[9px] text-muted-foreground">পণ্য দেখে পেমেন্ট</span>
         </div>

@@ -4,6 +4,7 @@ import { CartModal } from "@/components/cart";
 import LogoSquare from "@/components/logo-square";
 import { getMenu } from "@/lib/db/queries";
 import type { Menu } from "@/lib/types";
+import { ThemeToggler } from "@/components/theme-toggler";
 import { HeaderAuth } from "./HeaderAuth";
 import { MobileSearch } from "./MobileSearch";
 import MobileMenu from "./MobileMenu";
@@ -56,9 +57,10 @@ export async function Header() {
         </Suspense>
       </div>
 
-      {/* Right: Mobile Search + Profile/Auth + Cart */}
+      {/* Right: Mobile Search + ThemeToggler + Profile/Auth + Cart */}
       <div className="flex items-center gap-1 sm:gap-2">
         <MobileSearch />
+        <ThemeToggler />
         <HeaderAuth />
         <CartModal />
       </div>

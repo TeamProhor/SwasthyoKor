@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Store, Truck, Phone, CheckCircle2 } from "lucide-react";
+import { Save, Store, Truck, CheckCircle as CheckCircle2 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -43,8 +43,8 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "সেটিংস সংরক্ষণ ব্যর্থ হয়েছে।");
     } finally {
       setIsLoading(false);
     }

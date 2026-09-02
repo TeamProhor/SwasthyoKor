@@ -29,6 +29,29 @@ export async function Footer() {
             ১০০% খাঁটি, প্রাকৃতিক ও অর্গানিক স্বাস্থ্যকর খাদ্যের নির্ভরযোগ্য ঠিকানা।
           </p>
         </div>
+        <div>
+          <h3 className="font-semibold text-foreground text-xs uppercase tracking-wider mb-2">
+            জরুরি লিংক
+          </h3>
+          <ul className="flex flex-col gap-2">
+            <li>
+              <Link
+                href="/blog"
+                className="hover:text-foreground transition underline-offset-4 hover:underline"
+              >
+                স্বাস্থ্য ও পুষ্টি ব্লগ
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/faq"
+                className="hover:text-foreground transition underline-offset-4 hover:underline"
+              >
+                সচরাচর জিজ্ঞাসা (FAQ)
+              </Link>
+            </li>
+          </ul>
+        </div>
         <Suspense
           fallback={
             <div className="flex h-[188px] w-[200px] flex-col gap-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, MapPin, Phone, User, Trash2, CheckCircle2, Home, Building2 } from "lucide-react";
+import { Add as Plus, Location as MapPin, Phone, User, Trash2, CheckCircle as CheckCircle2, Home, Building2 } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared/ResponsiveDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,8 +61,8 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
         streetAddress: "",
         isDefault: false,
       });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "ঠিকানা সংরক্ষণ ব্যর্থ হয়েছে।");
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CreateProductDialog, StatsCards } from "@/components/admin";
-import { Box, Receipt } from "@/components/icons";
+import { Box, Receipt, BookOpen } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,7 +10,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { db } from "@/lib/db";
-import { collections, orders, products, users } from "@/lib/db/schema";
+import { collections, orders, products, users, blogs } from "@/lib/db/schema";
 
 export const metadata = {
   title: "অ্যাডমিন ওভারভিউ | স্বাস্থ্যকর",
@@ -18,12 +18,14 @@ export const metadata = {
 };
 
 export default async function AdminOverviewPage() {
-  const [allProducts, allOrders, allCollections, allUsers] = await Promise.all([
-    db.select().from(products),
-    db.select().from(orders),
-    db.select().from(collections),
-    db.select().from(users),
-  ]);
+  const [allProducts, allOrders, allCollections, allUsers, allBlogs] =
+    await Promise.all([
+      db.select().from(products),
+      db.select().from(orders),
+      db.select().from(collections),
+      db.select().from(users),
+      db.select().from(blogs),
+    ]);
 
   const totalRevenue = allOrders.reduce(
     (acc, order) => acc + (order.totalAmount || 0),
@@ -39,7 +41,7 @@ export default async function AdminOverviewPage() {
             অ্যাডমিন প্যানেল
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            স্বাস্থ্যকর স্টোরফ্রন্টের পণ্য, স্টক, অর্ডার ও ডেটাবেস পরিচালনা করুন।
+            স্বাস্থ্যকর স্টোরফ্রন্টের পণ্য, স্টক, অর্ডার, ব্লগ ও ডেটাবেস পরিচালনা করুন।
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -61,7 +63,7 @@ export default async function AdminOverviewPage() {
       />
 
       {/* ─── Quick Actions & Recent Summary ─── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="rounded-2xl border-border bg-card shadow-xs">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-base font-bold flex items-center gap-2">
@@ -85,16 +87,16 @@ export default async function AdminOverviewPage() {
               </Empty>
             ) : (
               <div className="divide-y divide-border">
-                {allProducts.slice(0, 5).map((prod) => (
+                {allProducts.slice(0, 4).map((prod) => (
                   <div
                     key={prod.id}
                     className="py-3 flex items-center justify-between text-sm"
                   >
-                    <div>
-                      <div className="font-bold text-foreground">
+                    <div className="min-w-0 flex-1 mr-2">
+                      <div className="font-bold text-foreground truncate">
                         {prod.title}
                       </div>
-                      <div className="text-xs text-muted-foreground font-mono">
+                      <div className="text-xs text-muted-foreground font-mono truncate">
                         /{prod.handle}
                       </div>
                     </div>
@@ -102,6 +104,7 @@ export default async function AdminOverviewPage() {
                       variant={
                         prod.availableForSale ? "default" : "destructive"
                       }
+                      className="shrink-0 text-[10px]"
                     >
                       {prod.availableForSale ? "ইন স্টক" : "স্টক শেষ"}
                     </Badge>
@@ -137,7 +140,7 @@ export default async function AdminOverviewPage() {
               </Empty>
             ) : (
               <div className="divide-y divide-border">
-                {allOrders.slice(0, 5).map((ord) => (
+                {allOrders.slice(0, 4).map((ord) => (
                   <div
                     key={ord.id}
                     className="py-3 flex items-center justify-between text-sm"
@@ -158,6 +161,52 @@ export default async function AdminOverviewPage() {
                         {ord.status}
                       </Badge>
                     </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border bg-card shadow-xs">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <BookOpen className="size-5 text-primary" />
+              সাম্প্রতিক ব্লগ ও গাইড
+            </CardTitle>
+            <Link
+              href="/admin/blog"
+              className="text-xs font-semibold text-primary hover:underline"
+            >
+              সব দেখুন →
+            </Link>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {allBlogs.length === 0 ? (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>কোনো ব্লগ নেই</EmptyTitle>
+                  <EmptyDescription>নতুন আর্টিকেল প্রকাশ করুন।</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            ) : (
+              <div className="divide-y divide-border">
+                {allBlogs.slice(0, 4).map((b) => (
+                  <div
+                    key={b.id}
+                    className="py-3 flex items-center justify-between text-sm"
+                  >
+                    <div className="min-w-0 flex-1 mr-2">
+                      <div className="font-bold text-foreground truncate">
+                        {b.title}
+                      </div>
+                      <div className="text-xs text-muted-foreground font-mono truncate">
+                        /blog/{b.slug}
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="shrink-0 text-[10px]">
+                      {b.category}
+                    </Badge>
                   </div>
                 ))}
               </div>

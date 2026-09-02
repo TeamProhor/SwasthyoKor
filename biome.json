@@ -13,6 +13,8 @@
       "!.next",
       "!dist",
       "!build",
+      "!graphify-out",
+      "!.graphify",
       "!src/components/ui",
       "!ref.html"
     ]

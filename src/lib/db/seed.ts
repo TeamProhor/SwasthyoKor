@@ -5,7 +5,6 @@ import {
   carts,
   collections,
   menus,
-  orders,
   pages,
   productCollections,
   productImages,
@@ -25,16 +24,15 @@ type SeedProduct = {
   imageUrls: string[];
 };
 
-const now = new Date();
-
 const PRODUCTS: SeedProduct[] = [
   {
     handle: "swasthyo-organic-honey",
     title: "খাঁটি সুন্দরবন মধু (Pure Sundarban Raw Honey)",
     description:
       "১০০% খাঁটি ও প্রাকৃতিক সুন্দরবনের কাঁচা মধু। কোনো কৃত্রিম মিষ্টি বা প্রিজারভেটিভ ছাড়া সংগৃহীত উচ্চ পুষ্টিগুণ সমৃদ্ধ অর্গানিক মধু।",
-    price: 15,
-    tags: ["organic", "new", "food"],
+    price: 850,
+    tags: ["organic", "honey", "food", "best-seller"],
+    sizes: ["৫০০ গ্রাম", "১ কেজি"],
     imageUrls: [
       "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=85",
       "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=800&auto=format&fit=crop&q=85",
@@ -42,39 +40,29 @@ const PRODUCTS: SeedProduct[] = [
     ],
   },
   {
-    handle: "swasthyo-cold-pressed-mustard-oil",
-    title: "ঘানি ভাঙা সরিষার তেল (Cold Pressed Mustard Oil)",
-    description:
-      "কাঠের ঘানিতে ভাঙা খাঁটি দেশি সরিষার তেল। খাঁটি ঝাঁঝ ও প্রাকৃতিক পুষ্টিতে ভরপুর স্বাস্থ্যকর রান্নার তেল।",
-    price: 12,
-    tags: ["organic", "oil", "food"],
-    imageUrls: [
-      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=85",
-      "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=800&auto=format&fit=crop&q=85",
-    ],
-  },
-  {
     handle: "swasthyo-organic-ghee",
     title: "গাওয়া ঘি (Pure Grass-fed Cow Ghee)",
     description:
       "দেশি গরুর খাঁটি দুধের মালাই থেকে ঐতিহ্যবাহী পদ্ধতিতে তৈরি সুগন্ধি দানাদার গাওয়া ঘি।",
-    price: 25,
-    tags: ["dairy", "new", "food"],
+    price: 1450,
+    tags: ["dairy", "ghee", "food", "best-seller"],
+    sizes: ["৫০০ গ্রাম", "১ কেজি"],
     imageUrls: [
       "https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=800&auto=format&fit=crop&q=85",
       "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=800&auto=format&fit=crop&q=85",
     ],
   },
   {
-    handle: "swasthyo-moringa-powder",
-    title: "সজিনা পাতা গুঁড়ো (Organic Moringa Leaf Powder)",
+    handle: "swasthyo-cold-pressed-mustard-oil",
+    title: "ঘানি ভাঙা সরিষার তেল (Cold Pressed Mustard Oil)",
     description:
-      "প্রাকৃতিক মাল্টিভিটামিন ও সুপারফুড। রোগ প্রতিরোধ ক্ষমতা বৃদ্ধি ও শারীরিক শক্তি যোগাতে অতুলনীয়।",
-    price: 10,
-    tags: ["superfood", "wellness"],
+      "কাঠের ঘানিতে ভাঙা খাঁটি দেশি সরিষার তেল। খাঁটি ঝাঁঝ ও প্রাকৃতিক পুষ্টিতে ভরপুর স্বাস্থ্যকর রান্নার তেল।",
+    price: 360,
+    tags: ["oil", "organic", "food", "best-seller"],
+    sizes: ["১ লিটার", "২ লিটার", "৫ লিটার"],
     imageUrls: [
-      "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=85",
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=800&auto=format&fit=crop&q=85",
     ],
   },
   {
@@ -82,23 +70,25 @@ const PRODUCTS: SeedProduct[] = [
     title: "অর্গানিক চিয়া সিড (Premium Organic Chia Seeds)",
     description:
       "ওমেগা-৩ ফ্যাটি অ্যাসিড, ফাইবার ও অ্যান্টিঅক্সিডেন্ট সমৃদ্ধ প্রিমিয়াম গ্রেডের অর্গানিক চিয়া সিড।",
-    price: 8,
-    tags: ["superfood", "weight-management"],
+    price: 420,
+    tags: ["superfood", "chia", "weight-management", "best-seller"],
+    sizes: ["২৫০ গ্রাম", "৫০০ গ্রাম"],
     imageUrls: [
       "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=800&auto=format&fit=crop&q=85",
       "https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=800&auto=format&fit=crop&q=85",
     ],
   },
   {
-    handle: "swasthyo-black-seed-oil",
-    title: "কালোজিরা তেল (Cold-pressed Black Seed Oil)",
+    handle: "swasthyo-moringa-powder",
+    title: "সজিনা পাতা গুঁড়ো (Organic Moringa Leaf Powder)",
     description:
-      "১০০% খাঁটি কোল্ড-প্রেসড কালোজিরা তেল। প্রাকৃতিক আরোগ্য ও ইমিউনিটি বৃদ্ধির মহৌষধ।",
-    price: 14,
-    tags: ["oil", "wellness"],
+      "প্রাকৃতিক মাল্টিভিটামিন ও সুপারফুড। রোগ প্রতিরোধ ক্ষমতা বৃদ্ধি ও শারীরিক শক্তি যোগাতে অতুলনীয়।",
+    price: 450,
+    tags: ["superfood", "moringa", "wellness"],
+    sizes: ["২০০ গ্রাম", "৪০০ গ্রাম"],
     imageUrls: [
-      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=85",
-      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=85",
     ],
   },
   {
@@ -106,33 +96,113 @@ const PRODUCTS: SeedProduct[] = [
     title: "প্রিমিয়াম নাটস ও ড্রাই ফ্রুটস মিক্স (Mixed Dry Fruits)",
     description:
       "কাঠবাদাম, কাজুবাদাম, পেস্তা, আখরোট ও কিশমিশের সেরা মিশ্রণ। স্বাস্থ্যকর স্ন্যাক্স হিসেবে আদর্শ।",
-    price: 22,
-    tags: ["nuts", "snack"],
+    price: 950,
+    tags: ["nuts", "snack", "dry-fruits", "best-seller"],
+    sizes: ["৫০০ গ্রাম", "১ কেজি"],
     imageUrls: [
       "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1536591375315-1b838865f24a?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-black-seed-oil",
+    title: "কালোজিরা তেল (Cold-pressed Black Seed Oil)",
+    description:
+      "১০০% খাঁটি কোল্ড-প্রেসড কালোজিরা তেল। প্রাকৃতিক আরোগ্য ও ইমিউনিটি বৃদ্ধির মহৌষধ।",
+    price: 580,
+    tags: ["oil", "wellness", "herbal"],
+    sizes: ["১০০ মি.লি.", "২৫০ মি.লি."],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-khejur-gur",
+    title: "যশোরের খাঁটি ঝোলা ও পাটালি খেজুরের গুড় (Pure Date Molasses)",
+    description:
+      "ঐতিহ্যবাহী যশোরের গাছিদের সংগৃহীত শতভাগ খাঁটি ও সুগন্ধযুক্ত প্রাকৃতিক খেজুরের গুড়। কোনো চিনি বা রাসায়নিক নেই।",
+    price: 550,
+    tags: ["organic", "sweet", "seasonal"],
+    sizes: ["১ কেজি", "২ কেজি"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1606913084603-3e7702b01627?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-cashew-nuts",
+    title: "রোস্টেড প্রিমিয়াম কাজুবাদাম (Roasted Salted Cashews)",
+    description:
+      "কুড়মুড়ে ও পুষ্টিকর রোস্টেড কাজুবাদাম। হালকা লবণাক্ত স্বাদে স্ন্যাকস বা শক্তির সেরা উৎস।",
+    price: 680,
+    tags: ["nuts", "snack"],
+    sizes: ["২৫০ গ্রাম", "৫০০ গ্রাম"],
+    imageUrls: [
       "https://images.unsplash.com/photo-1536591375315-1b838865f24a?w=800&auto=format&fit=crop&q=85",
       "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=800&auto=format&fit=crop&q=85",
     ],
   },
   {
-    handle: "swasthyo-herbal-tulsi-green-tea",
-    title: "তুলসী গ্রিন টি (Organic Tulsi Herbal Green Tea)",
+    handle: "swasthyo-almonds-badam",
+    title: "আমেরিকান প্রিমিয়াম কাঠবাদাম (California Almonds)",
     description:
-      "অর্গানিক গ্রিন টি এবং রাম, কৃষ্ণ ও বন তুলসীর সংমিশ্রণ। মানসিক প্রশান্তি ও সতেজতার জন্য সেরা।",
-    price: 9,
-    tags: ["tea", "beverage"],
+      "উচ্চমানের ক্যালিফোর্নিয়া অ্যালমন্ড। মস্তিষ্ক ও হার্টের সুস্বাস্থ্যের জন্য প্রতিদিনের আবশ্যক পুষ্টি।",
+    price: 620,
+    tags: ["nuts", "superfood"],
+    sizes: ["২৫০ গ্রাম", "৫০০ গ্রাম"],
     imageUrls: [
-      "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&auto=format&fit=crop&q=85",
-      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-mariyum-dates",
+    title: "মদিনার প্রিমিয়াম মরিয়ম খেজুর (Ajwa & Maryam Dates)",
+    description:
+      "সৌদি আরবের মদিনা থেকে সরাসরি সংগৃহীত রসালো ও সুস্বাদু মরিয়ম খেজুর। উচ্চ শক্তি ও পুষ্টিতে ভরপুর।",
+    price: 850,
+    tags: ["dates", "dry-fruits", "superfood"],
+    sizes: ["৫০০ গ্রাম", "১ কেজি"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-extra-virgin-olive-oil",
+    title: "এক্সট্রা ভার্জিন অলিভ অয়েল (Extra Virgin Spanish Olive Oil)",
+    description:
+      "স্পেন থেকে আমদানিকৃত কোল্ড-প্রেসড এক্সট্রা ভার্জিন অলিভ অয়েল। সালাদ, রান্না ও ত্বক চর্চার জন্য সেরা।",
+    price: 1250,
+    tags: ["oil", "imported", "wellness"],
+    sizes: ["৫০০ মি.লি.", "১ লিটার"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-coconut-oil",
+    title: "এক্সট্রা ভার্জিন নারিকেল তেল (Extra Virgin Cold Pressed Coconut Oil)",
+    description:
+      "তাজা নারিকেলের দুধ থেকে কোল্ড-প্রেসড প্রক্রিয়ায় তৈরি ১০০% খাঁটি খাবার উপযোগী ভার্জিন কোকোনাট অয়েল।",
+    price: 480,
+    tags: ["oil", "wellness"],
+    sizes: ["২৫০ মি.লি.", "৫০০ মি.লি."],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=85",
     ],
   },
   {
     handle: "swasthyo-pink-himalayan-salt",
     title: "হিমালয়ান পিংক সল্ট (Himalayan Pink Rock Salt)",
     description:
-      "৮৪টি প্রাকৃতিক খনিজ সমৃদ্ধ খাঁটি হিমালয়ান পিংক রক সল্ট। সাধারণ লবণের স্বাস্থ্যকর বিকল্প।",
-    price: 6,
-    tags: ["grocery", "wellness"],
+      "৮৪টি প্রাকৃতিক খনিজ সমৃদ্ধ খাঁটি হিমালয়ান পিংক রক সল্ট। সাধারণ লবণের স্বাস্থ্যকর প্রাকৃতিক বিকল্প।",
+    price: 250,
+    tags: ["grocery", "wellness", "salt"],
+    sizes: ["৫০০ গ্রাম", "১ কেজি"],
     imageUrls: [
       "https://images.unsplash.com/photo-1607672632458-9eb56696346b?w=800&auto=format&fit=crop&q=85",
       "https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=800&auto=format&fit=crop&q=85",
@@ -143,11 +213,77 @@ const PRODUCTS: SeedProduct[] = [
     title: "কাঁচা অ্যাপল সিডার ভিনেগার (Raw Apple Cider Vinegar with Mother)",
     description:
       "অর্গানিক আপেল থেকে তৈরি আনফিল্টার্ড এবং কাঁচা অ্যাপল সিডার ভিনেগার যাতে উইথ দ্য মাদার বিদ্যমান।",
-    price: 16,
-    tags: ["wellness", "organic"],
+    price: 750,
+    tags: ["wellness", "organic", "beverage"],
+    sizes: ["৫০০ মি.লি."],
     imageUrls: [
       "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=800&auto=format&fit=crop&q=85",
       "https://images.unsplash.com/photo-1568651779193-e60136e1d2b4?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-spirulina-powder",
+    title: "অর্গানিক স্পিরুলিনা গুঁড়ো (Organic Spirulina Superfood Powder)",
+    description:
+      "প্রোটিন, আয়রন ও ভিটামিন সমৃদ্ধ নীল-সবুজ শৈবাল। শক্তি ও মেটাবলিজম বৃদ্ধির আল্টিমেট সুপারফুড।",
+    price: 650,
+    tags: ["superfood", "wellness"],
+    sizes: ["১০০ গ্রাম", "২০০ গ্রাম"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-turmeric-powder",
+    title: "পাহাড়ি কাঁচা হলুদ গুঁড়ো (Organic Raw Turmeric Powder)",
+    description:
+      "পার্বত্য অঞ্চল থেকে সংগৃহীত প্রাকৃতিক কারকিউমিন সমৃদ্ধ খাঁটি পাহাড়ি কাঁচা হলুদ গুঁড়ো।",
+    price: 280,
+    tags: ["spices", "organic", "grocery"],
+    sizes: ["২৫০ গ্রাম", "৫০০ গ্রাম"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-isabgol-bhusi",
+    title: "খাঁটি ইসবগুলের ভুসি (Pure Psyllium Husk)",
+    description:
+      "১০০% প্রাকৃতিক ও পরিষ্কার ইসবগুলের ভুসি। হজম স্বাস্থ্য ও পেটের সুরক্ষায় অত্যন্ত কার্যকরী।",
+    price: 320,
+    tags: ["wellness", "herbal"],
+    sizes: ["১০০ গ্রাম", "২৫০ গ্রাম"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-herbal-tulsi-green-tea",
+    title: "তুলসী অর্গানিক গ্রিন টি (Organic Tulsi Herbal Green Tea)",
+    description:
+      "অর্গানিক গ্রিন টি এবং রাম, কৃষ্ণ ও বন তুলসীর সংমিশ্রণ। মানসিক প্রশান্তি ও সতেজতার জন্য সেরা।",
+    price: 380,
+    tags: ["tea", "beverage", "herbal"],
+    sizes: ["১০০ গ্রাম"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=800&auto=format&fit=crop&q=85",
+    ],
+  },
+  {
+    handle: "swasthyo-triphala-powder",
+    title: "হার্বাল ত্রিফলা চূর্ণ (Triphala Digestive Herbal Powder)",
+    description:
+      "আমলকী, হরিতকী ও বহেড়ার সমপরিমাণ মিশ্রণে প্রস্তুত ঐতিহ্যবাহী আয়ুর্বেদিক হজম সহায়ক চূর্ণ।",
+    price: 350,
+    tags: ["herbal", "wellness"],
+    sizes: ["২০০ গ্রাম"],
+    imageUrls: [
+      "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=85",
     ],
   },
 ];
@@ -180,7 +316,9 @@ const COLLECTIONS = [
       "swasthyo-organic-honey",
       "swasthyo-organic-ghee",
       "swasthyo-cold-pressed-mustard-oil",
+      "swasthyo-khejur-gur",
       "swasthyo-pink-himalayan-salt",
+      "swasthyo-turmeric-powder",
     ],
   },
   {
@@ -191,231 +329,260 @@ const COLLECTIONS = [
     productHandles: [
       "swasthyo-moringa-powder",
       "swasthyo-chia-seeds",
+      "swasthyo-spirulina-powder",
       "swasthyo-black-seed-oil",
-      "swasthyo-mixed-dry-fruits",
       "swasthyo-apple-cider-vinegar",
+      "swasthyo-isabgol-bhusi",
+      "swasthyo-triphala-powder",
       "swasthyo-herbal-tulsi-green-tea",
     ],
   },
   {
-    handle: "new-arrivals",
-    title: "নতুন সংগ্রহ (New Arrivals)",
-    description: "সদ্য যুক্ত হওয়া ফ্রেশ স্বাস্থ্যকর খাদ্যসামগ্রী।",
+    handle: "nuts-dry-fruits",
+    title: "ড্রাই ফ্রুটস ও বাদাম (Nuts & Dates)",
+    description: "কাজু, কাঠবাদাম, পেস্তা ও মদিনার সুস্বাদু খেজুর।",
     hidden: false,
     productHandles: [
-      "swasthyo-organic-honey",
-      "swasthyo-organic-ghee",
-      "swasthyo-moringa-powder",
       "swasthyo-mixed-dry-fruits",
+      "swasthyo-cashew-nuts",
+      "swasthyo-almonds-badam",
+      "swasthyo-mariyum-dates",
+    ],
+  },
+  {
+    handle: "oils-and-ghee",
+    title: "তেল ও ঘি (Pure Oils & Ghee)",
+    description: "ঘানি ভাঙা সরিষা, নারিকেল, কালোজিরা তেল ও খাঁটি গাওয়া ঘি।",
+    hidden: false,
+    productHandles: [
+      "swasthyo-cold-pressed-mustard-oil",
+      "swasthyo-organic-ghee",
+      "swasthyo-black-seed-oil",
+      "swasthyo-extra-virgin-olive-oil",
+      "swasthyo-coconut-oil",
     ],
   },
 ];
 
 const MENUS = [
-  { handle: "header", title: "হোম", path: "/" },
-  { handle: "header", title: "আম", path: "/search?q=আম" },
-  { handle: "header", title: "মধু", path: "/search?q=মধু" },
-  { handle: "header", title: "প্যান্ট্রি", path: "/search/organic-essentials" },
-  { handle: "header", title: "হেলথ", path: "/search/superfoods-wellness" },
-  { handle: "footer", title: "হোম", path: "/" },
-  { handle: "footer", title: "আমাদের কথা", path: "/about" },
-  { handle: "footer", title: "খাঁটি পণ্য", path: "/search/organic-essentials" },
-  { handle: "footer", title: "সুপারফুড", path: "/search/superfoods-wellness" },
-  { handle: "footer", title: "শর্তাবলী", path: "/terms" },
-  { handle: "footer", title: "প্রাইভেসি পলিসি", path: "/privacy" },
-  { handle: "footer", title: "শিপিং ও রিটার্ন", path: "/shipping-returns" },
+  {
+    handle: "main-menu",
+    title: "সকল পণ্য",
+    path: "/search",
+    position: 0,
+  },
+  {
+    handle: "main-menu",
+    title: "খাঁটি পণ্য",
+    path: "/search/organic-essentials",
+    position: 1,
+  },
+  {
+    handle: "main-menu",
+    title: "সুপারফুড",
+    path: "/search/superfoods-wellness",
+    position: 2,
+  },
+  {
+    handle: "main-menu",
+    title: "বাদাম ও খেজুর",
+    path: "/search/nuts-dry-fruits",
+    position: 3,
+  },
+  {
+    handle: "main-menu",
+    title: "তেল ও ঘি",
+    path: "/search/oils-and-ghee",
+    position: 4,
+  },
+  {
+    handle: "footer",
+    title: "আমাদের সম্পর্কে",
+    path: "/about",
+    position: 0,
+  },
+  {
+    handle: "footer",
+    title: "যোগাযোগ",
+    path: "/contact",
+    position: 1,
+  },
+  {
+    handle: "footer",
+    title: "শর্তাবলী",
+    path: "/terms",
+    position: 2,
+  },
+  {
+    handle: "footer",
+    title: "গোপনীয়তা নীতি",
+    path: "/privacy",
+    position: 3,
+  },
 ];
 
 const PAGES = [
   {
     handle: "about",
-    title: "আমাদের কথা (About Swasthyokor)",
-    body: `<p><strong>স্বাস্থ্যকর (Swasthyokor)</strong> হলো বিশুদ্ধ, স্বাস্থ্যকর এবং প্রাকৃতিক পণ্যের একটি আধুনিক ই-কমার্স প্ল্যাটফর্ম। আমরা কোনো ভেজাল বা কৃত্রিম উপাদান ছাড়া সরাসরি খামার ও প্রকৃতি থেকে সংগৃহীত সেরা মানের খাদ্যসামগ্রী আপনাদের দ্বারে পৌঁছে দিতে অঙ্গীকারবদ্ধ।</p><p>আমাদের পুরো প্ল্যাটফর্মটি তৈরি হয়েছে Next.js 16 এবং PostgreSQL এর সর্বাধুনিক আর্কিটেকচার দ্বারা, যা গ্রাহককে প্রদান করে নিরাপদ ও নির্ভরযোগ্য শপিং অভিজ্ঞতা।</p>`,
+    title: "আমাদের সম্পর্কে",
+    body: "স্বাস্থ্যকর (SwasthyoKor) — The Symbol of Faith and Trust. আমরা বাংলাদেশের প্রতিটি পরিবারে নিরাপদ, খাঁটি ও অর্গানিক পুষ্টিকর খাদ্য পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ।",
+    bodySummary: "স্বাস্থ্যকর এর পরিচিতি ও মিশন।",
+    seoTitle: "আমাদের সম্পর্কে | স্বাস্থ্যকর",
+    seoDescription: "স্বাস্থ্যকর এর লক্ষ্য, উদ্দেশ্য এবং খাঁটি পণ্যের সরবরাহ ব্যবস্থা।",
+  },
+  {
+    handle: "contact",
+    title: "যোগাযোগ",
+    body: "আমাদের সাথে যোগাযোগের হটলাইন: ০১৮১২৩৪৫৬৭৮। ইমেইল: support@swasthyokor.com। ঠিকানা: ঢাকা, বাংলাদেশ।",
+    bodySummary: "স্বাস্থ্যকর কাস্টমার কেয়ার ও সাপোর্ট।",
+    seoTitle: "যোগাযোগ | স্বাস্থ্যকর",
+    seoDescription: "স্বাস্থ্যকর হটলাইন ও সাপোর্ট টিম।",
   },
   {
     handle: "terms",
-    title: "ব্যবহারের নিয়ম ও শর্তাবলী (Terms & Conditions)",
-    body: `<p>স্বাস্থ্যকর স্টোরফ্রন্টে আপনাকে স্বাগতম। এই প্ল্যাটফর্ম ব্যবহার করে আপনি খাঁটি অর্গানিক পণ্য অর্ডার করতে পারেন। অর্ডার কনফার্মেশনের পর আপনার প্রদত্ত ঠিকানায় দ্রুত ডেলিভারি নিশ্চিত করা হয়।</p>`,
+    title: "শর্তাবলী",
+    body: "আমাদের প্ল্যাটফর্ম ব্যবহারের সাধারণ নিয়মাবলী ও শর্তাবলী। পণ্যের ডেলিভারি ও রিটার্ন নীতি।",
+    bodySummary: "ব্যবহারের শর্তাবলী।",
+    seoTitle: "শর্তাবলী | স্বাস্থ্যকর",
+    seoDescription: "স্বাস্থ্যকর এর শর্তাবলী।",
   },
   {
     handle: "privacy",
-    title: "প্রাইভেসি পলিসি (Privacy Policy)",
-    body: `<p>আপনার ব্যক্তিগত তথ্যের গোপনীয়তা রক্ষা করা আমাদের দায়িত্ব। গ্রাহকের নাম, ফোন নম্বর ও ডেলিভারি ঠিকানা শুধুমাত্র অর্ডার প্রসেসিং এর কাজে নিরাপদে সংরক্ষিত হয়।</p>`,
-  },
-  {
-    handle: "shipping-returns",
-    title: "শিপিং ও রিটার্ন পলিসি (Shipping & Returns)",
-    body: `<p>আমরা সারা দেশে দ্রুত ও যত্নসহকারে পণ্য ডেলিভারি করে থাকি। কোনো পণ্যে ত্রুটি থাকলে বা সিল ভাঙা থাকলে ডেলিভারির ২৪ ঘণ্টার মধ্যে আমাদের জানালে আমরা রিপ্লেসমেন্ট প্রদান করি।</p>`,
+    title: "গোপনীয়তা নীতি",
+    body: "আমরা আপনার তথ্যের সর্বোচ্চ নিরাপত্তা বজায় রাখি। আপনার কোনো ব্যক্তিগত তথ্য তৃতীয় পক্ষের সাথে শেয়ার করা হয় না।",
+    bodySummary: "ব্যক্তিগত তথ্যের গোপনীয়তা রক্ষা।",
+    seoTitle: "গোপনীয়তা নীতি | স্বাস্থ্যকর",
+    seoDescription: "স্বাস্থ্যকর প্রাইভেসি পলিসি।",
   },
 ];
 
 async function seed() {
   console.log("পুরনো ডেটা মুছে ফেলা হচ্ছে...");
-
   await db.delete(cartItems);
   await db.delete(carts);
-  await db.delete(orders);
   await db.delete(productCollections);
-  await db.delete(productImages);
-  await db.delete(productOptions);
   await db.delete(productVariants);
+  await db.delete(productOptions);
+  await db.delete(productImages);
   await db.delete(products);
   await db.delete(collections);
   await db.delete(menus);
   await db.delete(pages);
 
   console.log("পণ্য সিড করা হচ্ছে...");
+  const productIdMap = new Map<string, string>();
 
-  const productIds = new Map<string, string>();
+  for (const item of PRODUCTS) {
+    const prodId = crypto.randomUUID();
+    const [createdProduct] = await db
+      .insert(products)
+      .values({
+        id: prodId,
+        handle: item.handle,
+        title: item.title,
+        description: item.description,
+        descriptionHtml: `<p>${item.description}</p>`,
+        tags: item.tags,
+        availableForSale: item.availableForSale ?? true,
+      })
+      .returning();
 
-  for (const seedProduct of PRODUCTS) {
-    const productId = crypto.randomUUID();
-    productIds.set(seedProduct.handle, productId);
+    productIdMap.set(item.handle, createdProduct.id);
 
-    const descriptionHtml = `<p>${seedProduct.description}</p>`;
-
-    await db.insert(products).values({
-      id: productId,
-      handle: seedProduct.handle,
-      title: seedProduct.title,
-      description: seedProduct.description,
-      descriptionHtml,
-      tags: seedProduct.tags,
-      availableForSale: seedProduct.availableForSale ?? true,
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    for (let i = 0; i < seedProduct.imageUrls.length; i++) {
+    // Images
+    for (let i = 0; i < item.imageUrls.length; i++) {
       await db.insert(productImages).values({
         id: crypto.randomUUID(),
-        productId,
-        url: seedProduct.imageUrls[i],
-        altText: `${seedProduct.title} ছবি ${i + 1}`,
+        productId: createdProduct.id,
+        url: item.imageUrls[i],
+        altText: `${item.title} - Image ${i + 1}`,
         width: 800,
         height: 800,
-        position: i + 1,
+        position: i,
       });
     }
 
-    if (seedProduct.sizes) {
-      const optionId = crypto.randomUUID();
-      await db.insert(productOptions).values({
-        id: optionId,
-        productId,
-        name: "Size",
-        position: 1,
-        values: seedProduct.sizes,
-      });
+    // Sizes / Variants
+    const sizes = item.sizes || ["স্ট্যান্ডার্ড প্যাক"];
+    await db.insert(productOptions).values({
+      id: crypto.randomUUID(),
+      productId: createdProduct.id,
+      name: "পরিমাণ",
+      position: 0,
+      values: sizes,
+    });
 
-      for (const size of seedProduct.sizes) {
-        await db.insert(productVariants).values({
-          id: crypto.randomUUID(),
-          productId,
-          title: size,
-          priceAmount: seedProduct.price,
-          priceCurrency: "USD",
-          availableForSale: true,
-          position: seedProduct.sizes.indexOf(size) + 1,
-          selectedOptions: [{ name: "Size", value: size }],
-        });
-      }
-    } else {
+    for (let i = 0; i < sizes.length; i++) {
+      const sizeName = sizes[i];
+      const multiplier = i === 0 ? 1 : i === 1 ? 1.85 : 4.5;
+      const variantPrice = Math.round(item.price * multiplier);
+
       await db.insert(productVariants).values({
         id: crypto.randomUUID(),
-        productId,
-        title: "Default Title",
-        priceAmount: seedProduct.price,
-        priceCurrency: "USD",
+        productId: createdProduct.id,
+        title: sizeName,
+        priceAmount: variantPrice,
+        priceCurrency: "BDT",
         availableForSale: true,
-        position: 1,
-        selectedOptions: [],
+        position: i,
+        selectedOptions: [{ name: "পরিমাণ", value: sizeName }],
       });
     }
   }
 
   console.log("কালেকশন সিড করা হচ্ছে...");
+  for (const col of COLLECTIONS) {
+    const [createdCollection] = await db
+      .insert(collections)
+      .values({
+        id: crypto.randomUUID(),
+        handle: col.handle,
+        title: col.title,
+        description: col.description,
+        hidden: col.hidden,
+      })
+      .returning();
 
-  const collectionIds = new Map<string, string>();
-
-  for (const collection of COLLECTIONS) {
-    const collectionId = crypto.randomUUID();
-    collectionIds.set(collection.handle, collectionId);
-
-    await db.insert(collections).values({
-      id: collectionId,
-      handle: collection.handle,
-      title: collection.title,
-      description: collection.description,
-      seoTitle: collection.title,
-      seoDescription: collection.description,
-      hidden: collection.hidden,
-      createdAt: now,
-      updatedAt: now,
-    });
-
-    for (const productHandle of collection.productHandles) {
-      const productId = productIds.get(productHandle);
-      if (!productId) continue;
-
-      await db.insert(productCollections).values({
-        productId,
-        collectionId,
-      });
+    for (const pHandle of col.productHandles) {
+      const pId = productIdMap.get(pHandle);
+      if (pId) {
+        await db.insert(productCollections).values({
+          productId: pId,
+          collectionId: createdCollection.id,
+        });
+      }
     }
   }
 
   console.log("মেনু এবং পেজ সিড করা হচ্ছে...");
-
-  for (const [i, menu] of MENUS.entries()) {
+  for (const m of MENUS) {
     await db.insert(menus).values({
       id: crypto.randomUUID(),
-      handle: menu.handle,
-      title: menu.title,
-      path: menu.path,
-      position: i,
+      handle: m.handle,
+      title: m.title,
+      path: m.path,
+      position: m.position,
     });
   }
 
-  for (const page of PAGES) {
-    const summary = page.body
-      .replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 140);
-
+  for (const p of PAGES) {
     await db.insert(pages).values({
       id: crypto.randomUUID(),
-      handle: page.handle,
-      title: page.title,
-      body: page.body,
-      bodySummary: summary,
-      seoTitle: page.title,
-      seoDescription: summary,
-      createdAt: now,
-      updatedAt: now,
+      handle: p.handle,
+      title: p.title,
+      body: p.body,
+      bodySummary: p.bodySummary,
+      seoTitle: p.seoTitle,
+      seoDescription: p.seoDescription,
     });
   }
 
-  const [productCount, collectionCount, menuCount, pageCount] =
-    await Promise.all([
-      db.select({ count: products.id }).from(products),
-      db.select({ count: collections.id }).from(collections),
-      db.select({ count: menus.id }).from(menus),
-      db.select({ count: pages.id }).from(pages),
-    ]);
-
-  console.log(
-    `সিড সম্পন্ন: ${productCount.length}টি পণ্য, ${collectionCount.length}টি কালেকশন, ${menuCount.length}টি মেনু আইটেম, ${pageCount.length}টি পেজ।`,
-  );
+  console.log(`সিড সম্পন্ন: ${PRODUCTS.length}টি পণ্য, ${COLLECTIONS.length}টি কালেকশন, ${MENUS.length}টি মেনু আইটেম, ${PAGES.length}টি পেজ।`);
+  console.log("PostgreSQL সিডিং সম্পন্ন হয়েছে।");
+  process.exit(0);
 }
 
-seed()
-  .then(() => {
-    console.log("PostgreSQL সিডিং সম্পন্ন হয়েছে।");
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error("সিডিং ত্রুটি:", error);
-    process.exit(1);
-  });
+seed().catch((err) => {
+  console.error("সিডিং ত্রুটি:", err);
+  process.exit(1);
+});

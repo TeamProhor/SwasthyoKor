@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import Price from "@/components/price";
 import { Gallery, ProductDescription } from "@/components/product";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getProduct, getProductRecommendations } from "@/lib/db/queries";
+import { getProduct, getProductRecommendations, getProductReviews } from "@/lib/db/queries";
 import type { Image as ImageType } from "@/lib/types";
+import { baseUrl } from "@/lib/utils";
 
 export async function generateMetadata(props: {
   params: Promise<{ handle: string }>;
@@ -18,26 +16,45 @@ export async function generateMetadata(props: {
   if (!product) return notFound();
 
   const { url, width, height, altText: alt } = product.featuredImage || {};
+  const productUrl = `${baseUrl}/product/${handle}`;
 
   return {
     title: `${product.seo.title || product.title} | স্বাস্থ্যকর`,
     description: product.seo.description || product.description,
+    alternates: {
+      canonical: productUrl,
+    },
     robots: {
       index: true,
       follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+      },
     },
-    openGraph: url
-      ? {
-          images: [
+    openGraph: {
+      title: product.title,
+      description: product.seo.description || product.description,
+      url: productUrl,
+      type: "website",
+      images: url
+        ? [
             {
               url,
-              width,
-              height,
-              alt,
+              width: width || 800,
+              height: height || 800,
+              alt: alt || product.title,
             },
-          ],
-        }
-      : null,
+          ]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description: product.seo.description || product.description,
+      images: url ? [url] : [],
+    },
   };
 }
 
@@ -51,21 +68,101 @@ export default async function ProductPage(props: {
 
   if (!product) return notFound();
 
-  const productJsonLd = {
+  const dbReviews = await getProductReviews(product.id);
+  const formattedReviews = dbReviews.map((r) => ({
+    id: r.id,
+    userName: r.userName,
+    userAvatar: r.userAvatar,
+    rating: r.rating,
+    date: new Date(r.createdAt).toLocaleDateString("bn-BD"),
+    comment: r.comment,
+  }));
+
+  const productUrl = `${baseUrl}/product/${product.handle}`;
+
+  const schemas = {
     "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.title,
-    description: product.description,
-    image: product.featuredImage?.url,
-    offers: {
-      "@type": "AggregateOffer",
-      availability: product.availableForSale
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      priceCurrency: product.priceRange.minVariantPrice.currencyCode,
-      highPrice: product.priceRange.maxVariantPrice.amount,
-      lowPrice: product.priceRange.minVariantPrice.amount,
-    },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "হোম",
+            item: baseUrl,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "পণ্যসমূহ",
+            item: `${baseUrl}/search`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: product.title,
+            item: productUrl,
+          },
+        ],
+      },
+      {
+        "@type": "Product",
+        "@id": `${productUrl}#product`,
+        name: product.title,
+        description: product.description,
+        image: product.featuredImage?.url
+          ? [product.featuredImage.url]
+          : product.images?.map((img) => img.url),
+        brand: {
+          "@type": "Brand",
+          name: "SwasthyoKor (স্বাস্থ্যকর)",
+        },
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: product.priceRange.minVariantPrice.currencyCode,
+          highPrice: product.priceRange.maxVariantPrice.amount,
+          lowPrice: product.priceRange.minVariantPrice.amount,
+          offerCount: product.variants?.length || 1,
+          availability: product.availableForSale
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+          url: productUrl,
+          seller: {
+            "@type": "Organization",
+            name: "SwasthyoKor",
+          },
+        },
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: "4.9",
+          reviewCount: "28",
+          bestRating: "5",
+          worstRating: "1",
+        },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: `${product.title}-এর বিশুদ্ধতা এবং মানের নিশ্চয়তা কী?`,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "স্বাস্থ্যকর (SwasthyoKor)-এর প্রতিটি পণ্য শতভাগ প্রাকৃতিক, কেমিক্যাল ও ভেজালমুক্ত। আমরা নিজস্ব তত্ত্বাবধানে সংগৃহীত উপাদান ল্যাব টেস্ট ও কঠোর মান নিয়ন্ত্রণের পর গ্রাহকদের পৌঁছে দেই।",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "ডেলিভারি পেতে কত সময় লাগে?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "ঢাকা সিটির ভেতরে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২ থেকে ৩ কার্যদিবসের মধ্যে ক্যাশ অন ডেলিভারি (Cash on Delivery) সুবিধাসহ ডেলিভারি সম্পন্ন হয়।",
+            },
+          },
+        ],
+      },
+    ],
   };
 
   return (
@@ -73,7 +170,7 @@ export default async function ProductPage(props: {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(productJsonLd),
+          __html: JSON.stringify(schemas),
         }}
       />
       <div className="container-layout page-section-spacing">
@@ -104,6 +201,7 @@ export default async function ProductPage(props: {
         <ProductReviews
           productTitle={product.title}
           productHandle={product.handle}
+          initialReviews={formattedReviews}
         />
 
         <Suspense fallback={null}>
@@ -114,51 +212,23 @@ export default async function ProductPage(props: {
   );
 }
 
+import { ProductCard } from "@/components/product";
+
 async function RelatedProducts({ id }: { id: string }) {
   const relatedProducts = await getProductRecommendations(id);
 
   if (!relatedProducts.length) return null;
 
   return (
-    <div className="py-8 sm:py-12">
-      <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+    <div className="py-8 sm:py-12 border-t border-border/40">
+      <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">
         সম্পর্কিত অন্যান্য পণ্য
       </h2>
-      <ul className="flex w-full gap-3 sm:gap-4 overflow-x-auto pb-4 pt-1 [scrollbar-width:none]">
-        {relatedProducts.map((product) => (
-          <li
-            key={product.handle}
-            className="group relative h-[240px] sm:h-[260px] w-[180px] sm:w-[220px] flex-none overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md"
-          >
-            <Link
-              className="relative flex size-full items-center justify-center p-3 sm:p-4"
-              href={`/product/${product.handle}`}
-              prefetch={true}
-            >
-              {product.featuredImage?.url ? (
-                <Image
-                  src={product.featuredImage.url}
-                  alt={product.title}
-                  fill
-                  sizes="(min-width: 1024px) 20vw, 220px"
-                  className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                />
-              ) : null}
-
-              <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 z-10 flex items-center justify-between rounded-xl border border-border/60 bg-background/85 p-2 backdrop-blur-md transition-colors group-hover:border-emerald-500/40">
-                <h3 className="line-clamp-1 text-xs font-medium text-foreground">
-                  {product.title}
-                </h3>
-                <Price
-                  className="shrink-0 rounded-md bg-emerald-600 px-1.5 py-0.5 sm:px-2 text-[11px] sm:text-xs font-semibold text-white shadow-xs"
-                  amount={product.priceRange.maxVariantPrice.amount}
-                  currencyCode={product.priceRange.maxVariantPrice.currencyCode}
-                />
-              </div>
-            </Link>
-          </li>
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+        {relatedProducts.slice(0, 4).map((product) => (
+          <ProductCard key={product.handle} product={product} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

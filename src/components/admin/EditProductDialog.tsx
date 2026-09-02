@@ -16,6 +16,7 @@ export interface EditProductItem {
   title: string;
   handle: string;
   price: string;
+  compareAtPrice?: string;
   description?: string;
   collectionId?: string;
   imageUrl?: string;
@@ -54,7 +55,7 @@ export function EditProductDialog({
       open={open}
       onOpenChange={setOpen}
       title="পণ্য সম্পাদনা করুন"
-      description="পণ্যের নাম, হ্যান্ডেল, মূল্য, স্টক এবং বিবরণ পরিবর্তন করুন।"
+      description="পণ্যের নাম, হ্যান্ডেল, মূল্য, পূর্বের মূল্য (ডিসকাউন্ট), স্টক এবং বিবরণ পরিবর্তন করুন।"
       trigger={
         <Button
           variant="ghost"
@@ -100,10 +101,10 @@ export function EditProductDialog({
             />
           </Field>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Field>
               <FieldLabel htmlFor={`prod-price-${product.id}`}>
-                মূল্য (টাকা) *
+                বিক্রয় মূল্য (টাকা) *
               </FieldLabel>
               <Input
                 id={`prod-price-${product.id}`}
@@ -112,6 +113,21 @@ export function EditProductDialog({
                 step="any"
                 defaultValue={product.price}
                 required
+                className="rounded-xl"
+              />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor={`prod-compare-${product.id}`}>
+                পূর্বের মূল্য (ঐচ্ছিক)
+              </FieldLabel>
+              <Input
+                id={`prod-compare-${product.id}`}
+                name="compareAtPrice"
+                type="number"
+                step="any"
+                defaultValue={product.compareAtPrice || ""}
+                placeholder="যেমন: ৮৫০"
                 className="rounded-xl"
               />
             </Field>

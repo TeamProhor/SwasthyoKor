@@ -91,9 +91,10 @@ export const productVariants = pgTable(
       .references(() => products.id, { onDelete: "cascade" }),
     title: varchar("title", { length: 255 }).notNull(),
     priceAmount: real("price_amount").notNull(),
+    compareAtPrice: real("compare_at_price"),
     priceCurrency: varchar("price_currency", { length: 10 })
       .notNull()
-      .default("USD"),
+      .default("BDT"),
     availableForSale: boolean("available_for_sale").notNull().default(true),
     position: integer("position").notNull().default(0),
     selectedOptions: jsonb("selected_options")
@@ -153,6 +154,34 @@ export const pages = pgTable(
   (table) => [index("pages_handle_idx").on(table.handle)],
 );
 
+export const blogs = pgTable(
+  "blogs",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description").notNull(),
+    content: text("content").notNull(),
+    category: varchar("category", { length: 100 }).notNull().default("মধু ও পুষ্টি"),
+    readTime: varchar("read_time", { length: 50 }).notNull().default("৫ মিনিট"),
+    author: varchar("author", { length: 100 }).notNull().default("স্বাস্থ্যকর নিউট্রিশন টিম"),
+    coverImage: text("cover_image").notNull(),
+    tags: jsonb("tags").$type<string[]>().notNull().default([]),
+    faqs: jsonb("faqs").$type<{ question: string; answer: string }[]>().notNull().default([]),
+    relatedProductHandles: jsonb("related_product_handles").$type<string[]>().notNull().default([]),
+    published: boolean("published").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("blogs_slug_idx").on(table.slug)],
+);
+
+export type Blog = typeof blogs.$inferSelect;
+
 export const carts = pgTable("carts", {
   id: varchar("id", { length: 255 }).primaryKey(),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -196,7 +225,7 @@ export const orders = pgTable("orders", {
   totalAmount: real("total_amount").notNull(),
   totalCurrency: varchar("total_currency", { length: 10 })
     .notNull()
-    .default("USD"),
+    .default("BDT"),
   status: varchar("status", { length: 50 }).notNull().default("confirmed"),
   items: jsonb("items")
     .$type<
@@ -354,6 +383,49 @@ export const coupons = pgTable(
   (table) => [index("coupons_code_idx").on(table.code)],
 );
 
+export const productReviews = pgTable(
+  "product_reviews",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    productId: varchar("product_id", { length: 255 })
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    userId: varchar("user_id", { length: 255 })
+      .references(() => users.id, { onDelete: "set null" }),
+    userName: varchar("user_name", { length: 255 }).notNull(),
+    userAvatar: text("user_avatar"),
+    rating: integer("rating").notNull().default(5),
+    comment: text("comment").notNull(),
+    approved: boolean("approved").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("product_reviews_product_idx").on(table.productId),
+    index("product_reviews_user_idx").on(table.userId),
+  ],
+);
+
+export const heroBanners = pgTable("hero_banners", {
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: varchar("title", { length: 255 }).notNull(),
+  highlight: varchar("highlight", { length: 255 }).notNull(),
+  subtitle: text("subtitle").notNull(),
+  link: text("link").notNull().default("/search"),
+  accentColor: varchar("accent_color", { length: 50 }).notNull().default("text-amber-400"),
+  image: text("image").notNull(),
+  position: integer("position").notNull().default(0),
+  active: boolean("active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export const storeSettings = pgTable("store_settings", {
   id: varchar("id", { length: 50 }).primaryKey().default("default"),
   storeName: varchar("store_name", { length: 255 })
@@ -386,6 +458,8 @@ export type Session = typeof sessions.$inferSelect;
 export type UserAddress = typeof userAddresses.$inferSelect;
 export type Coupon = typeof coupons.$inferSelect;
 export type StoreSettings = typeof storeSettings.$inferSelect;
+export type ProductReview = typeof productReviews.$inferSelect;
+export type HeroBanner = typeof heroBanners.$inferSelect;
 
 // ---- relations ----
 
@@ -394,6 +468,7 @@ export const productsRelations = relations(products, ({ many }) => ({
   options: many(productOptions),
   variants: many(productVariants),
   collections: many(productCollections),
+  reviews: many(productReviews),
 }));
 
 export const productImagesRelations = relations(productImages, ({ one }) => ({
@@ -450,6 +525,17 @@ export const cartItemsRelations = relations(cartItems, ({ one }) => ({
   variant: one(productVariants, {
     fields: [cartItems.variantId],
     references: [productVariants.id],
+  }),
+}));
+
+export const productReviewsRelations = relations(productReviews, ({ one }) => ({
+  product: one(products, {
+    fields: [productReviews.productId],
+    references: [products.id],
+  }),
+  user: one(users, {
+    fields: [productReviews.userId],
+    references: [users.id],
   }),
 }));
 

@@ -1,12 +1,19 @@
 import type { MetadataRoute } from "next";
-import { getCollections, getPages, getProducts } from "@/lib/db/queries";
+import { getBlogs, getCollections, getPages, getProducts } from "@/lib/db/queries";
 import { baseUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routesMap = ["", "search"].map((route) => ({
+  const routesMap = ["", "search", "blog", "faq"].map((route) => ({
     url: `${baseUrl}/${route}`,
     lastModified: new Date().toISOString(),
   }));
+
+  const blogsPromise = getBlogs().then((blogsList) =>
+    blogsList.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+    })),
+  );
 
   const collectionsPromise = getCollections().then((collections) =>
     collections.map((collection) => ({
@@ -29,11 +36,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  const [collections, products, pages] = await Promise.all([
+  const [blogsList, collections, products, pages] = await Promise.all([
+    blogsPromise,
     collectionsPromise,
     productsPromise,
     pagesPromise,
   ]);
 
-  return [...routesMap, ...collections, ...products, ...pages];
+  return [...routesMap, ...blogsList, ...collections, ...products, ...pages];
 }

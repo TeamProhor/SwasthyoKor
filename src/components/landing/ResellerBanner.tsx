@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle, TrendingUp, ShieldCheck, Truck, ArrowUpRight } from "lucide-react";
+import { WhatsAppIcon, TrendUp, ShieldCheck, Truck, ArrowUpRight } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 const RESELLER_BENEFITS = [
   {
-    icon: TrendingUp,
+    icon: TrendUp,
     title: "পাইকারি মূল্য সুবিধা",
     desc: "সর্বোচ্চ মার্জিনে খাঁটি পণ্য সংগ্রহ",
   },
@@ -92,7 +92,7 @@ export function ResellerBanner() {
                   size="lg"
                   className="w-full rounded-xl bg-emerald-500 font-bold text-white shadow-lg hover:bg-emerald-400 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                 >
-                  <MessageCircle data-icon="inline-start" />
+                  <WhatsAppIcon data-icon="inline-start" className="size-5" />
                   <span>হোয়াটসঅ্যাপে যোগাযোগ করুন</span>
                   <ArrowUpRight data-icon="inline-end" />
                 </Button>

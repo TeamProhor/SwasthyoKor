@@ -23,6 +23,10 @@ import {
   menus,
   orders,
   pages,
+  blogs,
+  storeSettings,
+  productReviews,
+  heroBanners,
   productCollections,
   type productImages,
   type productOptions,
@@ -36,9 +40,13 @@ type ProductRow = InferSelectModel<typeof products> & {
   images: InferSelectModel<typeof productImages>[];
   variants: InferSelectModel<typeof productVariants>[];
   options: InferSelectModel<typeof productOptions>[];
+  reviews?: InferSelectModel<typeof productReviews>[];
+  collections?: {
+    collection: InferSelectModel<typeof collections>;
+  }[];
 };
 
-const DEFAULT_CURRENCY = "USD";
+const DEFAULT_CURRENCY = "BDT";
 
 function money(amount: number, currencyCode = DEFAULT_CURRENCY) {
   return { amount: amount.toFixed(2), currencyCode };
@@ -51,11 +59,20 @@ function toProduct(row: ProductRow): Product {
     availableForSale: variant.availableForSale,
     selectedOptions: variant.selectedOptions,
     price: money(variant.priceAmount, variant.priceCurrency),
+    compareAtPrice: variant.compareAtPrice
+      ? money(variant.compareAtPrice, variant.priceCurrency)
+      : undefined,
   }));
 
   const prices = row.variants.map((variant) => variant.priceAmount);
   const minPrice = prices.length ? Math.min(...prices) : 0;
   const maxPrice = prices.length ? Math.max(...prices) : 0;
+
+  const comparePrices = row.variants
+    .map((variant) => variant.compareAtPrice)
+    .filter((p): p is number => typeof p === "number" && p > 0);
+  const minComparePrice = comparePrices.length ? Math.min(...comparePrices) : undefined;
+  const maxComparePrice = comparePrices.length ? Math.max(...comparePrices) : undefined;
 
   const images = row.images.map((image) => ({
     url: image.url,
@@ -63,6 +80,14 @@ function toProduct(row: ProductRow): Product {
     width: image.width,
     height: image.height,
   }));
+
+  const firstCollection = row.collections?.[0]?.collection;
+
+  const reviewsList = row.reviews || [];
+  const reviewCount = reviewsList.length;
+  const rating = reviewCount > 0
+    ? Number((reviewsList.reduce((acc, r) => acc + r.rating, 0) / reviewCount).toFixed(1))
+    : 0;
 
   return {
     id: row.id,
@@ -72,12 +97,28 @@ function toProduct(row: ProductRow): Product {
     descriptionHtml: row.descriptionHtml ?? undefined,
     tags: row.tags,
     availableForSale: row.availableForSale,
+    rating,
+    reviewCount,
+    category: firstCollection
+      ? {
+          id: firstCollection.id,
+          handle: firstCollection.handle,
+          title: firstCollection.title,
+        }
+      : undefined,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     priceRange: {
       minVariantPrice: money(minPrice),
       maxVariantPrice: money(maxPrice),
     },
+    compareAtPriceRange:
+      minComparePrice !== undefined && maxComparePrice !== undefined
+        ? {
+            minVariantPrice: money(minComparePrice),
+            maxVariantPrice: money(maxComparePrice),
+          }
+        : undefined,
     featuredImage: images[0],
     images,
     variants,
@@ -97,6 +138,12 @@ async function loadProducts(where?: SQL): Promise<Product[]> {
       images: { orderBy: (image, { asc }) => [asc(image.position)] },
       variants: { orderBy: (variant, { asc }) => [asc(variant.position)] },
       options: { orderBy: (option, { asc }) => [asc(option.position)] },
+      reviews: true,
+      collections: {
+        with: {
+          collection: true,
+        },
+      },
     },
   });
 
@@ -153,6 +200,11 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
       images: { orderBy: (image, { asc }) => [asc(image.position)] },
       variants: { orderBy: (variant, { asc }) => [asc(variant.position)] },
       options: { orderBy: (option, { asc }) => [asc(option.position)] },
+      collections: {
+        with: {
+          collection: true,
+        },
+      },
     },
   });
 
@@ -331,6 +383,97 @@ export async function getPages(): Promise<Page[]> {
   }));
 }
 
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  content: string;
+  category: string;
+  readTime: string;
+  author: string;
+  coverImage: string;
+  tags: string[];
+  faqs: { question: string; answer: string }[];
+  relatedProductHandles: string[];
+  publishedAt: string;
+  updatedAt: string;
+  relatedProducts?: {
+    title: string;
+    handle: string;
+    price: string;
+    image: string;
+  }[];
+}
+
+export async function getBlogs(): Promise<BlogPost[]> {
+  const rows = await db.query.blogs.findMany({
+    where: eq(blogs.published, true),
+    orderBy: (blog, { desc }) => [desc(blog.createdAt)],
+  });
+
+  return rows.map((b) => ({
+    id: b.id,
+    slug: b.slug,
+    title: b.title,
+    description: b.description,
+    content: b.content,
+    category: b.category,
+    readTime: b.readTime,
+    author: b.author,
+    coverImage: b.coverImage,
+    tags: b.tags,
+    faqs: b.faqs,
+    relatedProductHandles: b.relatedProductHandles,
+    publishedAt: b.createdAt.toISOString(),
+    updatedAt: b.updatedAt.toISOString(),
+  }));
+}
+
+export async function getBlog(slug: string): Promise<BlogPost | undefined> {
+  const b = await db.query.blogs.findFirst({
+    where: eq(blogs.slug, slug),
+  });
+
+  if (!b) return undefined;
+
+  let relatedProducts: {
+    title: string;
+    handle: string;
+    price: string;
+    image: string;
+  }[] = [];
+  if (b.relatedProductHandles && b.relatedProductHandles.length > 0) {
+    const prods = await getProducts({});
+    relatedProducts = prods
+      .filter((p) => b.relatedProductHandles.includes(p.handle))
+      .map((p) => ({
+        title: p.title,
+        handle: p.handle,
+        price: `৳${p.priceRange.minVariantPrice.amount}`,
+        image: p.featuredImage?.url || "/icon.png",
+      }));
+  }
+
+  return {
+    id: b.id,
+    slug: b.slug,
+    title: b.title,
+    description: b.description,
+    content: b.content,
+    category: b.category,
+    readTime: b.readTime,
+    author: b.author,
+    coverImage: b.coverImage,
+    tags: b.tags,
+    faqs: b.faqs,
+    relatedProductHandles: b.relatedProductHandles,
+    relatedProducts,
+    publishedAt: b.createdAt.toISOString(),
+    updatedAt: b.updatedAt.toISOString(),
+  };
+}
+
 export async function getCart(cartId?: string | null): Promise<Cart | null> {
   if (!cartId) return null;
 
@@ -386,7 +529,7 @@ export async function getCart(cartId?: string | null): Promise<Cart | null> {
     (sum, line) => sum + Number(line.cost.totalAmount.amount),
     0,
   );
-  const currencyCode = lines[0]?.cost.totalAmount.currencyCode ?? "USD";
+  const currencyCode = lines[0]?.cost.totalAmount.currencyCode ?? "BDT";
 
   return {
     id: cart.id,
@@ -416,4 +559,100 @@ export async function getOrder(id: string): Promise<Order | null> {
     items: row.items,
     createdAt: row.createdAt.toISOString(),
   };
+}
+
+export async function getStoreSettings() {
+  const settings = await db.query.storeSettings.findFirst({
+    where: eq(storeSettings.id, "default"),
+  });
+
+  return (
+    settings ?? {
+      id: "default",
+      storeName: "স্বাস্থ্যকর",
+      storePhone: "01812345678",
+      whatsappNumber: "8801812345678",
+      storeEmail: "support@swasthyokor.com",
+      storeAddress: "ঢাকা, বাংলাদেশ",
+      insideDhakaFee: 60,
+      outsideDhakaFee: 120,
+      freeShippingMinAmount: 1500,
+    }
+  );
+}
+
+export async function getProductReviews(productId: string) {
+  return db.query.productReviews.findMany({
+    where: eq(productReviews.productId, productId),
+    orderBy: (review, { desc }) => [desc(review.createdAt)],
+  });
+}
+
+export async function getHeroBanners() {
+  const rows = await db.query.heroBanners.findMany({
+    where: eq(heroBanners.active, true),
+    orderBy: (banner, { asc }) => [asc(banner.position)],
+  });
+
+  if (rows.length) return rows;
+
+  // Default seed fallback if table is empty
+  return [
+    {
+      id: "1",
+      title: "১০০% খাঁটি সুন্দরবন মধু ও",
+      highlight: "গাওয়া ঘি",
+      subtitle:
+        "প্রকৃতির নিখাদ দান, কোনো কৃত্রিম মিষ্টি বা প্রিজারভেটিভ ছাড়া সরাসরি সুন্দরবন ও খামার থেকে সংগৃহীত।",
+      link: "/search?q=মধু",
+      accentColor: "text-amber-400",
+      image:
+        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1600&auto=format&fit=crop&q=85",
+      position: 0,
+      active: true,
+      createdAt: new Date(),
+    },
+    {
+      id: "2",
+      title: "ঘানি ভাঙা সরিষার তেল ও",
+      highlight: "কালোজিরা তেল",
+      subtitle:
+        "কাঠের ঘানিতে ভাঙা প্রাকৃতিক ঝাঁঝ ও খাঁটি পুষ্টিতে ভরপুর স্বাস্থ্যকর রান্নার শ্রেষ্ঠ উপাদান।",
+      link: "/search?q=তেল",
+      accentColor: "text-emerald-400",
+      image:
+        "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1600&auto=format&fit=crop&q=85",
+      position: 1,
+      active: true,
+      createdAt: new Date(),
+    },
+    {
+      id: "3",
+      title: "প্রিমিয়াম অর্গানিক চিয়া সিড ও",
+      highlight: "সুপারফুড সংগ্রহ",
+      subtitle:
+        "প্রতিদিনের সুস্থতা ও রোগ প্রতিরোধ ক্ষমতা বৃদ্ধিতে খাঁটি সুপারফুডের সমাহার।",
+      link: "/search/superfoods-wellness",
+      accentColor: "text-teal-400",
+      image:
+        "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=1600&auto=format&fit=crop&q=85",
+      position: 2,
+      active: true,
+      createdAt: new Date(),
+    },
+    {
+      id: "4",
+      title: "সেরা বাছাইকৃত ড্রাই ফ্রুটস ও",
+      highlight: "পুষ্টিকর বাদাম",
+      subtitle:
+        "আমন্ড, কাজু, পেস্তা, আখরোট ও প্রিমিয়াম কিশমিশের সেরা স্বাস্থ্যকর স্ন্যাক্স।",
+      link: "/search?q=বাদাম",
+      accentColor: "text-amber-300",
+      image:
+        "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1600&auto=format&fit=crop&q=85",
+      position: 3,
+      active: true,
+      createdAt: new Date(),
+    },
+  ];
 }

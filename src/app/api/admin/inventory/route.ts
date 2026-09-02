@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
-import { products, productVariants } from "@/lib/db/schema";
+import { productVariants } from "@/lib/db/schema";
 
 export async function PATCH(req: NextRequest) {
   const user = await getCurrentUser();

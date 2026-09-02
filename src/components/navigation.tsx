@@ -19,7 +19,7 @@ import { useLogout, useUser } from "@/hooks/use-auth";
 import { getNavItems, sidebarAnnouncement } from "@/lib/navigation";
 import type { Dictionary, SidebarProps } from "@/types";
 
-export function Sidebar({ onClose, dict, lang }: SidebarProps) {
+export function Sidebar({ onClose, dict, lang: _lang }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const { data: user } = useUser();

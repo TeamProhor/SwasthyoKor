@@ -1,27 +1,27 @@
 import {
   Home,
-  Package,
+  Box,
   Receipt,
   User,
-  Settings,
-  MapPin,
+  Location,
   Heart,
   Tag,
-  Boxes,
   Store,
   ShoppingBag,
-  Layers,
-} from "lucide-react";
+  Category,
+  BookOpen,
+  SliderHorizontal,
+} from "@/components/icons";
 import type { Dictionary, NavItem, SidebarAnnouncement } from "@/types";
 
 export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { name: "ড্যাশবোর্ড", path: "/dashboard", exact: true, icon: Home },
-  { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Package },
+  { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Box },
   {
     name: "সংরক্ষিত ঠিকানা",
     path: "/dashboard/addresses",
     exact: false,
-    icon: MapPin,
+    icon: Location,
   },
   {
     name: "পছন্দের তালিকা",
@@ -29,22 +29,17 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
     exact: false,
     icon: Heart,
   },
-  {
-    name: "পেমেন্ট হিস্ট্রি",
-    path: "/dashboard/payments",
-    exact: false,
-    icon: Receipt,
-  },
-  { name: "প্রোফাইল", path: "/dashboard/profile", exact: false, icon: User },
-  { name: "সেটিংস", path: "/dashboard/settings", exact: false, icon: Settings },
+  { name: "প্রোফাইল ও সেটিংস", path: "/dashboard/profile", exact: false, icon: User },
 ];
 
 export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { name: "ওভারভিউ", path: "/admin", exact: true, icon: Home },
-  { name: "পণ্যসমূহ", path: "/admin/products", exact: false, icon: Package },
-  { name: "ইনভেন্টরি ও স্টক", path: "/admin/inventory", exact: false, icon: Boxes },
+  { name: "পণ্যসমূহ", path: "/admin/products", exact: false, icon: Box },
+  { name: "ইনভেন্টরি ও স্টক", path: "/admin/inventory", exact: false, icon: Box },
   { name: "অর্ডারসমূহ", path: "/admin/orders", exact: false, icon: Receipt },
-  { name: "কালেকশন", path: "/admin/collections", exact: false, icon: Layers },
+  { name: "কালেকশন ও ক্যাটাগরি", path: "/admin/collections", exact: false, icon: Category },
+  { name: "হিরো ব্যানার", path: "/admin/banners", exact: false, icon: SliderHorizontal },
+  { name: "ব্লগ ও কনটেন্ট", path: "/admin/blog", exact: false, icon: BookOpen },
   { name: "কুপন ও প্রোমো", path: "/admin/coupons", exact: false, icon: Tag },
   { name: "গ্রাহকবৃন্দ", path: "/admin/customers", exact: false, icon: User },
   { name: "স্টোর সেটিংস", path: "/admin/settings", exact: false, icon: Store },
@@ -52,7 +47,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
 ];
 
 export function getNavItems(
-  dict?: Dictionary,
+  _dict?: Dictionary,
   isAdmin: boolean = false,
 ): readonly NavItem[] {
   if (isAdmin) {

@@ -34,6 +34,7 @@ export default async function AdminProductsPage() {
       description: prod.description,
       collectionId: prodCol?.collectionId,
       price: variant ? String(variant.priceAmount) : "0",
+      compareAtPrice: variant?.compareAtPrice ? String(variant.compareAtPrice) : undefined,
       imageUrl: img?.url,
       available: prod.availableForSale,
     };

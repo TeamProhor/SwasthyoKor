@@ -4,9 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Search as SearchIcon, TrendingUp, Loader2, ArrowRight } from "lucide-react";
+import { Search as SearchIcon, TrendUp, Loader, ArrowRight } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared/ResponsiveDialog";
-import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
@@ -89,15 +88,13 @@ export function MobileSearch() {
       title="পণ্য অনুসন্ধান"
       description="আপনার প্রয়োজনীয় খাঁটি অর্গানিক পণ্য খুঁজুন"
       trigger={
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon"
           aria-label="পণ্য খুঁজুন"
-          className="size-9 sm:size-10 text-foreground md:hidden"
+          className="relative flex size-9 sm:size-10 md:size-11 items-center justify-center rounded-lg border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer shrink-0 md:hidden"
         >
-          <SearchIcon className="size-5" />
-        </Button>
+          <SearchIcon className="size-4 sm:size-5 transition-all ease-in-out hover:scale-110" />
+        </button>
       }
     >
       <div className="flex flex-col gap-4">
@@ -114,7 +111,7 @@ export function MobileSearch() {
             />
             <InputGroupAddon align="inline-end" className="pr-3">
               {isLoading ? (
-                <Loader2 className="size-4 animate-spin text-emerald-600" />
+                <Loader className="size-4 animate-spin text-emerald-600" />
               ) : (
                 <button type="submit" aria-label="Search" className="cursor-pointer">
                   <SearchIcon className="size-4 text-muted-foreground hover:text-foreground" />
@@ -181,7 +178,7 @@ export function MobileSearch() {
           /* Popular Search Suggestions */
           <div>
             <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-              <TrendingUp className="size-3.5" />
+              <TrendUp className="size-3.5" />
               <span>জনপ্রিয় সার্চ:</span>
             </div>
             <div className="flex flex-wrap gap-1.5">

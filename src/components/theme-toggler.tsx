@@ -38,13 +38,18 @@ export function ThemeToggler({
       ref={buttonRef}
       onClick={toggleTheme}
       aria-label="Toggle Theme"
+      title={isDark ? "লাইট মোড" : "ডার্ক মোড"}
       className={cn(
-        "flex size-8 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-xs hover:bg-muted active:scale-95 transition-all cursor-pointer shrink-0",
+        "relative flex size-9 sm:size-10 md:size-11 items-center justify-center rounded-lg border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer shrink-0",
         className,
       )}
       {...props}
     >
-      {isDark ? <Sun size={18} /> : <Moon size={18} />}
+      {isDark ? (
+        <Sun className="size-4 sm:size-5 transition-all ease-in-out hover:scale-110" />
+      ) : (
+        <Moon className="size-4 sm:size-5 transition-all ease-in-out hover:scale-110" />
+      )}
     </button>
   );
 }

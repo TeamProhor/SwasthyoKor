@@ -78,18 +78,32 @@ export function CreateProductDialog({
             />
           </Field>
 
-          <Field>
-            <FieldLabel htmlFor="prod-price">মূল্য (টাকা) *</FieldLabel>
-            <Input
-              id="prod-price"
-              name="price"
-              type="number"
-              step="any"
-              placeholder="যেমন: ৭৫০"
-              required
-              className="rounded-xl"
-            />
-          </Field>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field>
+              <FieldLabel htmlFor="prod-price">মূল্য (টাকা) *</FieldLabel>
+              <Input
+                id="prod-price"
+                name="price"
+                type="number"
+                step="any"
+                placeholder="যেমন: ৭৫০"
+                required
+                className="rounded-xl"
+              />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="prod-compare-price">পূর্বের মূল্য (ঐচ্ছিক)</FieldLabel>
+              <Input
+                id="prod-compare-price"
+                name="compareAtPrice"
+                type="number"
+                step="any"
+                placeholder="যেমন: ৮৫০ (ছাড় দেখাতে)"
+                className="rounded-xl"
+              />
+            </Field>
+          </div>
 
           <Field>
             <FieldLabel htmlFor="prod-collection">কালেকশন / ক্যাটাগরি</FieldLabel>

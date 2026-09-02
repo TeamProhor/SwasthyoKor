@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft2, ArrowRight2 } from "@/components/icons";
 import {
   Carousel,
   CarouselContent,
@@ -78,7 +78,7 @@ export function Gallery({
                 aria-label="Previous image"
                 className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 size-8 sm:size-9 rounded-full bg-black/40 text-white hover:bg-black/65 hover:text-white backdrop-blur-md shadow-xs active:scale-90 cursor-pointer"
               >
-                <ChevronLeft className="size-4 sm:size-5" />
+                <ArrowLeft2 className="size-4 sm:size-5" />
               </Button>
 
               <Button
@@ -89,7 +89,7 @@ export function Gallery({
                 aria-label="Next image"
                 className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 size-8 sm:size-9 rounded-full bg-black/40 text-white hover:bg-black/65 hover:text-white backdrop-blur-md shadow-xs active:scale-90 cursor-pointer"
               >
-                <ChevronRight className="size-4 sm:size-5" />
+                <ArrowRight2 className="size-4 sm:size-5" />
               </Button>
             </>
           )}

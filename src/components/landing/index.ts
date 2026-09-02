@@ -12,3 +12,6 @@ export * from "./QuoteSection";
 export { QuoteSection as Quote } from "./QuoteSection";
 export * from "./ResellerBanner";
 export { ResellerBanner as Reseller } from "./ResellerBanner";
+export * from "./FlashDealsSection";
+export * from "./CategoryShowcaseSection";
+export * from "./TrustFeaturesBar";

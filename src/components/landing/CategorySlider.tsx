@@ -3,9 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft2, ArrowRight2 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export interface CategoryItem {
   name: string;
@@ -16,18 +15,39 @@ export interface CategoryItem {
 
 export const defaultCategories: CategoryItem[] = [
   {
-    name: "খাঁটি মধু",
-    nameEn: "Pure Honey",
+    name: "খাঁটি পণ্য",
+    nameEn: "Essentials",
+    image:
+      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&auto=format&fit=crop&q=80",
+    href: "/category/organic-essentials",
+  },
+  {
+    name: "ঘানি ভাঙা তেল ও ঘি",
+    nameEn: "Oils & Ghee",
+    image:
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&auto=format&fit=crop&q=80",
+    href: "/category/oils-and-ghee",
+  },
+  {
+    name: "সুপারফুড ও পুষ্টি",
+    nameEn: "Superfoods",
+    image:
+      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=300&auto=format&fit=crop&q=80",
+    href: "/category/superfoods-wellness",
+  },
+  {
+    name: "বাদাম ও ড্রাই ফ্রুটস",
+    nameEn: "Nuts & Dry Fruits",
+    image:
+      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80",
+    href: "/category/nuts-dry-fruits",
+  },
+  {
+    name: "খাঁটি সুন্দরবন মধু",
+    nameEn: "Raw Honey",
     image:
       "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&auto=format&fit=crop&q=80",
     href: "/search?q=মধু",
-  },
-  {
-    name: "ঘানি ভাঙা তেল",
-    nameEn: "Mustard Oil",
-    image:
-      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=তেল",
   },
   {
     name: "গাওয়া ঘি",
@@ -37,27 +57,6 @@ export const defaultCategories: CategoryItem[] = [
     href: "/search?q=ঘি",
   },
   {
-    name: "অর্গানিক চিয়া সিড",
-    nameEn: "Chia Seeds",
-    image:
-      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=300&auto=format&fit=crop&q=80",
-    href: "/search/superfoods-wellness",
-  },
-  {
-    name: "সজিনা পাতা গুঁড়ো",
-    nameEn: "Moringa Powder",
-    image:
-      "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=সজিনা",
-  },
-  {
-    name: "ড্রাই ফ্রুটস ও বাদাম",
-    nameEn: "Nuts & Dry Fruits",
-    image:
-      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=বাদাম",
-  },
-  {
     name: "কালোজিরা তেল",
     nameEn: "Black Seed Oil",
     image:
@@ -65,32 +64,18 @@ export const defaultCategories: CategoryItem[] = [
     href: "/search?q=কালোজিরা",
   },
   {
-    name: "তুলসী গ্রিন টি",
-    nameEn: "Herbal Green Tea",
-    image:
-      "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=চা",
-  },
-  {
     name: "হিমালয়ান পিংক সল্ট",
     nameEn: "Pink Rock Salt",
     image:
       "https://images.unsplash.com/photo-1607672632458-9eb56696346b?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=লবণ",
+    href: "/search?q=সল্ট",
   },
   {
-    name: "আম ও তাজা ফল",
-    nameEn: "Fresh Fruits",
+    name: "সকল ক্যাটাগরি",
+    nameEn: "All Categories",
     image:
-      "https://images.unsplash.com/photo-1553279768-865429fa0078?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=আম",
-  },
-  {
-    name: "সকল অর্গানিক পণ্য",
-    nameEn: "All Products",
-    image:
-      "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=300&auto=format&fit=crop&q=80",
-    href: "/search",
+      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&auto=format&fit=crop&q=80",
+    href: "/category",
   },
 ];
 
@@ -139,7 +124,7 @@ export function CategorySlider({
               aria-label="Previous categories"
               className="size-8 sm:size-9 rounded-full bg-background/90"
             >
-              <ChevronLeft />
+              <ArrowLeft2 className="size-4" />
             </Button>
             <Button
               type="button"
@@ -149,7 +134,7 @@ export function CategorySlider({
               aria-label="Next categories"
               className="size-8 sm:size-9 rounded-full bg-background/90"
             >
-              <ChevronRight />
+              <ArrowRight2 className="size-4" />
             </Button>
           </div>
         </div>
