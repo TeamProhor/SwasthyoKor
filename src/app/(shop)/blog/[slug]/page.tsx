@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBlog, getBlogs } from "@/lib/db/queries";
+import { getBlog } from "@/lib/db/queries";
 import { baseUrl } from "@/lib/utils";
 import {
   Clock,
@@ -15,13 +15,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
-export async function generateStaticParams() {
-  const blogs = await getBlogs();
-  return blogs.map((post) => ({
-    slug: post.slug,
-  }));
-}
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;

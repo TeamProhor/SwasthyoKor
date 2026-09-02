@@ -4,7 +4,6 @@ import {
   Receipt,
   User,
   Location,
-  Heart,
   Tag,
   Store,
   ShoppingBag,
@@ -22,12 +21,6 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
     path: "/dashboard/addresses",
     exact: false,
     icon: Location,
-  },
-  {
-    name: "পছন্দের তালিকা",
-    path: "/dashboard/wishlist",
-    exact: false,
-    icon: Heart,
   },
   { name: "প্রোফাইল ও সেটিংস", path: "/dashboard/profile", exact: false, icon: User },
 ];
