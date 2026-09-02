@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SearchNormal, Calendar, Package, Mail } from "@/components/icons";
+import { SearchNormal, Calendar, Package, Sms } from "@/components/icons";
 import { Input } from "@/components/ui/input";
 import { ListCard } from "@/components/shared";
 import { cn } from "@/lib/utils";
@@ -117,7 +117,7 @@ export function OrdersList({ orders }: { orders: AdminOrderItem[] }) {
                   subtitle={`৳${order.totalAmount.toLocaleString("bn-BD")}`}
                   metaItems={[
                     {
-                      icon: <Mail className="size-3.5" />,
+                      icon: <Sms className="size-3.5" />,
                       value: order.email ?? "অতিথি গ্রাহক",
                     },
                     {
