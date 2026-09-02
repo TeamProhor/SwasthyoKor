@@ -14,9 +14,10 @@ const globalForDb = globalThis as unknown as {
 const conn =
   globalForDb.conn ??
   postgres(connectionString, {
-    max: 3,
+    max: 10,
     idle_timeout: 20,
     connect_timeout: 15,
+    prepare: false, // Required for PgBouncer transaction pooling mode
   });
 
 globalForDb.conn = conn;

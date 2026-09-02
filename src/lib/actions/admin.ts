@@ -14,7 +14,6 @@ import {
   productVariants,
 } from "@/lib/db/schema";
 import { uploadObject } from "@/lib/storage";
-import { compressFileToWebp } from "@/lib/image";
 
 // ─── Products ─────────────────────────────────────────────────────────────
 
@@ -38,14 +37,15 @@ export async function createProductAction(formData: FormData) {
 
     let finalImageUrl = imageUrlInput || "";
 
-    // Compress to WebP and upload if file is provided
+    // Upload file if provided (compressed to WebP from browser)
     if (imageFile && imageFile.size > 0) {
-      const { buffer, contentType, extension } = await compressFileToWebp(imageFile);
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
       const s3Key = `products/${id}-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
         body: buffer,
-        contentType,
+        contentType: imageFile.type || "image/webp",
       });
     }
 
@@ -175,12 +175,13 @@ export async function updateProductAction(formData: FormData) {
     // 3. Update image if new file or URL is provided
     let finalImageUrl = imageUrlInput || "";
     if (imageFile && imageFile.size > 0) {
-      const { buffer, contentType, extension } = await compressFileToWebp(imageFile);
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
       const s3Key = `products/${id}-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
         body: buffer,
-        contentType,
+        contentType: imageFile.type || "image/webp",
       });
     }
 
@@ -476,12 +477,13 @@ export async function createHeroBannerAction(formData: FormData) {
     let finalImageUrl = imageUrlInput;
 
     if (imageFile && imageFile.size > 0) {
-      const { buffer, contentType, extension } = await compressFileToWebp(imageFile);
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
       const s3Key = `banners/banner-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
         body: buffer,
-        contentType,
+        contentType: imageFile.type || "image/webp",
       });
     }
 
@@ -533,12 +535,13 @@ export async function updateHeroBannerAction(formData: FormData) {
     let finalImageUrl = imageUrlInput;
 
     if (imageFile && imageFile.size > 0) {
-      const { buffer, contentType, extension } = await compressFileToWebp(imageFile);
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
       const s3Key = `banners/banner-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
         body: buffer,
-        contentType,
+        contentType: imageFile.type || "image/webp",
       });
     }
 

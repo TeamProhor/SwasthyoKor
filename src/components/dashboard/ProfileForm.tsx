@@ -15,6 +15,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { updateProfileUserAction } from "@/lib/actions/user";
+import { compressImageClient } from "@/lib/image";
 
 interface ProfileFormProps {
   initialUser: {
@@ -32,11 +33,21 @@ export function ProfileForm({ initialUser }: ProfileFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+
+    const avatarFile = formData.get("avatar") as File | null;
+    if (avatarFile && avatarFile.size > 0 && avatarFile.type.startsWith("image/")) {
+      const compressedWebpFile = await compressImageClient(avatarFile, {
+        maxWidthOrHeight: 500,
+        maxSizeMB: 0.5,
+      });
+      formData.set("avatar", compressedWebpFile);
+    }
 
     startTransition(async () => {
       const res = await updateProfileUserAction(formData);

@@ -6,7 +6,6 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { productReviews, products, users } from "@/lib/db/schema";
 import { uploadObject } from "@/lib/storage";
-import { compressFileToWebp } from "@/lib/image";
 
 export async function submitReviewAction({
   productHandle,
@@ -76,15 +75,13 @@ export async function updateProfileUserAction(formData: FormData) {
     let avatarUrl = user.avatarUrl;
 
     if (avatarFile && avatarFile.size > 0) {
-      const { buffer, contentType, extension } = await compressFileToWebp(avatarFile, {
-        maxWidth: 500,
-        maxHeight: 500,
-      });
+      const buffer = Buffer.from(await avatarFile.arrayBuffer());
+      const extension = avatarFile.name.endsWith(".webp") || avatarFile.type === "image/webp" ? "webp" : avatarFile.name.split(".").pop() || "webp";
       const s3Key = `avatars/${user.id}-${Date.now()}.${extension}`;
       avatarUrl = await uploadObject({
         key: s3Key,
         body: buffer,
-        contentType,
+        contentType: avatarFile.type || "image/webp",
       });
     }
 

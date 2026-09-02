@@ -1,94 +1,63 @@
-import "server-only";
-import sharp from "sharp";
+import imageCompression from "browser-image-compression";
 
 export interface CompressImageOptions {
   /**
-   * WebP compression quality (default 90 provides visually lossless results with substantial file size savings).
-   * Range: 1-100.
+   * Maximum file size in MB (default: 1.5MB)
    */
-  quality?: number;
+  maxSizeMB?: number;
   /**
-   * If true, enables mathematical lossless WebP encoding.
+   * Maximum width or height in pixels (default: 1920)
    */
-  lossless?: boolean;
+  maxWidthOrHeight?: number;
   /**
-   * CPU effort / compression level (0-6, default: 4). Higher = smaller file size.
+   * WebP compression quality (0.0 to 1.0, default: 0.90 for lossless visual clarity)
    */
-  effort?: number;
+  initialQuality?: number;
   /**
-   * Optional maximum width for downscaling very large images while maintaining aspect ratio.
+   * Run compression in background Web Worker (default: true)
    */
-  maxWidth?: number;
-  /**
-   * Optional maximum height for downscaling while maintaining aspect ratio.
-   */
-  maxHeight?: number;
+  useWebWorker?: boolean;
 }
 
 /**
- * Compresses an image Buffer or ArrayBuffer into optimized WebP format without quality loss.
+ * Compresses an image File using browser-image-compression into a WebP File without losing quality.
  *
- * @param input Image buffer, Uint8Array, or ArrayBuffer
- * @param options Compression configuration options
- * @returns Object containing the compressed WebP buffer, dimensions, and content-type
+ * @param file The original image File from an input or dropzone
+ * @param options Custom compression options
+ * @returns The optimized WebP File
  */
-export async function compressImageToWebp(
-  input: Buffer | Uint8Array | ArrayBuffer,
+export async function compressImage(
+  file: File,
   options: CompressImageOptions = {}
-): Promise<{
-  buffer: Buffer;
-  contentType: string;
-  extension: string;
-  width?: number;
-  height?: number;
-}> {
-  const {
-    quality = 90,
-    lossless = false,
-    effort = 5,
-    maxWidth,
-    maxHeight,
-  } = options;
-
-  const inputBuffer = Buffer.isBuffer(input)
-    ? input
-    : Buffer.from(input instanceof ArrayBuffer ? new Uint8Array(input) : input);
-
-  let pipeline = sharp(inputBuffer).rotate(); // Auto-orient based on EXIF
-
-  if (maxWidth || maxHeight) {
-    pipeline = pipeline.resize({
-      width: maxWidth,
-      height: maxHeight,
-      fit: "inside",
-      withoutEnlargement: true,
-    });
+): Promise<File> {
+  if (!file || !file.type.startsWith("image/")) {
+    return file;
   }
 
-  pipeline = pipeline.webp({
-    quality,
-    lossless,
-    effort,
-  });
+  try {
+    const defaultOptions = {
+      maxSizeMB: options.maxSizeMB ?? 1.5,
+      maxWidthOrHeight: options.maxWidthOrHeight ?? 1920,
+      initialQuality: options.initialQuality ?? 0.9,
+      fileType: "image/webp",
+      useWebWorker: options.useWebWorker ?? true,
+    };
 
-  const { data, info } = await pipeline.toBuffer({ resolveWithObject: true });
+    const compressedBlob = await imageCompression(file, defaultOptions);
 
-  return {
-    buffer: data,
-    contentType: "image/webp",
-    extension: "webp",
-    width: info.width,
-    height: info.height,
-  };
+    // Give the file a clean .webp extension and mime type
+    const baseName = file.name.replace(/\.[^/.]+$/, "");
+    return new File([compressedBlob], `${baseName}.webp`, {
+      type: "image/webp",
+      lastModified: Date.now(),
+    });
+  } catch (error) {
+    console.warn("browser-image-compression failed, using original file:", error);
+    return file;
+  }
 }
 
-/**
- * Compresses a File object (from FormData or form inputs) into WebP buffer and metadata.
- */
-export async function compressFileToWebp(
-  file: File,
-  options?: CompressImageOptions
-) {
-  const arrayBuffer = await file.arrayBuffer();
-  return compressImageToWebp(arrayBuffer, options);
-}
+// Alias for backward compatibility
+export const compressImageClient = compressImage;
+
+

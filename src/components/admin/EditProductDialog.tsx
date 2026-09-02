@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { updateProductAction } from "@/lib/actions/admin";
+import { compressImageClient } from "@/lib/image";
 
 export interface EditProductItem {
   id: string;
@@ -34,11 +35,19 @@ export function EditProductDialog({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
     formData.append("id", product.id);
+
+    // Compress client-side to WebP if image file is selected
+    const imageFile = formData.get("image") as File | null;
+    if (imageFile && imageFile.size > 0 && imageFile.type.startsWith("image/")) {
+      const compressedWebpFile = await compressImageClient(imageFile);
+      formData.set("image", compressedWebpFile);
+    }
 
     startTransition(async () => {
       const res = await updateProductAction(formData);

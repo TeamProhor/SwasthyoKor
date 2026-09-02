@@ -15,6 +15,7 @@ import {
   updateHeroBannerAction,
   deleteHeroBannerAction,
 } from "@/lib/actions/admin";
+import { compressImageClient } from "@/lib/image";
 import type { HeroBanner } from "@/lib/db/schema";
 
 export function AdminBannersManager({
@@ -28,10 +29,17 @@ export function AdminBannersManager({
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const handleCreateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
+
+    const imageFile = formData.get("image") as File | null;
+    if (imageFile && imageFile.size > 0 && imageFile.type.startsWith("image/")) {
+      const compressedWebpFile = await compressImageClient(imageFile);
+      formData.set("image", compressedWebpFile);
+    }
 
     startTransition(async () => {
       const res = await createHeroBannerAction(formData);
@@ -43,12 +51,19 @@ export function AdminBannersManager({
     });
   };
 
-  const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editingBanner) return;
     setError(null);
-    const formData = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const formData = new FormData(formElement);
     formData.append("id", editingBanner.id);
+
+    const imageFile = formData.get("image") as File | null;
+    if (imageFile && imageFile.size > 0 && imageFile.type.startsWith("image/")) {
+      const compressedWebpFile = await compressImageClient(imageFile);
+      formData.set("image", compressedWebpFile);
+    }
 
     startTransition(async () => {
       const res = await updateHeroBannerAction(formData);
