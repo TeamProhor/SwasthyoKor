@@ -35,12 +35,18 @@ export async function generateMetadata(props: {
 
 export default async function CheckoutProductPage(props: {
   params: Promise<{ handle: string }>;
+  searchParams: Promise<{ quantity?: string }>;
 }) {
   const { handle } = await props.params;
+  const searchParams = await props.searchParams;
   const product = await getProduct(handle);
 
   if (!product) return notFound();
 
+  const quantity = Math.max(
+    1,
+    parseInt(searchParams?.quantity || "1", 10) || 1,
+  );
   const variant = product.variants[0];
   const unitPrice = variant
     ? Number(variant.price.amount)
@@ -48,6 +54,8 @@ export default async function CheckoutProductPage(props: {
   const currencyCode = variant
     ? variant.price.currencyCode
     : product.priceRange.minVariantPrice.currencyCode;
+
+  const finalTotal = unitPrice * quantity;
 
   return (
     <div className="min-h-screen bg-neutral-50/60 dark:bg-neutral-950 py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
@@ -61,6 +69,9 @@ export default async function CheckoutProductPage(props: {
             <LogoSquare size="sm" />
             <span>স্বাস্থ্যকর</span>
           </Link>
+          <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/20">
+            🔒 সুরক্ষিত চেকআউট (SSL/COD)
+          </span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -78,7 +89,11 @@ export default async function CheckoutProductPage(props: {
               <CardContent>
                 <form action={checkoutDirectProduct} className="space-y-4">
                   <input type="hidden" name="handle" value={product.handle} />
-                  <input type="hidden" name="quantity" value="1" />
+                  <input
+                    type="hidden"
+                    name="quantity"
+                    value={quantity.toString()}
+                  />
 
                   <div className="space-y-1.5">
                     <Label htmlFor="name">আপনার পুরো নাম</Label>
@@ -118,7 +133,8 @@ export default async function CheckoutProductPage(props: {
                     <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2.5">
                       <div className="size-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
                       <span>
-                        পণ্য হাতে পেয়ে মূল্য পরিশোধ (Cash on Delivery) সুবিধা রয়েছে।
+                        পণ্য হাতে পেয়ে দেখে মূল্য পরিশোধ (Cash on Delivery) সুবিধা
+                        রয়েছে।
                       </span>
                     </div>
                   </div>
@@ -126,11 +142,18 @@ export default async function CheckoutProductPage(props: {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 h-11 text-base shadow-xs mt-2"
+                    className="w-full rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-700 h-12 text-base shadow-xs mt-2 cursor-pointer"
                   >
                     <BagShopping className="size-4" />
-                    <span>অর্ডার কনফার্ম করুন (ক্যাশ অন ডেলিভারি)</span>
+                    <span>
+                      অর্ডার নিশ্চিত করুন — ৳{finalTotal.toLocaleString("bn-BD")}{" "}
+                      (ক্যাশ অন ডেলিভারি)
+                    </span>
                   </Button>
+
+                  <p className="text-[11px] text-center text-muted-foreground pt-1">
+                    অর্ডার প্লেস করার পর আমাদের প্রতিনিধি আপনাকে কল করে নিশ্চিত করবেন।
+                  </p>
                 </form>
               </CardContent>
             </Card>
@@ -163,7 +186,7 @@ export default async function CheckoutProductPage(props: {
                       {product.title}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      পরিমাণ: ১টি
+                      পরিমাণ: {quantity.toLocaleString("bn-BD")}টি প্যাক
                     </span>
                     <Price
                       className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5"
@@ -181,10 +204,11 @@ export default async function CheckoutProductPage(props: {
                     <span>পণ্যের মূল্য</span>
                     <Price
                       className="font-medium text-foreground"
-                      amount={unitPrice.toString()}
+                      amount={finalTotal.toString()}
                       currencyCode={currencyCode}
                     />
                   </div>
+
                   <div className="flex items-center justify-between text-muted-foreground">
                     <span>ভ্যাট ও ট্যাক্স</span>
                     <Price
@@ -207,11 +231,25 @@ export default async function CheckoutProductPage(props: {
                   <span className="text-sm font-bold text-foreground">
                     সর্বমোট
                   </span>
-                  <Price
-                    className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400"
-                    amount={unitPrice.toString()}
-                    currencyCode={currencyCode}
-                  />
+                  <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                    ৳{finalTotal.toLocaleString("bn-BD")}
+                  </span>
+                </div>
+
+                {/* Video 2 Reassurance Guarantees */}
+                <div className="rounded-xl border border-border/60 bg-muted/25 p-3 space-y-2 pt-3 text-[11px] text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>১০০% প্রাকৃতিক ও ল্যাব টেস্টেড খাঁটি পণ্য</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>পণ্য হাতে পেয়ে চেক করে নেওয়ার সুবিধা</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>পছন্দ না হলে ৭ দিনের মান নিশ্চয়তা ও রিটার্ন</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

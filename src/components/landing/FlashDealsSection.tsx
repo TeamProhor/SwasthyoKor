@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product";
+import { Button } from "@/components/ui/button";
 import { getProducts } from "@/lib/db/queries";
 
 export async function FlashDealsSection() {
@@ -19,7 +19,7 @@ export async function FlashDealsSection() {
             হট ডিল ও বিশেষ অফার
           </h2>
           <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-            সীমিত সময়ের জন্য বাছাইকৃত পণ্যে বিশেষ মূল্যছাড়
+            খাঁটি অর্গানিক পণ্যে আকর্ষণীয় ছাড় ও স্পেশাল সেভার বান্ডেল
           </p>
         </div>
 
@@ -43,5 +43,3 @@ export async function FlashDealsSection() {
     </section>
   );
 }
-
-

@@ -41,58 +41,71 @@ export function VariantSelector({
     };
   });
 
-  return options.map((option) => (
-    <dl className="mb-4" key={option.id}>
-      <dt className="mb-2 text-xs font-bold text-foreground">
-        {option.name}:
-      </dt>
-      <dd className="flex flex-wrap gap-2.5">
-        {option.values.map((value) => {
-          const optionNameLowerCase = option.name.toLowerCase();
+  return options.map((option) => {
+    const selectedVal = selectedOptions[option.name.toLowerCase()];
+    return (
+      <dl className="mb-4" key={option.id}>
+        <dt className="mb-2 text-xs font-bold text-foreground flex items-center justify-between">
+          <span>
+            {option.name}:{" "}
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+              {selectedVal}
+            </span>
+          </span>
+          <span className="text-[11px] font-normal text-muted-foreground">
+            সুরক্ষিত সিল প্যাক
+          </span>
+        </dt>
+        <dd className="flex flex-wrap gap-2.5">
+          {option.values.map((value) => {
+            const optionNameLowerCase = option.name.toLowerCase();
 
-          // Calculate tentative options to check availability
-          const currentCombination = {
-            ...selectedOptions,
-            [optionNameLowerCase]: value,
-          };
+            // Calculate tentative options to check availability
+            const currentCombination = {
+              ...selectedOptions,
+              [optionNameLowerCase]: value,
+            };
 
-          const isAvailableForSale = combinations.some((combination) =>
-            Object.entries(currentCombination).every(
-              ([key, val]) =>
-                combination[key] === val && combination.availableForSale,
-            ),
-          );
+            const isAvailableForSale = combinations.some((combination) =>
+              Object.entries(currentCombination).every(
+                ([key, val]) =>
+                  combination[key] === val && combination.availableForSale,
+              ),
+            );
 
-          const isActive = selectedOptions[optionNameLowerCase] === value;
+            const isActive = selectedOptions[optionNameLowerCase] === value;
 
-          return (
-            <button
-              type="button"
-              key={value}
-              aria-disabled={!isAvailableForSale}
-              disabled={!isAvailableForSale}
-              onClick={() => onOptionSelect(optionNameLowerCase, value)}
-              title={`${option.name} ${value}${
-                !isAvailableForSale ? " (স্টক শেষ)" : ""
-              }`}
-              className={cn(
-                "flex min-w-[48px] items-center justify-center rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer",
-                {
-                  "border-emerald-600 bg-emerald-600 text-white shadow-xs":
-                    isActive,
-                  "border-border bg-card hover:border-emerald-500/50 hover:bg-muted text-foreground":
-                    !isActive && isAvailableForSale,
-                  "relative z-10 cursor-not-allowed opacity-40 bg-muted text-muted-foreground border-dashed":
-                    !isAvailableForSale,
-                },
-              )}
-            >
-              {value}
-            </button>
-          );
-        })}
-      </dd>
-    </dl>
-  ));
+            return (
+              <button
+                type="button"
+                key={value}
+                aria-disabled={!isAvailableForSale}
+                disabled={!isAvailableForSale}
+                onClick={() => onOptionSelect(optionNameLowerCase, value)}
+                title={`${option.name} ${value}${
+                  !isAvailableForSale ? " (স্টক শেষ)" : ""
+                }`}
+                className={cn(
+                  "flex min-w-[52px] items-center gap-1.5 justify-center rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer",
+                  {
+                    "border-emerald-600 bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-500/20":
+                      isActive,
+                    "border-border bg-card hover:border-emerald-500/50 hover:bg-muted text-foreground":
+                      !isActive && isAvailableForSale,
+                    "relative z-10 cursor-not-allowed opacity-40 bg-muted text-muted-foreground border-dashed":
+                      !isAvailableForSale,
+                  },
+                )}
+              >
+                {isActive && (
+                  <span className="size-1.5 rounded-full bg-white animate-pulse" />
+                )}
+                <span>{value}</span>
+              </button>
+            );
+          })}
+        </dd>
+      </dl>
+    );
+  });
 }
-

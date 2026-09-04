@@ -69,12 +69,13 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
     ? variant.price.currencyCode
     : product.priceRange.minVariantPrice.currencyCode;
 
+  const totalAmount = priceAmount * quantity;
   const now = new Date();
   const orderId = crypto.randomUUID();
 
   await db.insert(orders).values({
     id: orderId,
-    totalAmount: priceAmount * quantity,
+    totalAmount,
     totalCurrency: priceCurrency,
     status: "confirmed",
     items: [

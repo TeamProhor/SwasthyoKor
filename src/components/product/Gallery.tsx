@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ArrowLeft2, ArrowRight2 } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
+  type CarouselApi,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
 } from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Gallery({
@@ -52,7 +52,7 @@ export function Gallery({
         >
           <CarouselContent className="ml-0">
             {images.map((image, index) => (
-              <CarouselItem key={`${image.src}-${index}`} className="pl-0">
+              <CarouselItem key={image.src} className="pl-0">
                 <div className="relative aspect-square size-full max-h-[440px] sm:max-h-[500px] overflow-hidden bg-muted/30">
                   <Image
                     className="size-full object-cover transition-transform duration-500 hover:scale-105"
@@ -76,7 +76,7 @@ export function Gallery({
                 size="icon"
                 onClick={() => api?.scrollPrev()}
                 aria-label="Previous image"
-                className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 size-8 sm:size-9 rounded-full bg-black/40 text-white hover:bg-black/65 hover:text-white backdrop-blur-md shadow-xs active:scale-90 cursor-pointer"
+                className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 size-8 sm:size-9 rounded-full bg-white/90 text-neutral-800 hover:bg-white hover:text-neutral-900 dark:bg-neutral-900/90 dark:text-white dark:hover:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-700/60 backdrop-blur-md shadow-xs active:scale-90 cursor-pointer"
               >
                 <ArrowLeft2 className="size-4 sm:size-5" />
               </Button>
@@ -87,7 +87,7 @@ export function Gallery({
                 size="icon"
                 onClick={() => api?.scrollNext()}
                 aria-label="Next image"
-                className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 size-8 sm:size-9 rounded-full bg-black/40 text-white hover:bg-black/65 hover:text-white backdrop-blur-md shadow-xs active:scale-90 cursor-pointer"
+                className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 size-8 sm:size-9 rounded-full bg-white/90 text-neutral-800 hover:bg-white hover:text-neutral-900 dark:bg-neutral-900/90 dark:text-white dark:hover:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-700/60 backdrop-blur-md shadow-xs active:scale-90 cursor-pointer"
               >
                 <ArrowRight2 className="size-4 sm:size-5" />
               </Button>
@@ -104,7 +104,7 @@ export function Gallery({
 
             return (
               <button
-                key={`thumb-${image.src}-${index}`}
+                key={image.src}
                 type="button"
                 onClick={() => onThumbClick(index)}
                 aria-label={`Go to image ${index + 1}`}

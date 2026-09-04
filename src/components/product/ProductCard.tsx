@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Star, ShoppingBag } from "@/components/icons";
+import { ShoppingBag, Star } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/lib/types";
 
@@ -19,8 +19,12 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       ? compareAtPrice - currentPrice
       : 0;
 
-  const ratingVal = product.rating ? product.rating.toFixed(1) : "০.০";
-  const reviewCount = product.reviewCount ? product.reviewCount.toLocaleString("bn-BD") : "০";
+  const hasRating = Boolean(product.rating && product.rating > 0);
+  const ratingVal = product.rating ? product.rating.toFixed(1) : null;
+  const reviewCount =
+    product.reviewCount && product.reviewCount > 0
+      ? product.reviewCount.toLocaleString("bn-BD")
+      : null;
 
   return (
     <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-2 sm:p-3.5 shadow-2xs transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md">
@@ -49,15 +53,19 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
       {/* Title & Rating */}
       <div className="flex flex-col gap-1 flex-1">
-        <div className="flex items-center gap-1">
-          <Star className="size-3 fill-amber-400 text-amber-400" />
-          <span className="text-[10px] sm:text-[11px] font-bold text-foreground">
-            {ratingVal}
-          </span>
-          <span className="text-[9px] sm:text-[10px] text-muted-foreground">
-            ({reviewCount})
-          </span>
-        </div>
+        {hasRating ? (
+          <div className="flex items-center gap-1 text-[10px] sm:text-[11px]">
+            <Star className="size-3 fill-amber-400 text-amber-400" />
+            <span className="font-bold text-foreground">{ratingVal}</span>
+            {reviewCount && (
+              <span className="text-muted-foreground">({reviewCount})</span>
+            )}
+          </div>
+        ) : (
+          <div className="text-[10px] sm:text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+            ১০০% খাঁটি ও অর্গানিক
+          </div>
+        )}
 
         <Link
           href={`/product/${product.handle}`}
@@ -87,7 +95,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           className="w-full rounded-xl bg-emerald-600 font-bold text-white text-[11px] sm:text-xs hover:bg-emerald-500 shadow-2xs h-7 sm:h-9"
         >
           <ShoppingBag className="size-3 sm:size-3.5" />
-          <span>অর্ডার করুন</span>
+          <span>বিস্তারিত দেখুন</span>
         </Button>
       </div>
     </div>

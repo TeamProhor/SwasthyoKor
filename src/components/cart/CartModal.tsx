@@ -205,8 +205,12 @@ export function CartModal() {
                 </div>
 
                 <form action={checkout}>
-                  <CheckoutButton />
+                  <CheckoutButton totalAmount={cart.cost.totalAmount.amount} currencyCode={cart.cost.totalAmount.currencyCode} />
                 </form>
+
+                <p className="text-[11px] text-center text-muted-foreground mt-2.5">
+                  🔒 ক্যাশ অন ডেলিভারি সুবিধা • পণ্য দেখে মূল্য পরিশোধ
+                </p>
               </div>
             </div>
           )}
@@ -216,7 +220,7 @@ export function CartModal() {
   );
 }
 
-function CheckoutButton() {
+function CheckoutButton({ totalAmount, currencyCode }: { totalAmount: string; currencyCode: string }) {
   const { pending } = useFormStatus();
 
   return (
@@ -231,6 +235,7 @@ function CheckoutButton() {
         <>
           <BagShopping className="size-4" />
           <span>অর্ডার সম্পন্ন করুন</span>
+          <span className="ml-auto font-mono">৳{parseFloat(totalAmount).toLocaleString('bn-BD')}</span>
         </>
       )}
     </button>

@@ -79,12 +79,23 @@ export function ProductQuickView({
                 ) : null}
               </div>
 
-              <div className="flex flex-col min-w-0">
-                <h3 className="line-clamp-2 text-base font-bold text-foreground">
+              <div className="flex flex-col min-w-0 flex-1">
+                {product.rating && product.rating > 0 ? (
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] text-amber-500 font-bold">
+                      ★ {product.rating.toFixed(1)} (
+                      {product.reviewCount && product.reviewCount > 0
+                        ? product.reviewCount.toLocaleString("bn-BD")
+                        : "১"}
+                      )
+                    </span>
+                  </div>
+                ) : null}
+                <h3 className="line-clamp-2 text-sm sm:text-base font-bold text-foreground">
                   {product.title}
                 </h3>
                 <div className="mt-1 flex items-center gap-2">
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                  <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
                     <Price
                       amount={
                         defaultVariant?.price.amount ??
@@ -111,21 +122,21 @@ export function ProductQuickView({
 
             {/* Description snippet */}
             {product.description && (
-              <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
+              <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                 {product.description}
               </p>
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-2 pt-2">
+            <div className="flex flex-col gap-2 pt-1">
               <Button
                 render={
                   <Link href={`/checkout/${product.handle}`}>
-                    সরাসরি অর্ডার করুন
+                    সরাসরি অর্ডার করুন (ক্যাশ অন ডেলিভারি)
                   </Link>
                 }
                 size="lg"
-                className="w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed shadow-xs"
+                className="w-full rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed shadow-xs"
                 disabled={!isAvailable}
                 onClick={() => setOpen(false)}
               />
@@ -133,7 +144,7 @@ export function ProductQuickView({
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full rounded-xl border-border font-medium"
+                className="w-full rounded-xl border-border font-bold text-xs sm:text-sm"
                 disabled={!isAvailable || addCartItem.isPending}
                 onClick={handleAddToCart}
               >
@@ -149,10 +160,14 @@ export function ProductQuickView({
                   : "স্টক শেষ"}
               </Button>
 
+              <p className="text-[11px] text-center text-muted-foreground pt-0.5">
+                🔒 পণ্য হাতে পেয়ে দেখে মূল্য পরিশোধ সুবিধা
+              </p>
+
               <Button
                 render={
                   <Link href={`/product/${product.handle}`}>
-                    সম্পূর্ণ বিবরণ ও রিভিউ দেখুন
+                    সম্পূর্ণ বিবরণ ও গ্রাহক রিভিউ দেখুন
                   </Link>
                 }
                 variant="ghost"

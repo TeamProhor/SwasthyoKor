@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Star, MessagePlus, ArrowDoorIn } from "@/components/icons";
+import { ArrowDoorIn, MessagePlus, Star } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared/ResponsiveDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -73,11 +73,16 @@ export function ProductReviews({
   };
 
   const avgRating = reviews.length
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(
+        1,
+      )
     : null;
 
   return (
-    <section id="reviews-section" className="py-4 sm:py-6 border-t border-border/40">
+    <section
+      id="reviews-section"
+      className="py-4 sm:py-6 border-t border-border/40"
+    >
       {/* Compact Header with Rating & Action */}
       <div className="flex items-center justify-between gap-3 mb-3.5">
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -115,14 +120,23 @@ export function ProductReviews({
             <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
               <div className="flex items-center gap-2.5 p-2 rounded-lg bg-muted/40 border border-border/60">
                 <Avatar className="size-8 rounded-full">
-                  {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name || "User"} />}
+                  {user.avatarUrl && (
+                    <AvatarImage
+                      src={user.avatarUrl}
+                      alt={user.name || "User"}
+                    />
+                  )}
                   <AvatarFallback className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-xs">
                     {user.name ? user.name[0].toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="text-xs font-bold text-foreground">{user.name || "ইউজার"}</div>
-                  <div className="text-[10px] text-muted-foreground">{user.email}</div>
+                  <div className="text-xs font-bold text-foreground">
+                    {user.name || "ইউজার"}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {user.email}
+                  </div>
                 </div>
               </div>
 
@@ -149,7 +163,12 @@ export function ProductReviews({
               </div>
 
               <div className="flex flex-col gap-1">
-                <Label htmlFor="reviewComment" className="text-xs font-semibold">আপনার মন্তব্য</Label>
+                <Label
+                  htmlFor="reviewComment"
+                  className="text-xs font-semibold"
+                >
+                  আপনার মন্তব্য
+                </Label>
                 <Textarea
                   id="reviewComment"
                   value={comment}

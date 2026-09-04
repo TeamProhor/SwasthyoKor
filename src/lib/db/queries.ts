@@ -17,21 +17,21 @@ import type {
 } from "../types";
 import { db } from "./index";
 import {
+  blogs,
   cartItems,
   carts,
   collections,
+  heroBanners,
   menus,
   orders,
   pages,
-  blogs,
-  storeSettings,
-  productReviews,
-  heroBanners,
   productCollections,
   type productImages,
   type productOptions,
+  productReviews,
   products,
   type productVariants,
+  storeSettings,
 } from "./schema";
 
 type SortKey = "RELEVANCE" | "BEST_SELLING" | "CREATED_AT" | "PRICE";
@@ -71,8 +71,12 @@ function toProduct(row: ProductRow): Product {
   const comparePrices = row.variants
     .map((variant) => variant.compareAtPrice)
     .filter((p): p is number => typeof p === "number" && p > 0);
-  const minComparePrice = comparePrices.length ? Math.min(...comparePrices) : undefined;
-  const maxComparePrice = comparePrices.length ? Math.max(...comparePrices) : undefined;
+  const minComparePrice = comparePrices.length
+    ? Math.min(...comparePrices)
+    : undefined;
+  const maxComparePrice = comparePrices.length
+    ? Math.max(...comparePrices)
+    : undefined;
 
   const images = row.images.map((image) => ({
     url: image.url,
@@ -85,9 +89,14 @@ function toProduct(row: ProductRow): Product {
 
   const reviewsList = row.reviews || [];
   const reviewCount = reviewsList.length;
-  const rating = reviewCount > 0
-    ? Number((reviewsList.reduce((acc, r) => acc + r.rating, 0) / reviewCount).toFixed(1))
-    : 0;
+  const rating =
+    reviewCount > 0
+      ? Number(
+          (
+            reviewsList.reduce((acc, r) => acc + r.rating, 0) / reviewCount
+          ).toFixed(1),
+        )
+      : 0;
 
   return {
     id: row.id,
@@ -200,6 +209,7 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
       images: { orderBy: (image, { asc }) => [asc(image.position)] },
       variants: { orderBy: (variant, { asc }) => [asc(variant.position)] },
       options: { orderBy: (option, { asc }) => [asc(option.position)] },
+      reviews: true,
       collections: {
         with: {
           collection: true,
@@ -237,19 +247,31 @@ export async function getProductRecommendations(
     ];
   }
 
-  const all = await loadProducts();
-  const byId = new Map(all.map((product) => [product.id, product]));
-  const related = relatedIds
-    .map((id) => byId.get(id))
-    .filter((product): product is Product => Boolean(product));
+  let recommendations: Product[] = [];
+  if (relatedIds.length > 0) {
+    recommendations = await loadProducts(
+      inArray(products.id, relatedIds.slice(0, 4)),
+    );
+  }
 
-  if (related.length >= 4) return related.slice(0, 4);
+  if (recommendations.length < 4) {
+    const existingIds = [productId, ...recommendations.map((r) => r.id)];
+    const additionalRows = await db.query.products.findMany({
+      where: (p, { notInArray }) => notInArray(p.id, existingIds),
+      limit: 4 - recommendations.length,
+    });
+    if (additionalRows.length > 0) {
+      const additional = await loadProducts(
+        inArray(
+          products.id,
+          additionalRows.map((p) => p.id),
+        ),
+      );
+      recommendations.push(...additional);
+    }
+  }
 
-  const fillers = all.filter(
-    (product) => product.id !== productId && !related.includes(product),
-  );
-
-  return [...related, ...fillers].slice(0, 4);
+  return recommendations.slice(0, 4);
 }
 
 export async function getCollections(): Promise<Collection[]> {
@@ -444,15 +466,15 @@ export async function getBlog(slug: string): Promise<BlogPost | undefined> {
     image: string;
   }[] = [];
   if (b.relatedProductHandles && b.relatedProductHandles.length > 0) {
-    const prods = await getProducts({});
-    relatedProducts = prods
-      .filter((p) => b.relatedProductHandles.includes(p.handle))
-      .map((p) => ({
-        title: p.title,
-        handle: p.handle,
-        price: `৳${p.priceRange.minVariantPrice.amount}`,
-        image: p.featuredImage?.url || "/icon.png",
-      }));
+    const prods = await loadProducts(
+      inArray(products.handle, b.relatedProductHandles),
+    );
+    relatedProducts = prods.map((p) => ({
+      title: p.title,
+      handle: p.handle,
+      price: `৳${p.priceRange.minVariantPrice.amount}`,
+      image: p.featuredImage?.url || "/icon.png",
+    }));
   }
 
   return {
@@ -630,8 +652,7 @@ export async function getHeroBanners() {
       id: "3",
       title: "প্রিমিয়াম অর্গানিক চিয়া সিড ও",
       highlight: "সুপারফুড সংগ্রহ",
-      subtitle:
-        "প্রতিদিনের সুস্থতা ও রোগ প্রতিরোধ ক্ষমতা বৃদ্ধিতে খাঁটি সুপারফুডের সমাহার।",
+      subtitle: "প্রতিদিনের সুস্থতা ও রোগ প্রতিরোধ ক্ষমতা বৃদ্ধিতে খাঁটি সুপারফুডের সমাহার।",
       link: "/search/superfoods-wellness",
       accentColor: "text-teal-400",
       image:
@@ -644,8 +665,7 @@ export async function getHeroBanners() {
       id: "4",
       title: "সেরা বাছাইকৃত ড্রাই ফ্রুটস ও",
       highlight: "পুষ্টিকর বাদাম",
-      subtitle:
-        "আমন্ড, কাজু, পেস্তা, আখরোট ও প্রিমিয়াম কিশমিশের সেরা স্বাস্থ্যকর স্ন্যাক্স।",
+      subtitle: "আমন্ড, কাজু, পেস্তা, আখরোট ও প্রিমিয়াম কিশমিশের সেরা স্বাস্থ্যকর স্ন্যাক্স।",
       link: "/search?q=বাদাম",
       accentColor: "text-amber-300",
       image:

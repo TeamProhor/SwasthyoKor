@@ -3,7 +3,11 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Gallery, ProductDescription } from "@/components/product";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getProduct, getProductRecommendations, getProductReviews } from "@/lib/db/queries";
+import {
+  getProduct,
+  getProductRecommendations,
+  getProductReviews,
+} from "@/lib/db/queries";
 import type { Image as ImageType } from "@/lib/types";
 import { baseUrl } from "@/lib/utils";
 
@@ -133,13 +137,20 @@ export default async function ProductPage(props: {
             name: "SwasthyoKor",
           },
         },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.9",
-          reviewCount: "28",
-          bestRating: "5",
-          worstRating: "1",
-        },
+        ...(formattedReviews.length > 0
+          ? {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: (
+                  formattedReviews.reduce((sum, r) => sum + r.rating, 0) /
+                  formattedReviews.length
+                ).toFixed(1),
+                reviewCount: formattedReviews.length.toString(),
+                bestRating: "5",
+                worstRating: "1",
+              },
+            }
+          : {}),
       },
       {
         "@type": "FAQPage",

@@ -47,7 +47,7 @@ function ThreeItemGridItem({
 
         <div
           className={cn(
-            "absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 z-10 flex items-center justify-between rounded-xl border border-neutral-200/80 bg-white/80 p-2 backdrop-blur-md transition-colors group-hover:border-emerald-500/40 dark:border-neutral-800/80 dark:bg-neutral-950/80",
+            "absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 z-10 flex items-center justify-between rounded-xl border border-neutral-200/80 bg-white/90 p-2 backdrop-blur-xl shadow-sm transition-colors group-hover:border-emerald-500/40 dark:border-neutral-800/80 dark:bg-neutral-950/90",
             size === "full" && "md:bottom-6 md:left-6 md:right-6 md:p-3",
           )}
         >

@@ -49,7 +49,10 @@ export const products = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [index("products_handle_idx").on(table.handle)],
+  (table) => [
+    index("products_handle_idx").on(table.handle),
+    index("products_available_idx").on(table.availableForSale),
+  ],
 );
 
 export const productImages = pgTable(
@@ -162,13 +165,25 @@ export const blogs = pgTable(
     title: varchar("title", { length: 255 }).notNull(),
     description: text("description").notNull(),
     content: text("content").notNull(),
-    category: varchar("category", { length: 100 }).notNull().default("মধু ও পুষ্টি"),
+    category: varchar("category", { length: 100 })
+      .notNull()
+      .default("মধু ও পুষ্টি"),
     readTime: varchar("read_time", { length: 50 }).notNull().default("৫ মিনিট"),
-    author: varchar("author", { length: 100 }).notNull().default("স্বাস্থ্যকর নিউট্রিশন টিম"),
+    author: varchar("author", { length: 100 })
+      .notNull()
+      .default("স্বাস্থ্যকর নিউট্রিশন টিম"),
     coverImage: text("cover_image").notNull(),
+    inArticleImageUrl: text("in_article_image_url"),
+    inArticleImageCaption: text("in_article_image_caption"),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
-    faqs: jsonb("faqs").$type<{ question: string; answer: string }[]>().notNull().default([]),
-    relatedProductHandles: jsonb("related_product_handles").$type<string[]>().notNull().default([]),
+    faqs: jsonb("faqs")
+      .$type<{ question: string; answer: string }[]>()
+      .notNull()
+      .default([]),
+    relatedProductHandles: jsonb("related_product_handles")
+      .$type<string[]>()
+      .notNull()
+      .default([]),
     published: boolean("published").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -177,7 +192,14 @@ export const blogs = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [index("blogs_slug_idx").on(table.slug)],
+  (table) => [
+    index("blogs_slug_idx").on(table.slug),
+    index("blogs_published_created_at_idx").on(
+      table.published,
+      table.createdAt,
+    ),
+    index("blogs_category_idx").on(table.category),
+  ],
 );
 
 export type Blog = typeof blogs.$inferSelect;
@@ -215,34 +237,43 @@ export const cartItems = pgTable(
   },
   (table) => [
     index("cart_items_cart_idx").on(table.cartId),
+    index("cart_items_product_idx").on(table.productId),
     index("cart_items_variant_idx").on(table.variantId),
   ],
 );
 
-export const orders = pgTable("orders", {
-  id: varchar("id", { length: 255 }).primaryKey(),
-  email: varchar("email", { length: 255 }),
-  totalAmount: real("total_amount").notNull(),
-  totalCurrency: varchar("total_currency", { length: 10 })
-    .notNull()
-    .default("BDT"),
-  status: varchar("status", { length: 50 }).notNull().default("confirmed"),
-  items: jsonb("items")
-    .$type<
-      {
-        productHandle: string;
-        productTitle: string;
-        variantTitle: string;
-        quantity: number;
-        priceAmount: number;
-        priceCurrency: string;
-      }[]
-    >()
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const orders = pgTable(
+  "orders",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    email: varchar("email", { length: 255 }),
+    totalAmount: real("total_amount").notNull(),
+    totalCurrency: varchar("total_currency", { length: 10 })
+      .notNull()
+      .default("BDT"),
+    status: varchar("status", { length: 50 }).notNull().default("confirmed"),
+    items: jsonb("items")
+      .$type<
+        {
+          productHandle: string;
+          productTitle: string;
+          variantTitle: string;
+          quantity: number;
+          priceAmount: number;
+          priceCurrency: string;
+        }[]
+      >()
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("orders_created_at_idx").on(table.createdAt),
+    index("orders_email_idx").on(table.email),
+    index("orders_status_idx").on(table.status),
+  ],
+);
 
 // ─── Authentication Schema ──────────────────────────────────────────────────
 
@@ -392,8 +423,9 @@ export const productReviews = pgTable(
     productId: varchar("product_id", { length: 255 })
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
-    userId: varchar("user_id", { length: 255 })
-      .references(() => users.id, { onDelete: "set null" }),
+    userId: varchar("user_id", { length: 255 }).references(() => users.id, {
+      onDelete: "set null",
+    }),
     userName: varchar("user_name", { length: 255 }).notNull(),
     userAvatar: text("user_avatar"),
     rating: integer("rating").notNull().default(5),
@@ -409,22 +441,30 @@ export const productReviews = pgTable(
   ],
 );
 
-export const heroBanners = pgTable("hero_banners", {
-  id: varchar("id", { length: 255 })
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  title: varchar("title", { length: 255 }).notNull(),
-  highlight: varchar("highlight", { length: 255 }).notNull(),
-  subtitle: text("subtitle").notNull(),
-  link: text("link").notNull().default("/search"),
-  accentColor: varchar("accent_color", { length: 50 }).notNull().default("text-amber-400"),
-  image: text("image").notNull(),
-  position: integer("position").notNull().default(0),
-  active: boolean("active").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const heroBanners = pgTable(
+  "hero_banners",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    title: varchar("title", { length: 255 }).notNull(),
+    highlight: varchar("highlight", { length: 255 }).notNull(),
+    subtitle: text("subtitle").notNull(),
+    link: text("link").notNull().default("/search"),
+    accentColor: varchar("accent_color", { length: 50 })
+      .notNull()
+      .default("text-amber-400"),
+    image: text("image").notNull(),
+    position: integer("position").notNull().default(0),
+    active: boolean("active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("hero_banners_active_position_idx").on(table.active, table.position),
+  ],
+);
 
 export const storeSettings = pgTable("store_settings", {
   id: varchar("id", { length: 50 }).primaryKey().default("default"),
@@ -440,9 +480,7 @@ export const storeSettings = pgTable("store_settings", {
   storeEmail: varchar("store_email", { length: 255 })
     .notNull()
     .default("support@swasthyokor.com"),
-  storeAddress: text("store_address")
-    .notNull()
-    .default("ঢাকা, বাংলাদেশ"),
+  storeAddress: text("store_address").notNull().default("ঢাকা, বাংলাদেশ"),
   insideDhakaFee: real("inside_dhaka_fee").notNull().default(60),
   outsideDhakaFee: real("outside_dhaka_fee").notNull().default(120),
   freeShippingMinAmount: real("free_shipping_min_amount")
