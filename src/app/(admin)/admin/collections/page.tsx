@@ -1,14 +1,18 @@
+import { asc, desc } from "drizzle-orm";
 import { CollectionsTable, CreateCollectionDialog } from "@/components/admin";
 import { db } from "@/lib/db";
 import { collections } from "@/lib/db/schema";
 
 export const metadata = {
-  title: "কালেকশন ও ক্যাটাগরি| অ্যাডমিন",
+  title: "কালেকশন ও ক্যাটাগরি | অ্যাডমিন",
   description: "স্বাস্থ্যকর পণ্যের ক্যাটাগরি ও কালেকশন পরিচালনা।",
 };
 
 export default async function AdminCollectionsPage() {
-  const allCollections = await db.select().from(collections);
+  const allCollections = await db
+    .select()
+    .from(collections)
+    .orderBy(asc(collections.displayOrder), desc(collections.createdAt));
 
   return (
     <div className="flex flex-col gap-6 max-w-6xl">

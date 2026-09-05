@@ -17,13 +17,11 @@ export async function Footer() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 text-sm sm:px-6 sm:py-12 md:flex-row md:gap-12 min-[1320px]:px-0">
         <div>
           <Link
-            className="flex items-center gap-2 text-black md:pt-1 dark:text-white"
+            className="flex items-center text-black md:pt-1 dark:text-white"
             href="/"
+            aria-label={siteName}
           >
             <LogoSquare size="sm" />
-            <span className="font-bold tracking-tight text-emerald-800 dark:text-emerald-400 uppercase">
-              {siteName}
-            </span>
           </Link>
           <p className="mt-2 max-w-xs text-xs text-muted-foreground">
             ১০০% খাঁটি, প্রাকৃতিক ও অর্গানিক স্বাস্থ্যকর খাদ্যের নির্ভরযোগ্য ঠিকানা।

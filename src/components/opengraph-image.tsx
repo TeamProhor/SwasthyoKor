@@ -35,15 +35,6 @@ export default function OpengraphImage(props?: Props): React.ReactElement {
         }}
       >
         <LogoSquare size="sm" />
-        <p
-          style={{
-            marginLeft: 12,
-            fontSize: 28,
-            fontWeight: 600,
-          }}
-        >
-          {process.env.SITE_NAME || "স্বাস্থ্যকর"}
-        </p>
       </div>
       <div
         style={{

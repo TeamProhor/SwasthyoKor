@@ -39,9 +39,10 @@ export function Sidebar({ onClose, dict, lang: _lang }: SidebarProps) {
             <Link
               href="/dashboard"
               onClick={onClose}
+              aria-label="স্বাস্থ্যকর ড্যাশবোর্ড"
               className="flex items-center px-[8px] py-[4px] rounded-[8px] hover:bg-accent transition-colors overflow-hidden shrink-0"
             >
-              <div className="relative flex size-6 items-center justify-center shrink-0 mr-[8px] overflow-hidden">
+              <div className="relative flex size-6 items-center justify-center shrink-0 overflow-hidden">
                 <Image
                   src="/icon.png"
                   alt="স্বাস্থ্যকর"
@@ -51,11 +52,6 @@ export function Sidebar({ onClose, dict, lang: _lang }: SidebarProps) {
                   priority
                 />
               </div>
-              <h3
-                className={`font-[800] text-[18px] lg:text-[16px] whitespace-nowrap mt-[3px] text-foreground transition-opacity duration-200 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
-              >
-                স্বাস্থ্যকর
-              </h3>
             </Link>
 
             <Button

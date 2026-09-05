@@ -19,9 +19,13 @@ export const collections = pgTable(
     handle: varchar("handle", { length: 255 }).notNull().unique(),
     title: varchar("title", { length: 255 }).notNull(),
     description: text("description"),
+    subtitle: text("subtitle"),
     image: text("image"),
     seoTitle: varchar("seo_title", { length: 255 }),
     seoDescription: text("seo_description"),
+    showOnHomepage: boolean("show_on_homepage").notNull().default(false),
+    displayOrder: integer("display_order").notNull().default(0),
+    maxProducts: integer("max_products").notNull().default(4),
     hidden: boolean("hidden").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -30,7 +34,10 @@ export const collections = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [index("collections_handle_idx").on(table.handle)],
+  (table) => [
+    index("collections_handle_idx").on(table.handle),
+    index("collections_homepage_idx").on(table.showOnHomepage),
+  ],
 );
 
 export const products = pgTable(

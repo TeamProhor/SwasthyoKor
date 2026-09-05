@@ -75,6 +75,18 @@ export function CreateCollectionDialog() {
           </Field>
 
           <Field>
+            <FieldLabel htmlFor="col-subtitle">
+              হোমপেজ সাবটাইটেল / ট্যাগলাইন
+            </FieldLabel>
+            <Input
+              id="col-subtitle"
+              name="subtitle"
+              placeholder="যেমন: সুন্দরবনের কাঁচা মধু, গাওয়া ঘি ও খাঁটি গুড়ের সমাহার"
+              className="rounded-xl"
+            />
+          </Field>
+
+          <Field>
             <FieldLabel htmlFor="col-image">ক্যাটাগরি ছবি (Image URL)</FieldLabel>
             <Input
               id="col-image"
@@ -89,11 +101,45 @@ export function CreateCollectionDialog() {
             <Textarea
               id="col-desc"
               name="description"
-              rows={3}
+              rows={2}
               placeholder="কালেকশন সম্পর্কিত সংক্ষিপ্ত বিবরণ..."
               className="rounded-xl"
             />
           </Field>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl border border-border/70 bg-muted/30">
+            <div className="flex items-center gap-2.5">
+              <input
+                type="checkbox"
+                id="col-homepage"
+                name="showOnHomepage"
+                value="true"
+                className="size-4 rounded accent-primary cursor-pointer"
+              />
+              <label
+                htmlFor="col-homepage"
+                className="text-xs font-semibold text-foreground cursor-pointer"
+              >
+                হোমপেজে শোকেস করুন
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="col-order"
+                className="text-xs text-muted-foreground whitespace-nowrap"
+              >
+                ডিসপ্লে ক্রম:
+              </label>
+              <Input
+                id="col-order"
+                name="displayOrder"
+                type="number"
+                defaultValue="0"
+                className="rounded-lg h-8 text-xs w-20"
+              />
+            </div>
+          </div>
         </FieldGroup>
 
         <div className="flex items-center justify-end gap-2 pt-2">

@@ -56,10 +56,10 @@ export default async function CheckoutProductPage(props: {
         <div className="flex items-center justify-between pb-4 sm:pb-6 border-b border-border/80 mb-5 sm:mb-8">
           <Link
             href="/"
-            className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-extrabold text-xl tracking-tight"
+            className="flex items-center text-emerald-800 dark:text-emerald-300"
+            aria-label="স্বাস্থ্যকর"
           >
             <LogoSquare size="sm" />
-            <span>স্বাস্থ্যকর</span>
           </Link>
         </div>
 

@@ -53,7 +53,8 @@ export default function Shell({ children, dict, lang }: ShellProps) {
               </button>
               <Link
                 href={`/`}
-                className="flex flex-row items-center gap-2"
+                aria-label="স্বাস্থ্যকর"
+                className="flex flex-row items-center"
                 onClick={() => setIsSidebarOpen(false)}
               >
                 <div className="relative size-6 shrink-0">
@@ -66,9 +67,6 @@ export default function Shell({ children, dict, lang }: ShellProps) {
                     priority
                   />
                 </div>
-                <h3 className="text-[18px] font-[800] text-foreground whitespace-nowrap mt-[1px]">
-                  স্বাস্থ্যকর
-                </h3>
               </Link>
             </div>
 

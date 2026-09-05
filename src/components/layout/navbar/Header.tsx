@@ -23,11 +23,13 @@ export async function Header() {
             <MobileMenu menu={menu} />
           </Suspense>
         </div>
-        <Link href="/" prefetch={true} className="flex items-center gap-2">
+        <Link
+          href="/"
+          prefetch={true}
+          className="flex items-center"
+          aria-label={siteName}
+        >
           <LogoSquare />
-          <span className="text-base sm:text-lg font-bold tracking-tight text-emerald-800 dark:text-emerald-300">
-            {siteName}
-          </span>
         </Link>
         {menu.length ? (
           <ul className="hidden gap-6 text-sm font-medium md:flex md:items-center ml-4 lg:ml-6">

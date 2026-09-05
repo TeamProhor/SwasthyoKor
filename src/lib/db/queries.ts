@@ -1,4 +1,5 @@
 import {
+  and,
   eq,
   type InferSelectModel,
   ilike,
@@ -388,6 +389,59 @@ export async function getCollectionProducts({
 
   const all = await loadProducts(inArray(products.id, productIds));
   return sortProducts(all, sortKey ?? "RELEVANCE", reverse ?? false);
+}
+
+export interface HomepageShowcaseCategory {
+  id: string;
+  handle: string;
+  title: string;
+  subtitle: string | null;
+  displayOrder: number;
+  products: Product[];
+}
+
+export async function getHomepageShowcaseCategories(): Promise<
+  HomepageShowcaseCategory[]
+> {
+  let rows = await db.query.collections.findMany({
+    where: and(
+      eq(collections.showOnHomepage, true),
+      eq(collections.hidden, false),
+    ),
+    orderBy: (col, { asc, desc }) => [
+      asc(col.displayOrder),
+      desc(col.createdAt),
+    ],
+  });
+
+  // Fallback: If no collections are explicitly marked for homepage showcase yet, fallback to non-hidden collections
+  if (rows.length === 0) {
+    rows = await db.query.collections.findMany({
+      where: eq(collections.hidden, false),
+      orderBy: (col, { asc, desc }) => [
+        asc(col.displayOrder),
+        desc(col.createdAt),
+      ],
+      limit: 6,
+    });
+  }
+
+  const results = await Promise.all(
+    rows.map(async (col) => {
+      const limit = col.maxProducts && col.maxProducts > 4 ? col.maxProducts : 10;
+      const products = await getCollectionProducts({ collection: col.handle });
+      return {
+        id: col.id,
+        handle: col.handle,
+        title: col.title,
+        subtitle: col.subtitle || col.description || null,
+        displayOrder: col.displayOrder,
+        products: products.slice(0, limit),
+      };
+    }),
+  );
+
+  return results.filter((cat) => cat.products.length > 0);
 }
 
 export async function getMenu(handle: string): Promise<Menu[]> {

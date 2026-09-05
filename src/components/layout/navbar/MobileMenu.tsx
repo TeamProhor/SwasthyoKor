@@ -86,12 +86,10 @@ export default function MobileMenu({ menu }: { menu: MenuType[] }) {
             <Link
               href="/"
               onClick={closeMobileMenu}
-              className="flex items-center gap-2"
+              className="flex items-center"
+              aria-label="স্বাস্থ্যকর"
             >
               <LogoSquare />
-              <span className="text-base font-bold text-emerald-800 dark:text-emerald-300">
-                স্বাস্থ্যকর
-              </span>
             </Link>
             <Button
               type="button"

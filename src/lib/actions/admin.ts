@@ -286,7 +286,11 @@ export async function createCollectionAction(formData: FormData) {
       .trim()
       .replace(/[^a-z0-9]+/g, "-");
     const description = (formData.get("description") as string) || "";
+    const subtitle = (formData.get("subtitle") as string) || "";
     const image = (formData.get("image") as string)?.trim() || null;
+    const showOnHomepage = formData.get("showOnHomepage") === "true" || formData.get("showOnHomepage") === "on";
+    const displayOrder = parseInt((formData.get("displayOrder") as string) || "0", 10) || 0;
+    const maxProducts = parseInt((formData.get("maxProducts") as string) || "4", 10) || 4;
 
     const id = `col_${crypto.randomUUID().slice(0, 8)}`;
     const now = new Date();
@@ -296,7 +300,11 @@ export async function createCollectionAction(formData: FormData) {
       handle,
       title,
       description,
+      subtitle,
       image,
+      showOnHomepage,
+      displayOrder,
+      maxProducts,
       createdAt: now,
       updatedAt: now,
     });
@@ -324,7 +332,11 @@ export async function updateCollectionAction(formData: FormData) {
       .trim()
       .replace(/[^a-z0-9]+/g, "-");
     const description = (formData.get("description") as string) || "";
+    const subtitle = (formData.get("subtitle") as string) || "";
     const image = (formData.get("image") as string)?.trim() || null;
+    const showOnHomepage = formData.get("showOnHomepage") === "true" || formData.get("showOnHomepage") === "on";
+    const displayOrder = parseInt((formData.get("displayOrder") as string) || "0", 10) || 0;
+    const maxProducts = parseInt((formData.get("maxProducts") as string) || "4", 10) || 4;
 
     const now = new Date();
 
@@ -334,7 +346,11 @@ export async function updateCollectionAction(formData: FormData) {
         title,
         handle,
         description,
+        subtitle,
         image,
+        showOnHomepage,
+        displayOrder,
+        maxProducts,
         updatedAt: now,
       })
       .where(eq(collections.id, id));
@@ -348,6 +364,28 @@ export async function updateCollectionAction(formData: FormData) {
   } catch (err: unknown) {
     console.error("Update collection error:", err);
     return { success: false, error: "কালেকশন আপডেট করতে সমস্যা হয়েছে।" };
+  }
+}
+
+export async function toggleCollectionHomepageAction(
+  id: string,
+  showOnHomepage: boolean,
+) {
+  try {
+    await db
+      .update(collections)
+      .set({
+        showOnHomepage,
+        updatedAt: new Date(),
+      })
+      .where(eq(collections.id, id));
+
+    revalidatePath("/admin/collections");
+    revalidatePath("/");
+    return { success: true };
+  } catch (err: unknown) {
+    console.error("Toggle collection homepage error:", err);
+    return { success: false, error: "স্ট্যাটাস পরিবর্তন করতে সমস্যা হয়েছে।" };
   }
 }
 
