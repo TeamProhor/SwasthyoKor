@@ -19,6 +19,7 @@ export const collections = pgTable(
     handle: varchar("handle", { length: 255 }).notNull().unique(),
     title: varchar("title", { length: 255 }).notNull(),
     description: text("description"),
+    image: text("image"),
     seoTitle: varchar("seo_title", { length: 255 }),
     seoDescription: text("seo_description"),
     hidden: boolean("hidden").notNull().default(false),

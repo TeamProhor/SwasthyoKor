@@ -76,10 +76,13 @@ const homeFaqSchema = {
   ],
 };
 
-import { getHeroBanners } from "@/lib/db/queries";
+import { getCategorySliderCategories, getHeroBanners } from "@/lib/db/queries";
 
 export default async function HomePage() {
-  const banners = await getHeroBanners();
+  const [banners, categorySliderItems] = await Promise.all([
+    getHeroBanners(),
+    getCategorySliderCategories(),
+  ]);
 
   return (
     <>
@@ -93,8 +96,8 @@ export default async function HomePage() {
         {/* 1. Hero 16:9 Banner Slider */}
         <HeroSection slides={banners} />
 
-        {/* 2. Top Circular Category Badges */}
-        <CategorySlider />
+        {/* 2. Top Circular Category Badges (100% Dynamic from Database) */}
+        <CategorySlider categories={categorySliderItems} />
 
         {/* 3. Flash Deals / আজকের সেরা অফার */}
         <Suspense fallback={null}>

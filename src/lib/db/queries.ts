@@ -282,17 +282,21 @@ export async function getCollections(): Promise<Collection[]> {
 
   return [
     {
+      id: "all",
       handle: "",
       title: "সকল পণ্য (All)",
       description: "সকল পণ্য",
+      image: null,
       seo: { title: "সকল পণ্য", description: "সকল পণ্য" },
       path: "/search",
       updatedAt: new Date(0).toISOString(),
     },
     ...rows.map((collection) => ({
+      id: collection.id,
       handle: collection.handle,
       title: collection.title,
       description: collection.description ?? "",
+      image: collection.image ?? null,
       seo: {
         title: collection.seoTitle ?? collection.title,
         description: collection.seoDescription ?? collection.description ?? "",
@@ -313,9 +317,11 @@ export async function getCollection(
   if (!row) return undefined;
 
   return {
+    id: row.id,
     handle: row.handle,
     title: row.title,
     description: row.description ?? "",
+    image: row.image ?? null,
     seo: {
       title: row.seoTitle ?? row.title,
       description: row.seoDescription ?? row.description ?? "",
@@ -323,6 +329,42 @@ export async function getCollection(
     path: `/search/${row.handle}`,
     updatedAt: row.updatedAt.toISOString(),
   };
+}
+
+export interface CategorySliderItem {
+  id?: string;
+  name: string;
+  nameEn?: string;
+  image: string;
+  href: string;
+}
+
+export async function getCategorySliderCategories(): Promise<
+  CategorySliderItem[]
+> {
+  const rows = await db.query.collections.findMany({
+    where: eq(collections.hidden, false),
+    orderBy: (collection, { asc }) => [asc(collection.title)],
+  });
+
+  const items: CategorySliderItem[] = rows.map((collection) => {
+    // Extract Bangla name and English label if title format is "বাংলা (English)"
+    const match = collection.title.match(/^(.*?)(?:\s*\((.*?)\))?$/);
+    const name = match ? match[1].trim() : collection.title;
+    const nameEn = match?.[2] ? match[2].trim() : undefined;
+
+    return {
+      id: collection.id,
+      name,
+      nameEn,
+      image:
+        collection.image ||
+        "https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&auto=format&fit=crop&q=80",
+      href: `/category/${collection.handle}`,
+    };
+  });
+
+  return items;
 }
 
 export async function getCollectionProducts({

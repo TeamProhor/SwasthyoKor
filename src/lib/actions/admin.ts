@@ -286,6 +286,7 @@ export async function createCollectionAction(formData: FormData) {
       .trim()
       .replace(/[^a-z0-9]+/g, "-");
     const description = (formData.get("description") as string) || "";
+    const image = (formData.get("image") as string)?.trim() || null;
 
     const id = `col_${crypto.randomUUID().slice(0, 8)}`;
     const now = new Date();
@@ -295,12 +296,15 @@ export async function createCollectionAction(formData: FormData) {
       handle,
       title,
       description,
+      image,
       createdAt: now,
       updatedAt: now,
     });
 
     revalidatePath("/admin/collections");
     revalidatePath("/search");
+    revalidatePath("/category");
+    revalidatePath("/");
 
     return { success: true, message: "কালেকশন তৈরি হয়েছে।" };
   } catch (err: unknown) {
@@ -320,6 +324,7 @@ export async function updateCollectionAction(formData: FormData) {
       .trim()
       .replace(/[^a-z0-9]+/g, "-");
     const description = (formData.get("description") as string) || "";
+    const image = (formData.get("image") as string)?.trim() || null;
 
     const now = new Date();
 
@@ -329,6 +334,7 @@ export async function updateCollectionAction(formData: FormData) {
         title,
         handle,
         description,
+        image,
         updatedAt: now,
       })
       .where(eq(collections.id, id));

@@ -67,6 +67,7 @@ export default async function CategoriesPage() {
               "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80",
             icon: "🌿",
           };
+          const imageSrc = collection.image || meta.image;
 
           return (
             <Link
@@ -77,7 +78,7 @@ export default async function CategoriesPage() {
               {/* Image Side */}
               <div className="relative w-full sm:w-2/5 h-48 sm:h-auto overflow-hidden bg-muted">
                 <Image
-                  src={meta.image}
+                  src={imageSrc}
                   alt={collection.title}
                   fill
                   sizes="(min-width: 1024px) 300px, 100vw"

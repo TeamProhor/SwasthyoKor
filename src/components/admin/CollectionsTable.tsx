@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Edit, Trash2 } from "@/components/icons";
+import { Edit, Folder, Trash2 } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,7 @@ interface CollectionItem {
   title: string;
   handle: string;
   description?: string | null;
+  image?: string | null;
   createdAt: Date;
 }
 
@@ -103,12 +105,27 @@ export function CollectionsTable({
             collections.map((col) => (
               <TableRow key={col.id}>
                 <TableCell className="px-6 py-4 font-bold text-foreground">
-                  <Link
-                    href={`/search/${col.handle}`}
-                    className="hover:underline hover:text-primary transition-colors"
-                  >
-                    {col.title}
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <div className="relative size-10 rounded-full overflow-hidden border border-border bg-muted shrink-0 flex items-center justify-center">
+                      {col.image ? (
+                        <Image
+                          src={col.image}
+                          alt={col.title}
+                          fill
+                          sizes="40px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <Folder className="size-4 text-muted-foreground" />
+                      )}
+                    </div>
+                    <Link
+                      href={`/search/${col.handle}`}
+                      className="hover:underline hover:text-primary transition-colors line-clamp-1"
+                    >
+                      {col.title}
+                    </Link>
+                  </div>
                 </TableCell>
                 <TableCell className="px-6 py-4 font-mono text-xs text-muted-foreground">
                   /{col.handle}
@@ -184,6 +201,19 @@ export function CollectionsTable({
                   name="handle"
                   defaultValue={editingCol.handle}
                   required
+                  className="rounded-xl font-mono text-xs"
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="edit-col-image">
+                  ক্যাটাগরি ছবি URL (Image URL)
+                </FieldLabel>
+                <Input
+                  id="edit-col-image"
+                  name="image"
+                  defaultValue={editingCol.image || ""}
+                  placeholder="https://..."
                   className="rounded-xl font-mono text-xs"
                 />
               </Field>

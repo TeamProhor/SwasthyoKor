@@ -7,77 +7,12 @@ import { ArrowLeft2, ArrowRight2 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 export interface CategoryItem {
+  id?: string;
   name: string;
   nameEn?: string;
   image: string;
   href: string;
 }
-
-export const defaultCategories: CategoryItem[] = [
-  {
-    name: "খাঁটি পণ্য",
-    nameEn: "Essentials",
-    image:
-      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&auto=format&fit=crop&q=80",
-    href: "/category/organic-essentials",
-  },
-  {
-    name: "ঘানি ভাঙা তেল ও ঘি",
-    nameEn: "Oils & Ghee",
-    image:
-      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&auto=format&fit=crop&q=80",
-    href: "/category/oils-and-ghee",
-  },
-  {
-    name: "সুপারফুড ও পুষ্টি",
-    nameEn: "Superfoods",
-    image:
-      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=300&auto=format&fit=crop&q=80",
-    href: "/category/superfoods-wellness",
-  },
-  {
-    name: "বাদাম ও ড্রাই ফ্রুটস",
-    nameEn: "Nuts & Dry Fruits",
-    image:
-      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&auto=format&fit=crop&q=80",
-    href: "/category/nuts-dry-fruits",
-  },
-  {
-    name: "খাঁটি সুন্দরবন মধু",
-    nameEn: "Raw Honey",
-    image:
-      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=মধু",
-  },
-  {
-    name: "গাওয়া ঘি",
-    nameEn: "Pure Ghee",
-    image:
-      "https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=ঘি",
-  },
-  {
-    name: "কালোজিরা তেল",
-    nameEn: "Black Seed Oil",
-    image:
-      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=কালোজিরা",
-  },
-  {
-    name: "হিমালয়ান পিংক সল্ট",
-    nameEn: "Pink Rock Salt",
-    image:
-      "https://images.unsplash.com/photo-1607672632458-9eb56696346b?w=300&auto=format&fit=crop&q=80",
-    href: "/search?q=সল্ট",
-  },
-  {
-    name: "সকল ক্যাটাগরি",
-    nameEn: "All Categories",
-    image:
-      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&auto=format&fit=crop&q=80",
-    href: "/category",
-  },
-];
 
 interface CategorySliderProps {
   categories?: CategoryItem[];
@@ -86,11 +21,15 @@ interface CategorySliderProps {
 }
 
 export function CategorySlider({
-  categories = defaultCategories,
+  categories = [],
   title = "জনপ্রিয় ক্যাটাগরি",
   subtitle = "আপনার পছন্দের ক্যাটাগরি থেকে সহজে কেনাকাটা করুন",
 }: CategorySliderProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  if (!categories || categories.length === 0) {
+    return null;
+  }
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollContainerRef.current) return;

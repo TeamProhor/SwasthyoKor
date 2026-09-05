@@ -71,9 +71,11 @@ export type Product = {
 };
 
 export type Collection = {
+  id?: string;
   handle: string;
   title: string;
   description: string;
+  image?: string | null;
   seo: SEO;
   path: string;
   updatedAt: string;

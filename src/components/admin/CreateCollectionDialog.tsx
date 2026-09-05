@@ -75,6 +75,16 @@ export function CreateCollectionDialog() {
           </Field>
 
           <Field>
+            <FieldLabel htmlFor="col-image">ক্যাটাগরি ছবি (Image URL)</FieldLabel>
+            <Input
+              id="col-image"
+              name="image"
+              placeholder="https://... বা ছবির লিংক"
+              className="rounded-xl"
+            />
+          </Field>
+
+          <Field>
             <FieldLabel htmlFor="col-desc">বিবরণ</FieldLabel>
             <Textarea
               id="col-desc"
