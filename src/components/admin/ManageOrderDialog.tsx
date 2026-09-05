@@ -133,7 +133,7 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">পেমেন্ট মেথড:</span>
             <span className="font-semibold uppercase text-xs px-2 py-0.5 rounded bg-muted">
-              {order.paymentMethod || "COD"}
+              {order.paymentMethod || "ONLINE"}
             </span>
           </div>
           <div className="flex items-center justify-between">

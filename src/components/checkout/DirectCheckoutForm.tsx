@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { BagShopping } from "@/components/icons";
+import { BagShopping, CheckCircle, CloseCircle, Tag } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import { checkoutDirectProduct } from "@/lib/actions/checkout";
 
 interface DirectCheckoutFormProps {
@@ -22,13 +23,72 @@ export function DirectCheckoutForm({
   initialName = "",
   initialPhone = "",
 }: DirectCheckoutFormProps) {
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "online">("cod");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discountAmount: number;
+    finalAmount: number;
+    message: string;
+  } | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [isApplying, setIsApplying] = useState(false);
+
+  const payableAmount = appliedCoupon ? appliedCoupon.finalAmount : finalTotal;
+
+  const handleApplyCoupon = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!couponCode.trim()) return;
+
+    setIsApplying(true);
+    setCouponError("");
+
+    try {
+      const res = await fetch("/api/coupons/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: couponCode.trim(),
+          orderAmount: finalTotal,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setCouponError(data.error || "কুপন কোডটি সঠিক নয়।");
+        setAppliedCoupon(null);
+      } else {
+        setAppliedCoupon({
+          code: data.code,
+          discountAmount: data.discountAmount,
+          finalAmount: data.finalAmount,
+          message: data.message,
+        });
+        setCouponError("");
+      }
+    } catch {
+      setCouponError("কুপন যাচাই করতে সমস্যা হয়েছে।");
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleRemoveCoupon = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponError("");
+  };
 
   return (
     <form action={checkoutDirectProduct} className="space-y-4">
       <input type="hidden" name="handle" value={handle} />
       <input type="hidden" name="quantity" value={quantity.toString()} />
-      <input type="hidden" name="paymentMethod" value={paymentMethod} />
+      <input type="hidden" name="paymentMethod" value="online" />
+      <input
+        type="hidden"
+        name="couponCode"
+        value={appliedCoupon ? appliedCoupon.code : ""}
+      />
 
       <div className="space-y-1.5">
         <Label htmlFor="name">আপনার পুরো নাম</Label>
@@ -66,79 +126,99 @@ export function DirectCheckoutForm({
         />
       </div>
 
-      {/* Payment Method Selector */}
-      <div className="space-y-2 pt-2">
-        <Label className="text-sm font-semibold">পেমেন্ট পদ্ধতি নির্বাচন করুন</Label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <button
-            type="button"
-            onClick={() => setPaymentMethod("cod")}
-            className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer ${
-              paymentMethod === "cod"
-                ? "border-emerald-600 bg-emerald-500/10 text-emerald-950 dark:text-emerald-200 ring-2 ring-emerald-600/30"
-                : "border-border/80 bg-card hover:border-border text-foreground"
-            }`}
-          >
-            <input
-              type="radio"
-              name="paymentChoice"
-              checked={paymentMethod === "cod"}
-              onChange={() => setPaymentMethod("cod")}
-              className="mt-1 size-4 accent-emerald-600 cursor-pointer"
-            />
-            <div>
-              <div className="text-sm font-bold flex items-center gap-1.5">
-                <span>ক্যাশ অন ডেলিভারি</span>
-                <span className="text-[10px] bg-emerald-600/15 text-emerald-700 dark:text-emerald-300 font-semibold px-1.5 py-0.5 rounded">
-                  COD
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                পণ্য হাতে পেয়ে দেখে মূল্য পরিশোধ করুন
-              </p>
-            </div>
-          </button>
+      {/* Coupon Application Box */}
+      <div className="pt-1">
+        <div className="rounded-xl border border-border bg-card p-3.5 space-y-2.5">
+          <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+            <Tag className="size-3.5 text-emerald-600" />
+            <span>কুপন বা ডিসকাউন্ট ভাউচার কোড</span>
+          </Label>
 
-          <button
-            type="button"
-            onClick={() => setPaymentMethod("online")}
-            className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all cursor-pointer ${
-              paymentMethod === "online"
-                ? "border-emerald-600 bg-emerald-500/10 text-emerald-950 dark:text-emerald-200 ring-2 ring-emerald-600/30"
-                : "border-border/80 bg-card hover:border-border text-foreground"
-            }`}
-          >
-            <input
-              type="radio"
-              name="paymentChoice"
-              checked={paymentMethod === "online"}
-              onChange={() => setPaymentMethod("online")}
-              className="mt-1 size-4 accent-emerald-600 cursor-pointer"
-            />
-            <div>
-              <div className="text-sm font-bold flex items-center gap-1.5">
-                <span>অনলাইন পেমেন্ট</span>
-                <span className="text-[10px] bg-blue-600/15 text-blue-700 dark:text-blue-300 font-semibold px-1.5 py-0.5 rounded">
-                  বিকাশ / নগদ / কার্ড
+          {appliedCoupon ? (
+            <div className="flex items-center justify-between p-2.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-xs text-emerald-900 dark:text-emerald-200">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="size-4 text-emerald-600 shrink-0" />
+                <span>
+                  কুপন{" "}
+                  <strong className="font-mono uppercase">
+                    {appliedCoupon.code}
+                  </strong>{" "}
+                  যুক্ত হয়েছে (-৳
+                  {appliedCoupon.discountAmount.toLocaleString("bn-BD")})
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                সুরক্ষিত অনলাইন গেটওয়ে দিয়ে সরাসরি পেমেন্ট
-              </p>
+              <button
+                type="button"
+                onClick={handleRemoveCoupon}
+                className="text-muted-foreground hover:text-red-600 transition-colors p-1"
+                title="কুপন মুছুন"
+              >
+                <CloseCircle className="size-4" />
+              </button>
             </div>
-          </button>
+          ) : (
+            <div className="flex gap-2">
+              <Input
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                placeholder="প্রোমোকোড লিখুন (যেমন: SWAS10)"
+                className="rounded-lg h-9 text-xs font-mono uppercase"
+              />
+              <Button
+                type="button"
+                onClick={handleApplyCoupon}
+                disabled={isApplying || !couponCode.trim()}
+                variant="outline"
+                size="sm"
+                className="rounded-lg h-9 px-4 text-xs font-semibold shrink-0 cursor-pointer border-emerald-600 text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+              >
+                {isApplying ? <Spinner className="size-3" /> : "প্রয়োগ করুন"}
+              </Button>
+            </div>
+          )}
+
+          {couponError ? (
+            <p className="text-[11px] text-red-600 dark:text-red-400 font-medium">
+              {couponError}
+            </p>
+          ) : null}
+
+          {appliedCoupon ? (
+            <div className="pt-1 text-xs text-muted-foreground space-y-1">
+              <div className="flex justify-between">
+                <span>মূল মূল্য:</span>
+                <span>৳{finalTotal.toLocaleString("bn-BD")}</span>
+              </div>
+              <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
+                <span>কুপন ছাড়:</span>
+                <span>
+                  -৳{appliedCoupon.discountAmount.toLocaleString("bn-BD")}
+                </span>
+              </div>
+              <div className="flex justify-between font-bold text-foreground border-t border-border/50 pt-1 text-sm">
+                <span>পরিশোধযোগ্য মূল্য:</span>
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  ৳{payableAmount.toLocaleString("bn-BD")}
+                </span>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div className="pt-2">
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2.5">
-          <div className="size-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
-          <span>
-            {paymentMethod === "online"
-              ? "বিকাশ, নগদ, রকেট, উপায় বা ব্যাংক কার্ডের মাধ্যমে পেমেন্ট সম্পন্ন হবে।"
-              : "পণ্য হাতে পেয়ে দেখে মূল্য পরিশোধ (Cash on Delivery) সুবিধা রয়েছে।"}
+      {/* Online Payment Method Banner */}
+      <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 space-y-1.5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+            পেমেন্ট পদ্ধতি
+          </span>
+          <span className="text-[11px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full">
+            ১০০% নিরাপদ অনলাইন পেমেন্ট
           </span>
         </div>
+        <p className="text-xs font-semibold text-foreground">
+          বিকাশ, নগদ, রকেট অথবা কার্ডের মাধ্যমে সম্পূর্ণ মূল্য অগ্রিম পরিশোধযোগ্য।
+        </p>
       </div>
 
       <Button
@@ -148,16 +228,12 @@ export function DirectCheckoutForm({
       >
         <BagShopping className="size-4" />
         <span>
-          {paymentMethod === "online"
-            ? `অনলাইনে পেমেন্ট করুন — ৳${finalTotal.toLocaleString("bn-BD")}`
-            : `অর্ডার নিশ্চিত করুন — ৳${finalTotal.toLocaleString("bn-BD")} (ক্যাশ অন ডেলিভারি)`}
+          পেমেন্ট করুন — ৳{payableAmount.toLocaleString("bn-BD")} (অনলাইন গেটওয়ে)
         </span>
       </Button>
 
       <p className="text-[11px] text-center text-muted-foreground pt-1">
-        {paymentMethod === "online"
-          ? "পেমেন্ট সম্পন্ন করার জন্য আপনাকে UddoktaPay সুরক্ষিত গেটওয়েতে রিডাইরেক্ট করা হবে।"
-          : "অর্ডার প্লেস করার পর আমাদের প্রতিনিধি আপনাকে কল করে নিশ্চিত করবেন।"}
+        অর্ডার নিশ্চিত করতে আপনাকে UddoktaPay সুরক্ষিত গেটওয়েতে নিয়ে যাওয়া হবে।
       </p>
     </form>
   );

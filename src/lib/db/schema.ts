@@ -252,18 +252,22 @@ export const orders = pgTable(
     shippingAddress: text("shipping_address"),
     paymentMethod: varchar("payment_method", { length: 50 })
       .notNull()
-      .default("cod"), // 'cod' | 'online' (bkash/nagad/etc)
+      .default("online"), // 'online' (bkash/nagad/card etc)
+
     paymentStatus: varchar("payment_status", { length: 50 })
       .notNull()
       .default("pending"), // 'pending' | 'paid' | 'failed'
     paymentInvoiceId: varchar("payment_invoice_id", { length: 255 }),
     paymentTrxId: varchar("payment_trx_id", { length: 255 }),
     paymentSenderNumber: varchar("payment_sender_number", { length: 50 }),
+    couponCode: varchar("coupon_code", { length: 50 }),
+    discountAmount: real("discount_amount").default(0),
     totalAmount: real("total_amount").notNull(),
     totalCurrency: varchar("total_currency", { length: 10 })
       .notNull()
       .default("BDT"),
     status: varchar("status", { length: 50 }).notNull().default("confirmed"),
+
     items: jsonb("items")
       .$type<
         {

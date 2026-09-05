@@ -37,10 +37,6 @@ export default async function OrderSuccessPage({
   if (!order) return notFound();
 
   const orderNumber = order.id.slice(0, 8).toUpperCase();
-  const isOnline =
-    order.paymentMethod === "online" ||
-    order.paymentMethod === "bkash" ||
-    order.paymentMethod === "nagad";
   const isPaid = order.paymentStatus === "paid" || payment === "success";
 
   return (
@@ -55,21 +51,23 @@ export default async function OrderSuccessPage({
             <LogoSquare size="sm" />
             <span>স্বাস্থ্যকর</span>
           </Link>
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-full border border-border/60">
-            <CheckCircle className="size-4 text-emerald-600 dark:text-emerald-400" />
-            <span>{isPaid ? "পেমেন্ট ও অর্ডার নিশ্চিত" : "অর্ডার নিশ্চিত"}</span>
-          </div>
         </div>
 
         <Card className="border-border/80 bg-card rounded-2xl shadow-xs overflow-hidden">
           <CardHeader className="text-center pb-2 pt-6">
-            <div className="mx-auto mb-3 flex size-16 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <div
+              className={`mx-auto mb-3 flex size-16 items-center justify-center rounded-2xl ${
+                isPaid
+                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+              }`}
+            >
               <CheckCircle className="size-9" />
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
               {isPaid
-                ? "পেমেন্ট সফল! অর্ডার গৃহীত হয়েছে"
-                : "আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে!"}
+                ? "পেমেন্ট সফল! অর্ডার নিশ্চিত হয়েছে"
+                : "পেমেন্ট অসম্পূর্ণ বা অপেক্ষমাণ"}
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground pt-1">
               অর্ডার ট্র্যাকিং নম্বর:{" "}
@@ -84,7 +82,7 @@ export default async function OrderSuccessPage({
             {isPaid ? (
               <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
                 <p className="font-bold text-sm text-emerald-900 dark:text-emerald-200">
-                  ✓ অনলাইনে সফলভাবে পরিশোধিত
+                  ✓ অনলাইনে সম্পূর্ণ মূল্য পরিশোধিত হয়েছে
                 </p>
                 <p>
                   আপনার পেমেন্ট ভেরিফাই হয়েছে। আমাদের ডেলিভারি টিম দ্রুততম সময়ে আপনার
@@ -97,23 +95,20 @@ export default async function OrderSuccessPage({
                   </p>
                 ) : null}
               </div>
-            ) : payment === "cancelled" ? (
-              <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300">
+            ) : payment === "cancelled" || payment === "failed" ? (
+              <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3.5 text-xs text-red-800 dark:text-red-300 space-y-1">
                 <p className="font-bold text-sm mb-0.5">
                   অনলাইন পেমেন্ট সম্পন্ন হয়নি
                 </p>
                 <p>
-                  আপনার অর্ডারটি ক্যাশ অন ডেলিভারি (COD) হিসেবে সংরক্ষিত রয়েছে।
-                  ডেলিভারির সময় নগদ পরিশোধ করতে পারবেন।
+                  স্বাস্থ্যকরে শুধুমাত্র অগ্রিম অনলাইন পেমেন্টের মাধ্যমে অর্ডার গ্রহণ করা হয়।
+                  অনুগ্রহ করে পুনরায় অর্ডার করুন অথবা পেমেন্ট সম্পন্ন করুন।
                 </p>
               </div>
             ) : (
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 text-xs text-emerald-800 dark:text-emerald-300">
-                <p className="font-semibold text-sm mb-0.5">পরবর্তী ধাপ:</p>
-                <p>
-                  আমাদের প্রতিনিধি দ্রুত আপনার নম্বরে কল দিয়ে অর্ডারটি কনফার্ম করবেন এবং
-                  খুব শীঘ্রই আপনার ঠিকানায় পণ্য পৌঁছে দেওয়া হবে।
-                </p>
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300">
+                <p className="font-semibold text-sm mb-0.5">পেমেন্ট যাচাই চলছে:</p>
+                <p>আপনার পেমেন্ট কনফার্মেশন পাওয়ার সাথে সাথেই অর্ডার প্রসেস শুরু হবে।</p>
               </div>
             )}
 
@@ -158,12 +153,23 @@ export default async function OrderSuccessPage({
                   ফ্রি
                 </span>
               </div>
+              {order.couponCode &&
+              order.discountAmount &&
+              order.discountAmount > 0 ? (
+                <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+                  <span>কুপন ছাড় ({order.couponCode})</span>
+                  <span>-৳{order.discountAmount.toFixed(0)}</span>
+                </div>
+              ) : null}
+
               <div className="flex items-center justify-between text-muted-foreground">
                 <span>পেমেন্ট পদ্ধতি</span>
                 <span className="font-medium text-foreground">
-                  {isOnline
-                    ? `অনলাইন গেটওয়ে (${order.paymentMethod?.toUpperCase() || "UddoktaPay"})`
-                    : "ক্যাশ অন ডেলিভারি (COD)"}
+                  অনলাইন গেটওয়ে (
+                  {order.paymentMethod
+                    ? order.paymentMethod.toUpperCase()
+                    : "UDDOKTAPAY"}
+                  )
                 </span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground">
@@ -175,7 +181,7 @@ export default async function OrderSuccessPage({
                       : "bg-amber-500/15 text-amber-700 dark:text-amber-300"
                   }`}
                 >
-                  {isPaid ? "পরিশোধিত (Paid)" : "অপরিশোধিত (Pending)"}
+                  {isPaid ? "পরিশোধিত (Paid)" : "অপরিশোধিত (Unpaid / Pending)"}
                 </span>
               </div>
             </div>

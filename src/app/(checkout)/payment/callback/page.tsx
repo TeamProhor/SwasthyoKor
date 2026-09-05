@@ -61,6 +61,15 @@ export default async function PaymentCallbackPage({
             })
             .where(eq(orders.id, targetOrderId));
 
+          if (order.couponCode) {
+            const { coupons } = await import("@/lib/db/schema");
+            const { sql } = await import("drizzle-orm");
+            await db
+              .update(coupons)
+              .set({ usedCount: sql`${coupons.usedCount} + 1` })
+              .where(eq(coupons.code, order.couponCode));
+          }
+
           redirect(`/order/${targetOrderId}?payment=success`);
         } else {
           console.error(

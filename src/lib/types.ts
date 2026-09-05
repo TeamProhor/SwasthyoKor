@@ -145,6 +145,8 @@ export type Order = {
   paymentInvoiceId?: string | null;
   paymentTrxId?: string | null;
   paymentSenderNumber?: string | null;
+  couponCode?: string | null;
+  discountAmount?: number | null;
   totalAmount: number;
   totalCurrency: string;
   status: string;

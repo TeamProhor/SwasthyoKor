@@ -583,8 +583,11 @@ export async function getOrder(id: string): Promise<Order | null> {
     paymentInvoiceId: row.paymentInvoiceId,
     paymentTrxId: row.paymentTrxId,
     paymentSenderNumber: row.paymentSenderNumber,
+    couponCode: row.couponCode,
+    discountAmount: row.discountAmount,
     totalAmount: row.totalAmount,
     totalCurrency: row.totalCurrency,
+
     status: row.status,
     items: row.items,
     createdAt: row.createdAt.toISOString(),

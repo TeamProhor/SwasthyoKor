@@ -212,7 +212,7 @@ export function CartModal() {
                 </form>
 
                 <p className="text-[11px] text-center text-muted-foreground mt-2.5">
-                  🔒 ক্যাশ অন ডেলিভারি সুবিধা • পণ্য দেখে মূল্য পরিশোধ
+                  🔒 ১০০% নিরাপদ অনলাইন পেমেন্ট (বিকাশ / নগদ / কার্ড)
                 </p>
               </div>
             </div>

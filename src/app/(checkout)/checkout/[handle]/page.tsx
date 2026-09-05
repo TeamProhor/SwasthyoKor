@@ -5,13 +5,7 @@ import { notFound } from "next/navigation";
 import { DirectCheckoutForm } from "@/components/checkout/DirectCheckoutForm";
 import LogoSquare from "@/components/logo-square";
 import Price from "@/components/price";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getProduct } from "@/lib/db/queries";
@@ -67,9 +61,6 @@ export default async function CheckoutProductPage(props: {
             <LogoSquare size="sm" />
             <span>স্বাস্থ্যকর</span>
           </Link>
-          <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/20">
-            🔒 সুরক্ষিত চেকআউট (বিকাশ / নগদ / COD)
-          </span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -78,11 +69,8 @@ export default async function CheckoutProductPage(props: {
             <Card className="border-border/80 bg-card rounded-2xl shadow-xs">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-bold text-foreground">
-                  ডেলিভারির ঠিকানা ও পেমেন্ট
+                  ডেলিভারির ঠিকানা ও তথ্য
                 </CardTitle>
-                <CardDescription>
-                  আপনার সঠিক ঠিকানা দিন এবং পছন্দের পেমেন্ট পদ্ধতি বেছে নিন।
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <DirectCheckoutForm
@@ -173,7 +161,7 @@ export default async function CheckoutProductPage(props: {
                   </span>
                 </div>
 
-                {/* Video 2 Reassurance Guarantees */}
+                {/* Reassurance Guarantees */}
                 <div className="rounded-xl border border-border/60 bg-muted/25 p-3 space-y-2 pt-3 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <span className="text-emerald-600 font-bold">✓</span>
@@ -181,11 +169,7 @@ export default async function CheckoutProductPage(props: {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-emerald-600 font-bold">✓</span>
-                    <span>পণ্য হাতে পেয়ে চেক করে নেওয়ার সুবিধা</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-emerald-600 font-bold">✓</span>
-                    <span>পছন্দ না হলে ৭ দিনের মান নিশ্চয়তা ও রিটার্ন</span>
+                    <span>পণ্য হাতে পাওয়ার পর ৭ দিনের মান নিশ্চয়তা ও রিটার্ন</span>
                   </div>
                 </div>
               </CardContent>

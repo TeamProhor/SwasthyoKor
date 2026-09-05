@@ -50,6 +50,15 @@ export async function POST(req: NextRequest) {
               updatedAt: new Date(),
             })
             .where(eq(orders.id, orderId));
+
+          if (order.couponCode && order.paymentStatus !== "paid") {
+            const { coupons } = await import("@/lib/db/schema");
+            const { sql } = await import("drizzle-orm");
+            await db
+              .update(coupons)
+              .set({ usedCount: sql`${coupons.usedCount} + 1` })
+              .where(eq(coupons.code, order.couponCode));
+          }
         } else {
           console.error(
             `Webhook amount mismatch for order ${orderId}: Expected ${expectedAmount}, received ${paidAmount}`,
