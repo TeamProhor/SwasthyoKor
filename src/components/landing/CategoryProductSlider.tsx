@@ -75,25 +75,19 @@ export function CategoryProductSlider({
         </div>
       </div>
 
-      {/* Horizontal Scrollable Slider Row with Edge Fade */}
-      <div className="relative w-full">
-        {/* Smooth Edge Fades on Left and Right */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-4 sm:w-8 md:w-12 bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-4 sm:w-8 md:w-12 bg-gradient-to-l from-background to-transparent" />
-
-        <div
-          ref={scrollRef}
-          className="flex gap-3 sm:gap-4 overflow-x-auto pb-3 pt-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth px-0.5"
-        >
-          {products.map((product) => (
-            <div
-              key={product.handle}
-              className="w-[160px] sm:w-[210px] md:w-[240px] lg:w-[260px] shrink-0"
-            >
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
+      {/* Horizontal Scrollable Slider Row */}
+      <div
+        ref={scrollRef}
+        className="flex gap-3 sm:gap-4 overflow-x-auto pb-3 pt-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
+      >
+        {products.map((product) => (
+          <div
+            key={product.handle}
+            className="w-[160px] sm:w-[210px] md:w-[240px] lg:w-[260px] shrink-0"
+          >
+            <ProductCard product={product} />
+          </div>
+        ))}
       </div>
     </section>
   );
