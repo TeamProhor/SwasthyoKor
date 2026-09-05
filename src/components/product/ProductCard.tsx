@@ -29,9 +29,9 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
   return (
     <ProductQuickView product={product} className="size-full">
-      <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-2 sm:p-3.5 shadow-2xs transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md h-full">
+      <div className="group relative flex flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border-0 sm:border sm:border-border/70 bg-transparent sm:bg-card p-1 sm:p-3.5 shadow-none sm:shadow-2xs transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md h-full">
         {/* Product Image */}
-        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted/30 mb-2">
+        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted/25 sm:bg-muted/30 mb-2">
           <Link href={`/product/${product.handle}`} className="block size-full">
             {product.featuredImage?.url ? (
               <Image
@@ -82,11 +82,11 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         </div>
 
         {/* Action Button */}
-        <div className="pt-2 sm:pt-3 mt-1.5 border-t border-border/50">
+        <div className="pt-1.5 sm:pt-3 mt-1 sm:mt-1.5 border-t-0 sm:border-t sm:border-border/50">
           <Button
             render={<Link href={`/product/${product.handle}`} />}
             size="sm"
-            className="w-full rounded-xl bg-emerald-600 font-bold text-white text-[11px] sm:text-xs hover:bg-emerald-500 shadow-2xs h-7 sm:h-9"
+            className="w-full rounded-lg sm:rounded-xl bg-emerald-600 font-bold text-white text-[11px] sm:text-xs hover:bg-emerald-500 shadow-none sm:shadow-2xs h-7 sm:h-9"
           >
             <ShoppingBag className="size-3 sm:size-3.5" />
             <span>বিস্তারিত দেখুন</span>
