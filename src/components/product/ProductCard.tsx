@@ -20,12 +20,12 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       ? compareAtPrice - currentPrice
       : 0;
 
-  const hasRating = Boolean(product.rating && product.rating > 0);
-  const ratingVal = product.rating ? product.rating.toFixed(1) : null;
+  const ratingVal =
+    product.rating && product.rating > 0 ? product.rating.toFixed(1) : "৫.০";
   const reviewCount =
     product.reviewCount && product.reviewCount > 0
-      ? product.reviewCount.toLocaleString("bn-BD")
-      : null;
+      ? `(${product.reviewCount.toLocaleString("bn-BD")})`
+      : "(নতুন)";
 
   return (
     <ProductQuickView product={product} className="size-full">
@@ -55,19 +55,11 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
         {/* Title & Rating */}
         <div className="flex flex-col gap-1 flex-1">
-          {hasRating ? (
-            <div className="flex items-center gap-1 text-[10px] sm:text-[11px]">
-              <Star className="size-3 fill-amber-400 text-amber-400" />
-              <span className="font-bold text-foreground">{ratingVal}</span>
-              {reviewCount && (
-                <span className="text-muted-foreground">({reviewCount})</span>
-              )}
-            </div>
-          ) : (
-            <div className="text-[10px] sm:text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-              ১০০% খাঁটি ও অর্গানিক
-            </div>
-          )}
+          <div className="flex items-center gap-1 text-[10px] sm:text-[11px]">
+            <Star className="size-3 fill-amber-400 text-amber-400" />
+            <span className="font-bold text-foreground">{ratingVal}</span>
+            <span className="text-muted-foreground">{reviewCount}</span>
+          </div>
 
           <Link
             href={`/product/${product.handle}`}

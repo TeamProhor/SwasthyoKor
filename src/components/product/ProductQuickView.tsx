@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
-import { BagShopping } from "@/components/icons";
+import { BagShopping, Star } from "@/components/icons";
 import Price from "@/components/price";
 import { ResponsiveDialog } from "@/components/shared";
 import { Button } from "@/components/ui/button";
@@ -83,17 +83,21 @@ export function ProductQuickView({
             </div>
 
             <div className="flex flex-col min-w-0 flex-1">
-              {product.rating && product.rating > 0 ? (
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] text-amber-500 font-bold">
-                    ★ {product.rating.toFixed(1)} (
-                    {product.reviewCount && product.reviewCount > 0
-                      ? product.reviewCount.toLocaleString("bn-BD")
-                      : "১"}
-                    )
-                  </span>
-                </div>
-              ) : null}
+              <div className="flex items-center gap-1.5 mb-1 text-[10px] text-amber-500 font-bold">
+                <Star className="size-3 fill-amber-400 text-amber-400" />
+                <span>
+                  {product.rating && product.rating > 0
+                    ? product.rating.toFixed(1)
+                    : "৫.০"}
+                </span>
+                <span className="text-muted-foreground font-normal">
+                  (
+                  {product.reviewCount && product.reviewCount > 0
+                    ? `${product.reviewCount.toLocaleString("bn-BD")}টি রিভিউ`
+                    : "খাঁটি মান"}
+                  )
+                </span>
+              </div>
               <h3 className="line-clamp-2 text-sm sm:text-base font-bold text-foreground">
                 {product.title}
               </h3>
