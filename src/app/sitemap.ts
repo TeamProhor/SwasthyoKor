@@ -1,5 +1,10 @@
 import type { MetadataRoute } from "next";
-import { getBlogs, getCollections, getPages, getProducts } from "@/lib/db/queries";
+import {
+  getBlogs,
+  getCollections,
+  getPages,
+  getProducts,
+} from "@/lib/db/queries";
 import { baseUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -37,7 +37,8 @@ export const BLOG_POSTS: BlogPost[] = [
     author: "স্বাস্থ্যকর নিউট্রিশন টিম",
     publishedAt: "2026-08-15T00:00:00Z",
     updatedAt: "2026-08-30T00:00:00Z",
-    coverImage: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1200&auto=format&fit=crop&q=85",
+    coverImage:
+      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1200&auto=format&fit=crop&q=85",
     tags: ["মধু", "সুন্দরবন মধু", "অর্গানিক ফুড", "রোগ প্রতিরোধ ক্ষমতা"],
     content: `
 ## সুন্দরবনের প্রাকৃতিক কাঁচা মধুর বিশেষত্ব
@@ -72,7 +73,8 @@ export const BLOG_POSTS: BlogPost[] = [
         title: "খাঁটি সুন্দরবন মধু (Sundarban Raw Honey)",
         handle: "swasthyo-organic-honey",
         price: "৳৮৫০",
-        image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=85",
+        image:
+          "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=85",
       },
     ],
   },
@@ -86,7 +88,8 @@ export const BLOG_POSTS: BlogPost[] = [
     author: "স্বাস্থ্যকর রিসার্চ টিম",
     publishedAt: "2026-08-20T00:00:00Z",
     updatedAt: "2026-08-31T00:00:00Z",
-    coverImage: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1200&auto=format&fit=crop&q=85",
+    coverImage:
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1200&auto=format&fit=crop&q=85",
     tags: ["সরিষার তেল", "কাঠের ঘানি", "হার্ট হেলথ", "কোল্ড প্রেসড তেল"],
     content: `
 ## কাঠের ঘানির সরিষার তেল কেন অনন্য?
@@ -116,7 +119,8 @@ export const BLOG_POSTS: BlogPost[] = [
         title: "ঘানি ভাঙা সরিষার তেল (Cold Pressed Mustard Oil)",
         handle: "swasthyo-cold-pressed-mustard-oil",
         price: "৳৩৬০",
-        image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=85",
+        image:
+          "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=85",
       },
     ],
   },
@@ -130,7 +134,8 @@ export const BLOG_POSTS: BlogPost[] = [
     author: "স্বাস্থ্যকর নিউট্রিশন টিম",
     publishedAt: "2026-08-25T00:00:00Z",
     updatedAt: "2026-08-31T00:00:00Z",
-    coverImage: "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=1200&auto=format&fit=crop&q=85",
+    coverImage:
+      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=1200&auto=format&fit=crop&q=85",
     tags: ["চিয়া সিড", "সুপারফুড", "ওজন কমানো", "ওমেগা ৩"],
     content: `
 ## সুপারফুড চিয়া সিডের পুষ্টিশক্তি
@@ -163,7 +168,8 @@ export const BLOG_POSTS: BlogPost[] = [
         title: "অর্গানিক চিয়া সিড (Organic Chia Seeds)",
         handle: "swasthyo-chia-seeds",
         price: "৳৪২০",
-        image: "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=800&auto=format&fit=crop&q=85",
+        image:
+          "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=800&auto=format&fit=crop&q=85",
       },
     ],
   },

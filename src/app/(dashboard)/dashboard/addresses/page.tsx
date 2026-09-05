@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 import { AddressManager } from "@/components/dashboard/AddressManager";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";

@@ -1,3 +1,4 @@
+export * from "./AdminBlogManager";
 export * from "./CollectionsTable";
 export * from "./CreateCollectionDialog";
 export * from "./CreateProductDialog";
@@ -9,4 +10,3 @@ export * from "./ProductsList";
 export * from "./ProductsTable";
 export * from "./QuickList";
 export * from "./StatsCards";
-export * from "./AdminBlogManager";

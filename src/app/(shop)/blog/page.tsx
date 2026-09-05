@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { getBlogs } from "@/lib/db/queries";
-import { baseUrl } from "@/lib/utils";
-import { Clock, ArrowRight, ShieldCheck } from "@/components/icons";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { ArrowRight, Clock, ShieldCheck } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { getBlogs } from "@/lib/db/queries";
+import { baseUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "স্বাস্থ্য ও পুষ্টি গাইড (Health Blog) | স্বাস্থ্যকর",
@@ -66,7 +66,8 @@ export default async function BlogListingPage() {
             স্বাস্থ্য ও পুষ্টি ব্লগ
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            প্রাকৃতিক খাদ্য, রোগ প্রতিরোধ ক্ষমতা বৃদ্ধি ও খাঁটি খাদ্য চেনার নির্ভরযোগ্য বৈজ্ঞানিক গাইডলাইন।
+            প্রাকৃতিক খাদ্য, রোগ প্রতিরোধ ক্ষমতা বৃদ্ধি ও খাঁটি খাদ্য চেনার নির্ভরযোগ্য বৈজ্ঞানিক
+            গাইডলাইন।
           </p>
         </div>
 

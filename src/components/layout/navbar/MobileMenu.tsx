@@ -1,35 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import {
-  Menu,
+  ArrowRight2,
+  Box,
   CloseCircle,
+  Coffee,
+  Drop,
   Home,
+  Leaf,
+  Menu,
+  MessageCircle,
   ShoppingBag,
   Sparkles,
-  User,
-  Box,
-  MessageCircle,
-  ArrowRight2,
-  Drop,
-  Leaf,
   Tree,
-  Coffee,
+  User,
 } from "@/components/icons";
 import LogoSquare from "@/components/logo-square";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/hooks/use-auth";
 import type { Menu as MenuType } from "@/lib/types";
-import { cn, } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import Search, { SearchSkeleton } from "./Search";
 
 const POPULAR_CATEGORIES = [
@@ -211,13 +211,17 @@ export default function MobileMenu({ menu }: { menu: MenuType[] }) {
               <ul className="space-y-0.5">
                 <li>
                   <Link
-                    href={user ? (user.isAdmin ? "/admin" : "/dashboard") : "/login"}
+                    href={
+                      user ? (user.isAdmin ? "/admin" : "/dashboard") : "/login"
+                    }
                     onClick={closeMobileMenu}
                     className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-muted/70 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
                       <User className="size-4 text-emerald-600 dark:text-emerald-400" />
-                      <span>{user ? user.name || "ড্যাশবোর্ড" : "লগইন / রেজিস্টার"}</span>
+                      <span>
+                        {user ? user.name || "ড্যাশবোর্ড" : "লগইন / রেজিস্টার"}
+                      </span>
                     </div>
                     <ArrowRight2 className="size-3.5 text-muted-foreground" />
                   </Link>
@@ -250,7 +254,13 @@ export default function MobileMenu({ menu }: { menu: MenuType[] }) {
                 অর্ডার বা পণ্য সম্পর্কিত তথ্যের জন্য সরাসরি হোয়াটসঅ্যাপে মেসেজ দিন।
               </p>
               <Button
-                render={<Link href={whatsappUrl} target="_blank" rel="noopener noreferrer" />}
+                render={
+                  <Link
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
                 size="sm"
                 className="w-full rounded-lg bg-emerald-600 font-bold text-white shadow-xs hover:bg-emerald-500"
               >

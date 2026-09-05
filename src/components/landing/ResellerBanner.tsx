@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { WhatsAppIcon, TrendUp, ShieldCheck, Truck, ArrowUpRight } from "@/components/icons";
+import {
+  ArrowUpRight,
+  ShieldCheck,
+  TrendUp,
+  Truck,
+  WhatsAppIcon,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 const RESELLER_BENEFITS = [
@@ -46,7 +52,9 @@ export function ResellerBanner() {
               </h2>
 
               <p className="mb-6 text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed max-w-xl">
-                সীমিত অথবা জিরো পুঁজিতে স্বাস্থ্যকর-এর সাথে যুক্ত হয়ে আপনার এলাকায় বা অনলাইনে খাঁটি অর্গানিক খাদ্যের ব্যবসা শুরু করুন। আমরা দিচ্ছি পাইকারি রেট এবং সার্বিক সাপোর্ট।
+                সীমিত অথবা জিরো পুঁজিতে স্বাস্থ্যকর-এর সাথে যুক্ত হয়ে আপনার এলাকায় বা অনলাইনে
+                খাঁটি অর্গানিক খাদ্যের ব্যবসা শুরু করুন। আমরা দিচ্ছি পাইকারি রেট এবং সার্বিক
+                সাপোর্ট।
               </p>
 
               {/* Benefits Highlights */}
@@ -62,8 +70,12 @@ export function ResellerBanner() {
                         <Icon className="size-4" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-white">{b.title}</h4>
-                        <p className="text-[10px] text-neutral-400 mt-0.5">{b.desc}</p>
+                        <h4 className="text-xs font-bold text-white">
+                          {b.title}
+                        </h4>
+                        <p className="text-[10px] text-neutral-400 mt-0.5">
+                          {b.desc}
+                        </p>
                       </div>
                     </div>
                   );

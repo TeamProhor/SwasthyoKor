@@ -26,9 +26,7 @@ export default function SearchLayout({
         </div>
 
         {/* Center: Main Search Results & Products */}
-        <div className="min-h-[50vh] flex-1 w-full">
-          {children}
-        </div>
+        <div className="min-h-[50vh] flex-1 w-full">{children}</div>
 
         {/* Right Sidebar: Sort By (Desktop only) */}
         <div className="hidden md:block w-44 lg:w-52 flex-none">

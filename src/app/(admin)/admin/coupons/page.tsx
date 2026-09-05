@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import { desc } from "drizzle-orm";
+import { redirect } from "next/navigation";
 import { CouponsManager } from "@/components/admin/CouponsManager";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";

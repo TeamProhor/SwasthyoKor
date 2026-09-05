@@ -137,9 +137,18 @@ export type OrderItem = {
 export type Order = {
   id: string;
   email: string | null;
+  phone?: string | null;
+  customerName?: string | null;
+  shippingAddress?: string | null;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  paymentInvoiceId?: string | null;
+  paymentTrxId?: string | null;
+  paymentSenderNumber?: string | null;
   totalAmount: number;
   totalCurrency: string;
   status: string;
   items: OrderItem[];
   createdAt: string;
+  updatedAt?: string;
 };

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product";
+import { Button } from "@/components/ui/button";
 import { getCollectionProducts } from "@/lib/db/queries";
 
 interface CategoryBlock {
@@ -46,7 +46,10 @@ export async function CategoryShowcaseSection() {
         const displayProducts = products.slice(0, 4);
 
         return (
-          <section key={cat.collectionHandle} className="flex flex-col gap-4 sm:gap-6">
+          <section
+            key={cat.collectionHandle}
+            className="flex flex-col gap-4 sm:gap-6"
+          >
             {/* Category Header - Clean Typography without icons */}
             <div className="flex items-end justify-between border-b border-border/50 pb-3 sm:pb-4">
               <div>
@@ -81,5 +84,3 @@ export async function CategoryShowcaseSection() {
     </div>
   );
 }
-
-

@@ -22,6 +22,13 @@ export interface OrderDetailItem {
 export interface AdminOrderItem {
   id: string;
   email?: string | null;
+  phone?: string | null;
+  customerName?: string | null;
+  shippingAddress?: string | null;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  paymentTrxId?: string | null;
+  paymentSenderNumber?: string | null;
   totalAmount: number;
   totalCurrency: string;
   status: string;
@@ -30,11 +37,7 @@ export interface AdminOrderItem {
   items: OrderDetailItem[];
 }
 
-export function ManageOrderDialog({
-  order,
-}: {
-  order: AdminOrderItem;
-}) {
+export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(order.status);
   const [isPending, startTransition] = useTransition();
@@ -61,13 +64,19 @@ export function ManageOrderDialog({
       case "shipped":
         return <Badge variant="secondary">ডেলিভারিতে</Badge>;
       case "delivered":
-        return <Badge variant="default" className="bg-emerald-600">ডেলিভার্ড</Badge>;
+        return (
+          <Badge variant="default" className="bg-emerald-600">
+            ডেলিভার্ড
+          </Badge>
+        );
       case "cancelled":
         return <Badge variant="destructive">বাতিল</Badge>;
       default:
         return <Badge variant="outline">{st}</Badge>;
     }
   };
+
+  const isPaid = order.paymentStatus === "paid";
 
   return (
     <ResponsiveDialog
@@ -102,11 +111,51 @@ export function ManageOrderDialog({
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">গ্রাহক ইমেইল:</span>
-            <span className="font-mono text-foreground">
-              {order.email || "অতিথি গ্রাহক"}
+            <span className="text-muted-foreground">গ্রাহকের নাম:</span>
+            <span className="font-medium text-foreground">
+              {order.customerName || "উল্লেখ নেই"}
             </span>
           </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">মোবাইল নম্বর:</span>
+            <span className="font-mono text-foreground">
+              {order.phone || "উল্লেখ নেই"}
+            </span>
+          </div>
+          {order.shippingAddress ? (
+            <div className="flex items-start justify-between">
+              <span className="text-muted-foreground">ঠিকানা:</span>
+              <span className="font-medium text-right text-foreground max-w-[200px]">
+                {order.shippingAddress}
+              </span>
+            </div>
+          ) : null}
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">পেমেন্ট মেথড:</span>
+            <span className="font-semibold uppercase text-xs px-2 py-0.5 rounded bg-muted">
+              {order.paymentMethod || "COD"}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">পেমেন্ট স্ট্যাটাস:</span>
+            <span
+              className={`font-semibold text-xs px-2 py-0.5 rounded ${
+                isPaid
+                  ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                  : "bg-amber-500/20 text-amber-700 dark:text-amber-300"
+              }`}
+            >
+              {isPaid ? "পরিশোধিত (Paid)" : "বকেয়া (Pending)"}
+            </span>
+          </div>
+          {order.paymentTrxId ? (
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Trx ID:</span>
+              <span className="font-mono text-xs font-bold text-foreground">
+                {order.paymentTrxId}
+              </span>
+            </div>
+          ) : null}
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">বর্তমান স্ট্যাটাস:</span>
             <span>{getStatusBadge(order.status)}</span>
@@ -175,7 +224,11 @@ export function ManageOrderDialog({
           >
             বাতিল
           </Button>
-          <Button type="submit" disabled={isPending} className="rounded-xl">
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="rounded-xl cursor-pointer"
+          >
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" className="size-4" />

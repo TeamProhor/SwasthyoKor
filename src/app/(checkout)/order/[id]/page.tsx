@@ -17,21 +17,31 @@ import { Separator } from "@/components/ui/separator";
 import { getOrder } from "@/lib/db/queries";
 
 export const metadata: Metadata = {
-  title: "অর্ডার সফল হয়েছে | স্বাস্থ্যকর",
-  description: "আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে।",
+  title: "অর্ডার বিস্তারিত | স্বাস্থ্যকর",
+  description: "আপনার অর্ডারের বিবরণ ও পেমেন্ট স্ট্যাটাস।",
 };
+
+interface OrderPageProps {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ payment?: string }>;
+}
 
 export default async function OrderSuccessPage({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+  searchParams,
+}: OrderPageProps) {
   const { id } = await params;
+  const { payment } = await searchParams;
   const order = await getOrder(id);
 
   if (!order) return notFound();
 
   const orderNumber = order.id.slice(0, 8).toUpperCase();
+  const isOnline =
+    order.paymentMethod === "online" ||
+    order.paymentMethod === "bkash" ||
+    order.paymentMethod === "nagad";
+  const isPaid = order.paymentStatus === "paid" || payment === "success";
 
   return (
     <div className="min-h-screen bg-neutral-50/60 dark:bg-neutral-950 py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
@@ -47,7 +57,7 @@ export default async function OrderSuccessPage({
           </Link>
           <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground bg-muted/60 px-3 py-1.5 rounded-full border border-border/60">
             <CheckCircle className="size-4 text-emerald-600 dark:text-emerald-400" />
-            <span>অর্ডার নিশ্চিত</span>
+            <span>{isPaid ? "পেমেন্ট ও অর্ডার নিশ্চিত" : "অর্ডার নিশ্চিত"}</span>
           </div>
         </div>
 
@@ -57,7 +67,9 @@ export default async function OrderSuccessPage({
               <CheckCircle className="size-9" />
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-              আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে!
+              {isPaid
+                ? "পেমেন্ট সফল! অর্ডার গৃহীত হয়েছে"
+                : "আপনার অর্ডার সফলভাবে গ্রহণ করা হয়েছে!"}
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground pt-1">
               অর্ডার ট্র্যাকিং নম্বর:{" "}
@@ -68,13 +80,42 @@ export default async function OrderSuccessPage({
           </CardHeader>
 
           <CardContent className="space-y-6 pt-4">
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 text-xs text-emerald-800 dark:text-emerald-300">
-              <p className="font-semibold text-sm mb-0.5">পরবর্তী ধাপ:</p>
-              <p>
-                আমাদের প্রতিনিধি দ্রুত আপনার নম্বরে কল দিয়ে অর্ডারটি কনফার্ম করবেন এবং খুব
-                শীঘ্রই আপনার ঠিকানায় পণ্য পৌঁছে দেওয়া হবে।
-              </p>
-            </div>
+            {/* Status Alert */}
+            {isPaid ? (
+              <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
+                <p className="font-bold text-sm text-emerald-900 dark:text-emerald-200">
+                  ✓ অনলাইনে সফলভাবে পরিশোধিত
+                </p>
+                <p>
+                  আপনার পেমেন্ট ভেরিফাই হয়েছে। আমাদের ডেলিভারি টিম দ্রুততম সময়ে আপনার
+                  পণ্য পাঠিয়ে দেবে।
+                </p>
+                {order.paymentTrxId ? (
+                  <p className="font-mono text-[11px] pt-0.5">
+                    TrxID:{" "}
+                    <span className="font-bold">{order.paymentTrxId}</span>
+                  </p>
+                ) : null}
+              </div>
+            ) : payment === "cancelled" ? (
+              <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300">
+                <p className="font-bold text-sm mb-0.5">
+                  অনলাইন পেমেন্ট সম্পন্ন হয়নি
+                </p>
+                <p>
+                  আপনার অর্ডারটি ক্যাশ অন ডেলিভারি (COD) হিসেবে সংরক্ষিত রয়েছে।
+                  ডেলিভারির সময় নগদ পরিশোধ করতে পারবেন।
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 text-xs text-emerald-800 dark:text-emerald-300">
+                <p className="font-semibold text-sm mb-0.5">পরবর্তী ধাপ:</p>
+                <p>
+                  আমাদের প্রতিনিধি দ্রুত আপনার নম্বরে কল দিয়ে অর্ডারটি কনফার্ম করবেন এবং
+                  খুব শীঘ্রই আপনার ঠিকানায় পণ্য পৌঁছে দেওয়া হবে।
+                </p>
+              </div>
+            )}
 
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
@@ -120,7 +161,21 @@ export default async function OrderSuccessPage({
               <div className="flex items-center justify-between text-muted-foreground">
                 <span>পেমেন্ট পদ্ধতি</span>
                 <span className="font-medium text-foreground">
-                  ক্যাশ অন ডেলিভারি
+                  {isOnline
+                    ? `অনলাইন গেটওয়ে (${order.paymentMethod?.toUpperCase() || "UddoktaPay"})`
+                    : "ক্যাশ অন ডেলিভারি (COD)"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-muted-foreground">
+                <span>পেমেন্ট স্ট্যাটাস</span>
+                <span
+                  className={`font-semibold px-2 py-0.5 rounded-md ${
+                    isPaid
+                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                      : "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+                  }`}
+                >
+                  {isPaid ? "পরিশোধিত (Paid)" : "অপরিশোধিত (Pending)"}
                 </span>
               </div>
             </div>
@@ -148,7 +203,7 @@ export default async function OrderSuccessPage({
                 </Link>
               }
               size="lg"
-              className="w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 h-11 text-base shadow-xs"
+              className="w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 h-11 text-base shadow-xs cursor-pointer"
             />
           </CardFooter>
         </Card>

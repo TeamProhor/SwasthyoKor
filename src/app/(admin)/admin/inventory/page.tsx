@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { InventoryManager } from "@/components/admin/InventoryManager";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
-import { products, productImages, productVariants } from "@/lib/db/schema";
+import { productImages, products, productVariants } from "@/lib/db/schema";
 
 export const metadata = {
   title: "ইনভেন্টরি ও স্টক | অ্যাডমিন",

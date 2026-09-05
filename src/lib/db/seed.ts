@@ -577,7 +577,9 @@ async function seed() {
     });
   }
 
-  console.log(`সিড সম্পন্ন: ${PRODUCTS.length}টি পণ্য, ${COLLECTIONS.length}টি কালেকশন, ${MENUS.length}টি মেনু আইটেম, ${PAGES.length}টি পেজ।`);
+  console.log(
+    `সিড সম্পন্ন: ${PRODUCTS.length}টি পণ্য, ${COLLECTIONS.length}টি কালেকশন, ${MENUS.length}টি মেনু আইটেম, ${PAGES.length}টি পেজ।`,
+  );
   console.log("PostgreSQL সিডিং সম্পন্ন হয়েছে।");
   process.exit(0);
 }

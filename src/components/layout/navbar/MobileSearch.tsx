@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Search as SearchIcon, TrendUp, Loader, ArrowRight } from "@/components/icons";
+import {
+  ArrowRight,
+  Loader,
+  Search as SearchIcon,
+  TrendUp,
+} from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared/ResponsiveDialog";
 import {
   InputGroup,
@@ -113,7 +118,11 @@ export function MobileSearch() {
               {isLoading ? (
                 <Loader className="size-4 animate-spin text-emerald-600" />
               ) : (
-                <button type="submit" aria-label="Search" className="cursor-pointer">
+                <button
+                  type="submit"
+                  aria-label="Search"
+                  className="cursor-pointer"
+                >
                   <SearchIcon className="size-4 text-muted-foreground hover:text-foreground" />
                 </button>
               )}

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, type TouchEvent } from "react";
+import { type TouchEvent, useEffect, useRef, useState } from "react";
 import { ArrowLeft2, ArrowRight2 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,8 +40,7 @@ const HERO_SLIDES: BannerSlide[] = [
   {
     title: "প্রিমিয়াম অর্গানিক চিয়া সিড ও",
     highlight: "সুপারফুড সংগ্রহ",
-    subtitle:
-      "প্রতিদিনের সুস্থতা ও রোগ প্রতিরোধ ক্ষমতা বৃদ্ধিতে খাঁটি সুপারফুডের সমাহার।",
+    subtitle: "প্রতিদিনের সুস্থতা ও রোগ প্রতিরোধ ক্ষমতা বৃদ্ধিতে খাঁটি সুপারফুডের সমাহার।",
     link: "/search/superfoods-wellness",
     accentColor: "text-teal-400",
     image:
@@ -50,8 +49,7 @@ const HERO_SLIDES: BannerSlide[] = [
   {
     title: "সেরা বাছাইকৃত ড্রাই ফ্রুটস ও",
     highlight: "পুষ্টিকর বাদাম",
-    subtitle:
-      "আমন্ড, কাজু, পেস্তা, আখরোট ও প্রিমিয়াম কিশমিশের সেরা স্বাস্থ্যকর স্ন্যাক্স।",
+    subtitle: "আমন্ড, কাজু, পেস্তা, আখরোট ও প্রিমিয়াম কিশমিশের সেরা স্বাস্থ্যকর স্ন্যাক্স।",
     link: "/search?q=বাদাম",
     accentColor: "text-amber-300",
     image:

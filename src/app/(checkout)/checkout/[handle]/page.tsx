@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BagShopping } from "@/components/icons";
+import { DirectCheckoutForm } from "@/components/checkout/DirectCheckoutForm";
 import LogoSquare from "@/components/logo-square";
 import Price from "@/components/price";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,10 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { checkoutDirectProduct } from "@/lib/actions/checkout";
+import { getCurrentUser } from "@/lib/auth/session";
 import { getProduct } from "@/lib/db/queries";
 
 export async function generateMetadata(props: {
@@ -40,6 +37,7 @@ export default async function CheckoutProductPage(props: {
   const { handle } = await props.params;
   const searchParams = await props.searchParams;
   const product = await getProduct(handle);
+  const user = await getCurrentUser();
 
   if (!product) return notFound();
 
@@ -70,7 +68,7 @@ export default async function CheckoutProductPage(props: {
             <span>স্বাস্থ্যকর</span>
           </Link>
           <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/20">
-            🔒 সুরক্ষিত চেকআউট (SSL/COD)
+            🔒 সুরক্ষিত চেকআউট (বিকাশ / নগদ / COD)
           </span>
         </div>
 
@@ -80,81 +78,20 @@ export default async function CheckoutProductPage(props: {
             <Card className="border-border/80 bg-card rounded-2xl shadow-xs">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-bold text-foreground">
-                  ডেলিভারির ঠিকানা ও তথ্য
+                  ডেলিভারির ঠিকানা ও পেমেন্ট
                 </CardTitle>
                 <CardDescription>
-                  আপনার সঠিক ঠিকানা দিন, ক্যাশ অন ডেলিভারিতে পৌঁছে দেওয়া হবে।
+                  আপনার সঠিক ঠিকানা দিন এবং পছন্দের পেমেন্ট পদ্ধতি বেছে নিন।
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form action={checkoutDirectProduct} className="space-y-4">
-                  <input type="hidden" name="handle" value={product.handle} />
-                  <input
-                    type="hidden"
-                    name="quantity"
-                    value={quantity.toString()}
-                  />
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="name">আপনার পুরো নাম</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      required
-                      placeholder="যেমন: মোঃ সাকিব হাসান"
-                      className="rounded-xl h-10"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="phone">মোবাইল নম্বর</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      placeholder="যেমন: 017XXXXXXXX"
-                      className="rounded-xl h-10"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="address">সম্পূর্ণ ডেলিভারি ঠিকানা</Label>
-                    <Input
-                      id="address"
-                      name="address"
-                      required
-                      placeholder="বাড়ি/ফ্ল্যাট নং, রাস্তা, এলাকা, থানা ও জেলা"
-                      className="rounded-xl h-10"
-                    />
-                  </div>
-
-                  <div className="pt-2">
-                    <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2.5">
-                      <div className="size-2 rounded-full bg-emerald-600 animate-pulse shrink-0" />
-                      <span>
-                        পণ্য হাতে পেয়ে দেখে মূল্য পরিশোধ (Cash on Delivery) সুবিধা
-                        রয়েছে।
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-700 h-12 text-base shadow-xs mt-2 cursor-pointer"
-                  >
-                    <BagShopping className="size-4" />
-                    <span>
-                      অর্ডার নিশ্চিত করুন — ৳{finalTotal.toLocaleString("bn-BD")}{" "}
-                      (ক্যাশ অন ডেলিভারি)
-                    </span>
-                  </Button>
-
-                  <p className="text-[11px] text-center text-muted-foreground pt-1">
-                    অর্ডার প্লেস করার পর আমাদের প্রতিনিধি আপনাকে কল করে নিশ্চিত করবেন।
-                  </p>
-                </form>
+                <DirectCheckoutForm
+                  handle={product.handle}
+                  quantity={quantity}
+                  finalTotal={finalTotal}
+                  initialName={user?.name || ""}
+                  initialPhone={user?.phone || ""}
+                />
               </CardContent>
             </Card>
           </div>

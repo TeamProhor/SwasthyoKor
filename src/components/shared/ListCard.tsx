@@ -1,5 +1,5 @@
-import * as React from "react";
 import Link from "next/link";
+import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -116,9 +116,14 @@ export function ListCard({
                       ? `m-${meta.label}`
                       : `m-${i}`);
                   return (
-                    <div key={key} className="flex items-center gap-1.5 shrink-0">
+                    <div
+                      key={key}
+                      className="flex items-center gap-1.5 shrink-0"
+                    >
                       {meta.icon && (
-                        <span className="text-primary shrink-0">{meta.icon}</span>
+                        <span className="text-primary shrink-0">
+                          {meta.icon}
+                        </span>
                       )}
                       <span>
                         {meta.label && (
@@ -150,7 +155,7 @@ export function ListCard({
                 action.id ??
                 (typeof action.label === "string"
                   ? `a-${action.label}`
-                  : action.href ?? `a-${i}`);
+                  : (action.href ?? `a-${i}`));
 
               const btn = (
                 <Button

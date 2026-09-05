@@ -17,7 +17,12 @@ export interface QuickListItem {
   subtitle?: React.ReactNode;
   logoUrl?: string | null;
   badgeText?: React.ReactNode;
-  badgeVariant?: "success" | "destructive" | "warning" | "default" | "secondary";
+  badgeVariant?:
+    | "success"
+    | "destructive"
+    | "warning"
+    | "default"
+    | "secondary";
   tags?: QuickListTag[];
   actions?: React.ReactNode;
   onClick?: () => void;
@@ -80,7 +85,9 @@ export function QuickList({ items, className, emptyMessage }: QuickListProps) {
                       <Image
                         src={item.logoUrl}
                         alt={
-                          typeof item.title === "string" ? item.title : "Product"
+                          typeof item.title === "string"
+                            ? item.title
+                            : "Product"
                         }
                         fill
                         className="object-cover"

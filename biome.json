@@ -35,8 +35,15 @@
       "recommended": true,
       "security": {
         "noDangerouslySetInnerHtml": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
       }
     },
+
     "domains": {
       "next": "recommended",
       "react": "recommended"

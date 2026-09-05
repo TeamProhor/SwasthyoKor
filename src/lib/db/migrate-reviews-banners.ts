@@ -8,7 +8,9 @@ const connectionString =
 const sql = postgres(connectionString, { max: 1 });
 
 async function main() {
-  console.log("Migrating product_reviews, hero_banners, and compare_at_price...");
+  console.log(
+    "Migrating product_reviews, hero_banners, and compare_at_price...",
+  );
 
   // 1. Add compare_at_price to product_variants if not exists
   await sql`
@@ -57,20 +59,24 @@ async function main() {
         id: "banner-1",
         title: "১০০% খাঁটি সুন্দরবন মধু ও",
         highlight: "গাওয়া ঘি",
-        subtitle: "প্রকৃতির নিখাদ দান, কোনো কৃত্রিম মিষ্টি বা প্রিজারভেটিভ ছাড়া সরাসরি সুন্দরবন ও খামার থেকে সংগৃহীত।",
+        subtitle:
+          "প্রকৃতির নিখাদ দান, কোনো কৃত্রিম মিষ্টি বা প্রিজারভেটিভ ছাড়া সরাসরি সুন্দরবন ও খামার থেকে সংগৃহীত।",
         link: "/search?q=মধু",
         accent_color: "text-amber-400",
-        image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1600&auto=format&fit=crop&q=85",
+        image:
+          "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=1600&auto=format&fit=crop&q=85",
         position: 0,
       },
       {
         id: "banner-2",
         title: "ঘানি ভাঙা সরিষার তেল ও",
         highlight: "কালোজিরা তেল",
-        subtitle: "কাঠের ঘানিতে ভাঙা প্রাকৃতিক ঝাঁঝ ও খাঁটি পুষ্টিতে ভরপুর স্বাস্থ্যকর রান্নার শ্রেষ্ঠ উপাদান।",
+        subtitle:
+          "কাঠের ঘানিতে ভাঙা প্রাকৃতিক ঝাঁঝ ও খাঁটি পুষ্টিতে ভরপুর স্বাস্থ্যকর রান্নার শ্রেষ্ঠ উপাদান।",
         link: "/search?q=তেল",
         accent_color: "text-emerald-400",
-        image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1600&auto=format&fit=crop&q=85",
+        image:
+          "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1600&auto=format&fit=crop&q=85",
         position: 1,
       },
       {
@@ -80,7 +86,8 @@ async function main() {
         subtitle: "প্রতিদিনের সুস্থতা ও রোগ প্রতিরোধ ক্ষমতা বৃদ্ধিতে খাঁটি সুপারফুডের সমাহার।",
         link: "/search/superfoods-wellness",
         accent_color: "text-teal-400",
-        image: "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=1600&auto=format&fit=crop&q=85",
+        image:
+          "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=1600&auto=format&fit=crop&q=85",
         position: 2,
       },
       {
@@ -90,7 +97,8 @@ async function main() {
         subtitle: "আমন্ড, কাজু, পেস্তা, আখরোট ও প্রিমিয়াম কিশমিশের সেরা স্বাস্থ্যকর স্ন্যাক্স।",
         link: "/search?q=বাদাম",
         accent_color: "text-amber-300",
-        image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1600&auto=format&fit=crop&q=85",
+        image:
+          "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1600&auto=format&fit=crop&q=85",
         position: 3,
       },
     ];

@@ -14,14 +14,19 @@ export const metadata = {
 };
 
 export default async function AdminProductsPage() {
-  const [allProducts, allImages, allVariants, allCollections, allProdCollections] =
-    await Promise.all([
-      db.select().from(products),
-      db.select().from(productImages),
-      db.select().from(productVariants),
-      db.select().from(collections),
-      db.select().from(productCollections),
-    ]);
+  const [
+    allProducts,
+    allImages,
+    allVariants,
+    allCollections,
+    allProdCollections,
+  ] = await Promise.all([
+    db.select().from(products),
+    db.select().from(productImages),
+    db.select().from(productVariants),
+    db.select().from(collections),
+    db.select().from(productCollections),
+  ]);
 
   const formattedProducts = allProducts.map((prod) => {
     const img = allImages.find((i) => i.productId === prod.id);
@@ -34,7 +39,9 @@ export default async function AdminProductsPage() {
       description: prod.description,
       collectionId: prodCol?.collectionId,
       price: variant ? String(variant.priceAmount) : "0",
-      compareAtPrice: variant?.compareAtPrice ? String(variant.compareAtPrice) : undefined,
+      compareAtPrice: variant?.compareAtPrice
+        ? String(variant.compareAtPrice)
+        : undefined,
       imageUrl: img?.url,
       available: prod.availableForSale,
     };

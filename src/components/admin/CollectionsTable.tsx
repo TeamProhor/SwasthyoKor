@@ -2,20 +2,19 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { Trash2, Edit } from "@/components/icons";
+import { Edit, Trash2 } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -24,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import {
   deleteCollectionAction,
   updateCollectionAction,
@@ -176,7 +176,9 @@ export function CollectionsTable({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-col-handle">হ্যান্ডেল (URL Slug) *</FieldLabel>
+                <FieldLabel htmlFor="edit-col-handle">
+                  হ্যান্ডেল (URL Slug) *
+                </FieldLabel>
                 <Input
                   id="edit-col-handle"
                   name="handle"

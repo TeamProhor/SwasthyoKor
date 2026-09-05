@@ -41,7 +41,11 @@ export function ProfileForm({ initialUser }: ProfileFormProps) {
     const formData = new FormData(formElement);
 
     const avatarFile = formData.get("avatar") as File | null;
-    if (avatarFile && avatarFile.size > 0 && avatarFile.type.startsWith("image/")) {
+    if (
+      avatarFile &&
+      avatarFile.size > 0 &&
+      avatarFile.type.startsWith("image/")
+    ) {
       const compressedWebpFile = await compressImageClient(avatarFile, {
         maxWidthOrHeight: 500,
         maxSizeMB: 0.5,
@@ -135,9 +139,7 @@ export function ProfileForm({ initialUser }: ProfileFormProps) {
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="user-avatar">
-                প্রোফাইল ছবি পরিবর্তন
-              </FieldLabel>
+              <FieldLabel htmlFor="user-avatar">প্রোফাইল ছবি পরিবর্তন</FieldLabel>
               <Input
                 id="user-avatar"
                 name="avatar"

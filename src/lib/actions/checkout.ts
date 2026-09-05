@@ -3,14 +3,20 @@
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { getCart } from "@/lib/db/queries";
 import { cartItems, carts, orders } from "@/lib/db/schema";
+import { createPaymentCharge } from "@/lib/uddoktapay";
+
+const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "https://swasthyokor.prohor.dev";
 
 export async function checkout(): Promise<void> {
   const cookieStore = await cookies();
   const cartId = cookieStore.get("cartId")?.value;
   const cart = cartId ? await getCart(cartId) : null;
+  const user = await getCurrentUser();
 
   if (!cartId || !cart || cart.lines.length === 0) {
     redirect("/search");
@@ -18,11 +24,18 @@ export async function checkout(): Promise<void> {
 
   const now = new Date();
   const orderId = crypto.randomUUID();
+  const totalAmount = Number(cart.cost.totalAmount.amount);
+  const totalCurrency = cart.cost.totalAmount.currencyCode;
 
   await db.insert(orders).values({
     id: orderId,
-    totalAmount: Number(cart.cost.totalAmount.amount),
-    totalCurrency: cart.cost.totalAmount.currencyCode,
+    email: user?.email || null,
+    customerName: user?.name || null,
+    phone: user?.phone || null,
+    paymentMethod: "cod",
+    paymentStatus: "pending",
+    totalAmount,
+    totalCurrency,
     status: "confirmed",
     items: cart.lines.map((line) => ({
       productHandle: line.merchandise.product.handle,
@@ -33,6 +46,7 @@ export async function checkout(): Promise<void> {
       priceCurrency: line.cost.totalAmount.currencyCode,
     })),
     createdAt: now,
+    updatedAt: now,
   });
 
   // Clear the cart now that the order is placed.
@@ -45,15 +59,18 @@ export async function checkout(): Promise<void> {
 
 export async function checkoutDirectProduct(formData: FormData): Promise<void> {
   const handle = formData.get("handle") as string;
-  const quantity = Number(formData.get("quantity") || 1);
-  const _name = formData.get("name") as string;
-  const _phone = formData.get("phone") as string;
-  const _address = formData.get("address") as string;
+  const quantity = Math.max(1, Number(formData.get("quantity") || 1));
+  const name = (formData.get("name") as string)?.trim() || "";
+  const phone = (formData.get("phone") as string)?.trim() || "";
+  const address = (formData.get("address") as string)?.trim() || "";
+  const paymentMethod =
+    (formData.get("paymentMethod") as string) === "online" ? "online" : "cod";
 
   if (!handle) {
     redirect("/search");
   }
 
+  const user = await getCurrentUser();
   const { getProduct } = await import("@/lib/db/queries");
   const product = await getProduct(handle);
 
@@ -75,6 +92,12 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
 
   await db.insert(orders).values({
     id: orderId,
+    email: user?.email || null,
+    customerName: name || user?.name || null,
+    phone: phone || user?.phone || null,
+    shippingAddress: address || null,
+    paymentMethod,
+    paymentStatus: paymentMethod === "online" ? "pending" : "pending",
     totalAmount,
     totalCurrency: priceCurrency,
     status: "confirmed",
@@ -89,7 +112,36 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
       },
     ],
     createdAt: now,
+    updatedAt: now,
   });
+
+  // If online payment is chosen, redirect to UddoktaPay gateway
+  if (paymentMethod === "online") {
+    let paymentUrl = "";
+    try {
+      const charge = await createPaymentCharge({
+        fullName: name || "Customer",
+        email: user?.email || "customer@swasthyokor.com",
+        amount: totalAmount,
+        metadata: {
+          order_id: orderId,
+        },
+        redirectUrl: `${APP_URL}/payment/callback?order_id=${orderId}`,
+        cancelUrl: `${APP_URL}/order/${orderId}?payment=cancelled`,
+        webhookUrl: `${APP_URL}/api/payment/webhook`,
+        returnType: "GET",
+      });
+      paymentUrl = charge.paymentUrl;
+    } catch (err) {
+      console.error("Failed to initiate UddoktaPay charge:", err);
+      // Fallback to order details if gateway initiation fails
+      redirect(`/order/${orderId}?payment=failed`);
+    }
+
+    if (paymentUrl) {
+      redirect(paymentUrl);
+    }
+  }
 
   redirect(`/order/${orderId}`);
 }

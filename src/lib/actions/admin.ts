@@ -6,8 +6,8 @@ import { db } from "@/lib/db";
 import {
   blogs,
   collections,
-  orders,
   heroBanners,
+  orders,
   productCollections,
   productImages,
   products,
@@ -27,7 +27,9 @@ export async function createProductAction(formData: FormData) {
     const description = (formData.get("description") as string) || "";
     const priceAmount = Number(formData.get("price") || 0);
     const compareAtPriceInput = formData.get("compareAtPrice") as string;
-    const compareAtPrice = compareAtPriceInput ? Number(compareAtPriceInput) : null;
+    const compareAtPrice = compareAtPriceInput
+      ? Number(compareAtPriceInput)
+      : null;
     const categoryId = formData.get("collectionId") as string;
     const imageFile = formData.get("image") as File | null;
     const imageUrlInput = formData.get("imageUrl") as string;
@@ -40,7 +42,10 @@ export async function createProductAction(formData: FormData) {
     // Upload file if provided (compressed to WebP from browser)
     if (imageFile && imageFile.size > 0) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
+      const extension =
+        imageFile.name.endsWith(".webp") || imageFile.type === "image/webp"
+          ? "webp"
+          : imageFile.name.split(".").pop() || "webp";
       const s3Key = `products/${id}-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
@@ -122,7 +127,9 @@ export async function updateProductAction(formData: FormData) {
     const description = (formData.get("description") as string) || "";
     const priceAmount = Number(formData.get("price") || 0);
     const compareAtPriceInput = formData.get("compareAtPrice") as string;
-    const compareAtPrice = compareAtPriceInput ? Number(compareAtPriceInput) : null;
+    const compareAtPrice = compareAtPriceInput
+      ? Number(compareAtPriceInput)
+      : null;
     const categoryId = formData.get("collectionId") as string;
     const availableForSale = formData.get("availableForSale") === "true";
     const imageFile = formData.get("image") as File | null;
@@ -176,7 +183,10 @@ export async function updateProductAction(formData: FormData) {
     let finalImageUrl = imageUrlInput || "";
     if (imageFile && imageFile.size > 0) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
+      const extension =
+        imageFile.name.endsWith(".webp") || imageFile.type === "image/webp"
+          ? "webp"
+          : imageFile.name.split(".").pop() || "webp";
       const s3Key = `products/${id}-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
@@ -469,7 +479,8 @@ export async function createHeroBannerAction(formData: FormData) {
     const highlight = (formData.get("highlight") as string) || "";
     const subtitle = (formData.get("subtitle") as string) || "";
     const link = (formData.get("link") as string) || "/search";
-    const accentColor = (formData.get("accentColor") as string) || "text-amber-400";
+    const accentColor =
+      (formData.get("accentColor") as string) || "text-amber-400";
     const position = Number(formData.get("position") || 0);
     const imageFile = formData.get("image") as File | null;
     const imageUrlInput = (formData.get("imageUrl") as string) || "";
@@ -478,7 +489,10 @@ export async function createHeroBannerAction(formData: FormData) {
 
     if (imageFile && imageFile.size > 0) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
+      const extension =
+        imageFile.name.endsWith(".webp") || imageFile.type === "image/webp"
+          ? "webp"
+          : imageFile.name.split(".").pop() || "webp";
       const s3Key = `banners/banner-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,
@@ -526,7 +540,8 @@ export async function updateHeroBannerAction(formData: FormData) {
     const highlight = (formData.get("highlight") as string) || "";
     const subtitle = (formData.get("subtitle") as string) || "";
     const link = (formData.get("link") as string) || "/search";
-    const accentColor = (formData.get("accentColor") as string) || "text-amber-400";
+    const accentColor =
+      (formData.get("accentColor") as string) || "text-amber-400";
     const position = Number(formData.get("position") || 0);
     const active = formData.get("active") === "true";
     const imageFile = formData.get("image") as File | null;
@@ -536,7 +551,10 @@ export async function updateHeroBannerAction(formData: FormData) {
 
     if (imageFile && imageFile.size > 0) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
+      const extension =
+        imageFile.name.endsWith(".webp") || imageFile.type === "image/webp"
+          ? "webp"
+          : imageFile.name.split(".").pop() || "webp";
       const s3Key = `banners/banner-${Date.now()}.${extension}`;
       finalImageUrl = await uploadObject({
         key: s3Key,

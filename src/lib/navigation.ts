@@ -1,15 +1,15 @@
 import {
-  Home,
-  Box,
-  Receipt,
-  User,
-  Location,
-  Tag,
-  Store,
-  ShoppingBag,
-  Category,
   BookOpen,
+  Box,
+  Category,
+  Home,
+  Location,
+  Receipt,
+  ShoppingBag,
   SliderHorizontal,
+  Store,
+  Tag,
+  User,
 } from "@/components/icons";
 import type { Dictionary, NavItem, SidebarAnnouncement } from "@/types";
 
@@ -22,7 +22,12 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
     exact: false,
     icon: Location,
   },
-  { name: "প্রোফাইল ও সেটিংস", path: "/dashboard/profile", exact: false, icon: User },
+  {
+    name: "প্রোফাইল ও সেটিংস",
+    path: "/dashboard/profile",
+    exact: false,
+    icon: User,
+  },
 ];
 
 export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
@@ -30,8 +35,18 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { name: "পণ্যসমূহ", path: "/admin/products", exact: false, icon: Box },
   { name: "ইনভেন্টরি ও স্টক", path: "/admin/inventory", exact: false, icon: Box },
   { name: "অর্ডারসমূহ", path: "/admin/orders", exact: false, icon: Receipt },
-  { name: "কালেকশন ও ক্যাটাগরি", path: "/admin/collections", exact: false, icon: Category },
-  { name: "হিরো ব্যানার", path: "/admin/banners", exact: false, icon: SliderHorizontal },
+  {
+    name: "কালেকশন ও ক্যাটাগরি",
+    path: "/admin/collections",
+    exact: false,
+    icon: Category,
+  },
+  {
+    name: "হিরো ব্যানার",
+    path: "/admin/banners",
+    exact: false,
+    icon: SliderHorizontal,
+  },
   { name: "ব্লগ ও কনটেন্ট", path: "/admin/blog", exact: false, icon: BookOpen },
   { name: "কুপন ও প্রোমো", path: "/admin/coupons", exact: false, icon: Tag },
   { name: "গ্রাহকবৃন্দ", path: "/admin/customers", exact: false, icon: User },

@@ -28,9 +28,9 @@ export interface CompressImageOptions {
  */
 export async function compressImage(
   file: File,
-  options: CompressImageOptions = {}
+  options: CompressImageOptions = {},
 ): Promise<File> {
-  if (!file || !file.type.startsWith("image/")) {
+  if (!file?.type.startsWith("image/")) {
     return file;
   }
 
@@ -52,12 +52,13 @@ export async function compressImage(
       lastModified: Date.now(),
     });
   } catch (error) {
-    console.warn("browser-image-compression failed, using original file:", error);
+    console.warn(
+      "browser-image-compression failed, using original file:",
+      error,
+    );
     return file;
   }
 }
 
 // Alias for backward compatibility
 export const compressImageClient = compressImage;
-
-

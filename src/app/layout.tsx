@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
 import { QueryProvider } from "@/components/query-provider";
+import { FloatingWhatsApp } from "@/components/shared";
 import { Toaster } from "@/components/ui/toast";
 import { WelcomeToast } from "@/components/welcome-toast";
-import { FloatingWhatsApp } from "@/components/shared";
 import "./globals.css";
 import localFont from "next/font/local";
 import { baseUrl, cn } from "@/lib/utils";

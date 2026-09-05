@@ -3,11 +3,24 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { AlertTriangle, CheckCircle as CheckCircle2, CloseCircle as XCircle, Search, ArrowUpRight } from "@/components/icons";
+import {
+  AlertTriangle,
+  ArrowUpRight,
+  CheckCircle as CheckCircle2,
+  Search,
+  CloseCircle as XCircle,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Card, } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface InventoryItem {
   id: string;
@@ -20,12 +33,21 @@ interface InventoryItem {
   available: boolean;
 }
 
-export function InventoryManager({ initialItems }: { initialItems: InventoryItem[] }) {
+export function InventoryManager({
+  initialItems,
+}: {
+  initialItems: InventoryItem[];
+}) {
   const [items, setItems] = useState<InventoryItem[]>(initialItems);
   const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"all" | "in_stock" | "out_of_stock">("all");
+  const [filterStatus, setFilterStatus] = useState<
+    "all" | "in_stock" | "out_of_stock"
+  >("all");
 
-  const handleToggleStock = async (variantId: string, currentStatus: boolean) => {
+  const handleToggleStock = async (
+    variantId: string,
+    currentStatus: boolean,
+  ) => {
     try {
       const res = await fetch("/api/admin/inventory", {
         method: "PATCH",
@@ -53,7 +75,8 @@ export function InventoryManager({ initialItems }: { initialItems: InventoryItem
       item.variantTitle.toLowerCase().includes(search.toLowerCase());
 
     if (filterStatus === "in_stock") return matchesSearch && item.available;
-    if (filterStatus === "out_of_stock") return matchesSearch && !item.available;
+    if (filterStatus === "out_of_stock")
+      return matchesSearch && !item.available;
     return matchesSearch;
   });
 
@@ -65,22 +88,30 @@ export function InventoryManager({ initialItems }: { initialItems: InventoryItem
       {/* Metrics Summary Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="rounded-2xl border-border bg-card p-4 shadow-xs">
-          <div className="text-xs font-semibold text-muted-foreground">মোট আইটেম / ভ্যারিয়েন্ট</div>
-          <div className="text-2xl font-extrabold text-foreground mt-1">{items.length}</div>
+          <div className="text-xs font-semibold text-muted-foreground">
+            মোট আইটেম / ভ্যারিয়েন্ট
+          </div>
+          <div className="text-2xl font-extrabold text-foreground mt-1">
+            {items.length}
+          </div>
         </Card>
         <Card className="rounded-2xl border-border bg-card p-4 shadow-xs">
           <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
             <CheckCircle2 className="size-4" />
             <span>ইন স্টক (বিক্রিযোগ্য)</span>
           </div>
-          <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">{inStockCount}</div>
+          <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">
+            {inStockCount}
+          </div>
         </Card>
         <Card className="rounded-2xl border-border bg-card p-4 shadow-xs">
           <div className="text-xs font-semibold text-rose-500 flex items-center gap-1.5">
             <AlertTriangle className="size-4" />
             <span>স্টক আউট (শেষ)</span>
           </div>
-          <div className="text-2xl font-extrabold text-rose-500 mt-1">{outOfStockCount}</div>
+          <div className="text-2xl font-extrabold text-rose-500 mt-1">
+            {outOfStockCount}
+          </div>
         </Card>
       </div>
 
@@ -130,10 +161,14 @@ export function InventoryManager({ initialItems }: { initialItems: InventoryItem
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="font-bold text-xs">পণ্য</TableHead>
-              <TableHead className="font-bold text-xs">ভ্যারিয়েন্ট / সাইজ</TableHead>
+              <TableHead className="font-bold text-xs">
+                ভ্যারিয়েন্ট / সাইজ
+              </TableHead>
               <TableHead className="font-bold text-xs">মূল্য</TableHead>
               <TableHead className="font-bold text-xs">স্টক স্ট্যাটাস</TableHead>
-              <TableHead className="text-right font-bold text-xs">টগল অ্যাকশন</TableHead>
+              <TableHead className="text-right font-bold text-xs">
+                টগল অ্যাকশন
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -185,7 +220,9 @@ export function InventoryManager({ initialItems }: { initialItems: InventoryItem
                   <Button
                     variant={item.available ? "outline" : "default"}
                     size="sm"
-                    onClick={() => handleToggleStock(item.variantId, item.available)}
+                    onClick={() =>
+                      handleToggleStock(item.variantId, item.available)
+                    }
                     className={`rounded-xl text-xs font-bold ${
                       item.available
                         ? "text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/50"

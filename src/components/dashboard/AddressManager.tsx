@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Add as Plus, Location as MapPin, Phone, User, Trash2, CheckCircle as CheckCircle2, Home, Building2 } from "@/components/icons";
+import {
+  Building2,
+  CheckCircle as CheckCircle2,
+  Home,
+  Location as MapPin,
+  Phone,
+  Add as Plus,
+  Trash2,
+  User,
+} from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared/ResponsiveDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,7 +18,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { UserAddress } from "@/lib/db/schema";
 
-export function AddressManager({ initialAddresses }: { initialAddresses: UserAddress[] }) {
+export function AddressManager({
+  initialAddresses,
+}: {
+  initialAddresses: UserAddress[];
+}) {
   const [addresses, setAddresses] = useState<UserAddress[]>(initialAddresses);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,7 +115,10 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
           title="নতুন ডেলিভারি ঠিকানা"
           description="আপনার সঠিক ডেলিভারি তথ্য প্রদান করুন।"
           trigger={
-            <Button size="sm" className="rounded-xl bg-emerald-600 font-bold text-white shadow-xs hover:bg-emerald-500">
+            <Button
+              size="sm"
+              className="rounded-xl bg-emerald-600 font-bold text-white shadow-xs hover:bg-emerald-500"
+            >
               <Plus className="size-4" />
               <span>ঠিকানা যোগ করুন</span>
             </Button>
@@ -117,21 +133,29 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="label" className="text-xs font-semibold">লেবেল</Label>
+                <Label htmlFor="label" className="text-xs font-semibold">
+                  লেবেল
+                </Label>
                 <Input
                   id="label"
                   value={formData.label}
-                  onChange={(e) => setFormData({ ...formData, label: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, label: e.target.value })
+                  }
                   placeholder="যেমন: বাসা, অফিস"
                   required
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="fullName" className="text-xs font-semibold">প্রাপকের নাম</Label>
+                <Label htmlFor="fullName" className="text-xs font-semibold">
+                  প্রাপকের নাম
+                </Label>
                 <Input
                   id="fullName"
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                   placeholder="পূর্ণ নাম"
                   required
                 />
@@ -140,21 +164,29 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="phone" className="text-xs font-semibold">মোবাইল নম্বর</Label>
+                <Label htmlFor="phone" className="text-xs font-semibold">
+                  মোবাইল নম্বর
+                </Label>
                 <Input
                   id="phone"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                   placeholder="01XXXXXXXXX"
                   required
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="district" className="text-xs font-semibold">জেলা</Label>
+                <Label htmlFor="district" className="text-xs font-semibold">
+                  জেলা
+                </Label>
                 <Input
                   id="district"
                   value={formData.district}
-                  onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, district: e.target.value })
+                  }
                   placeholder="যেমন: ঢাকা, চট্টগ্রাম"
                   required
                 />
@@ -162,22 +194,30 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="thana" className="text-xs font-semibold">থানা / উপজেলা</Label>
+              <Label htmlFor="thana" className="text-xs font-semibold">
+                থানা / উপজেলা
+              </Label>
               <Input
                 id="thana"
                 value={formData.thana}
-                onChange={(e) => setFormData({ ...formData, thana: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, thana: e.target.value })
+                }
                 placeholder="যেমন: মিরপুর, ধানমন্ডি, গুলশান"
                 required
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="streetAddress" className="text-xs font-semibold">বিস্তারিত ঠিকানা (বাড়ি, রোড, ফ্ল্যাট)</Label>
+              <Label htmlFor="streetAddress" className="text-xs font-semibold">
+                বিস্তারিত ঠিকানা (বাড়ি, রোড, ফ্ল্যাট)
+              </Label>
               <Input
                 id="streetAddress"
                 value={formData.streetAddress}
-                onChange={(e) => setFormData({ ...formData, streetAddress: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, streetAddress: e.target.value })
+                }
                 placeholder="বাড়ি নং, রোড নং, এলাকা..."
                 required
               />
@@ -188,10 +228,15 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
                 type="checkbox"
                 id="isDefault"
                 checked={formData.isDefault}
-                onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, isDefault: e.target.checked })
+                }
                 className="size-4 rounded accent-emerald-600 cursor-pointer"
               />
-              <Label htmlFor="isDefault" className="text-xs font-medium cursor-pointer">
+              <Label
+                htmlFor="isDefault"
+                className="text-xs font-medium cursor-pointer"
+              >
                 ডিফল্ট ডেলিভারি ঠিকানা হিসেবে সেট করুন
               </Label>
             </div>
@@ -213,7 +258,9 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
           <div className="flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 mb-3">
             <MapPin className="size-6" />
           </div>
-          <h3 className="text-base font-bold text-foreground">কোনো ঠিকানা সংরক্ষিত নেই</h3>
+          <h3 className="text-base font-bold text-foreground">
+            কোনো ঠিকানা সংরক্ষিত নেই
+          </h3>
           <p className="text-xs text-muted-foreground mt-1 max-w-sm">
             সহজে চেকআউট করার জন্য আপনার বাসা বা অফিসের ঠিকানা যোগ করুন।
           </p>
@@ -261,7 +308,8 @@ export function AddressManager({ initialAddresses }: { initialAddresses: UserAdd
                     <div className="flex items-start gap-2 pt-0.5">
                       <MapPin className="size-3.5 text-emerald-600 shrink-0 mt-0.5" />
                       <span className="leading-relaxed">
-                        {address.streetAddress}, {address.thana}, {address.district}
+                        {address.streetAddress}, {address.thana},{" "}
+                        {address.district}
                       </span>
                     </div>
                   </div>

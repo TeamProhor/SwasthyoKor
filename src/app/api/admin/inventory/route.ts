@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { productVariants } from "@/lib/db/schema";

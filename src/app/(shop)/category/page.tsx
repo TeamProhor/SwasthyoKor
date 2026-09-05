@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
-import { getCollections, getCollectionProducts } from "@/lib/db/queries";
+import { getCollectionProducts, getCollections } from "@/lib/db/queries";
 
 export const metadata = {
   title: "ক্যাটাগরি সমূহ | স্বাস্থ্যকর",
@@ -10,19 +10,23 @@ export const metadata = {
 
 const CATEGORY_META: Record<string, { image: string; icon: string }> = {
   "organic-essentials": {
-    image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=80",
+    image:
+      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=80",
     icon: "🍯",
   },
   "oils-and-ghee": {
-    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=80",
+    image:
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=800&auto=format&fit=crop&q=80",
     icon: "🫒",
   },
   "superfoods-wellness": {
-    image: "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=800&auto=format&fit=crop&q=80",
+    image:
+      "https://images.unsplash.com/photo-1514733670139-4d87a1941d55?w=800&auto=format&fit=crop&q=80",
     icon: "🌿",
   },
   "nuts-dry-fruits": {
-    image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&auto=format&fit=crop&q=80",
+    image:
+      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&auto=format&fit=crop&q=80",
     icon: "🥜",
   },
 };
@@ -55,9 +59,12 @@ export default async function CategoriesPage() {
       {/* Categories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {visibleCollections.map(async (collection) => {
-          const prods = await getCollectionProducts({ collection: collection.handle });
+          const prods = await getCollectionProducts({
+            collection: collection.handle,
+          });
           const meta = CATEGORY_META[collection.handle] || {
-            image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80",
+            image:
+              "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80",
             icon: "🌿",
           };
 
@@ -94,7 +101,8 @@ export default async function CategoriesPage() {
                     {collection.title}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
-                    {collection.description || "১০০% খাঁটি ও সেরা মানের অর্গানিক খাদ্য উপাদান।"}
+                    {collection.description ||
+                      "১০০% খাঁটি ও সেরা মানের অর্গানিক খাদ্য উপাদান।"}
                   </p>
                 </div>
 

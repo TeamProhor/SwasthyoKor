@@ -44,7 +44,11 @@ export function EditProductDialog({
 
     // Compress client-side to WebP if image file is selected
     const imageFile = formData.get("image") as File | null;
-    if (imageFile && imageFile.size > 0 && imageFile.type.startsWith("image/")) {
+    if (
+      imageFile &&
+      imageFile.size > 0 &&
+      imageFile.type.startsWith("image/")
+    ) {
       const compressedWebpFile = await compressImageClient(imageFile);
       formData.set("image", compressedWebpFile);
     }

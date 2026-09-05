@@ -22,7 +22,7 @@ export async function submitReviewAction({
       return { success: false, error: "রিভিউ দিতে অনুগ্রহ করে প্রথমে লগইন করুন।" };
     }
 
-    if (!comment || !comment.trim()) {
+    if (!comment?.trim()) {
       return { success: false, error: "অনুগ্রহ করে আপনার মন্তব্য লিখুন।" };
     }
 
@@ -51,12 +51,17 @@ export async function submitReviewAction({
 
     revalidatePath(`/product/${productHandle}`);
 
-    return { success: true, review: newReview, message: "আপনার রিভিউ সফলভাবে যুক্ত হয়েছে!" };
+    return {
+      success: true,
+      review: newReview,
+      message: "আপনার রিভিউ সফলভাবে যুক্ত হয়েছে!",
+    };
   } catch (err: unknown) {
     console.error("Submit review error:", err);
     return {
       success: false,
-      error: err instanceof Error ? err.message : "রিভিউ সংরক্ষণ করতে সমস্যা হয়েছে।",
+      error:
+        err instanceof Error ? err.message : "রিভিউ সংরক্ষণ করতে সমস্যা হয়েছে।",
     };
   }
 }
@@ -76,7 +81,10 @@ export async function updateProfileUserAction(formData: FormData) {
 
     if (avatarFile && avatarFile.size > 0) {
       const buffer = Buffer.from(await avatarFile.arrayBuffer());
-      const extension = avatarFile.name.endsWith(".webp") || avatarFile.type === "image/webp" ? "webp" : avatarFile.name.split(".").pop() || "webp";
+      const extension =
+        avatarFile.name.endsWith(".webp") || avatarFile.type === "image/webp"
+          ? "webp"
+          : avatarFile.name.split(".").pop() || "webp";
       const s3Key = `avatars/${user.id}-${Date.now()}.${extension}`;
       avatarUrl = await uploadObject({
         key: s3Key,

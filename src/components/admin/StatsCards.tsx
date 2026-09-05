@@ -43,7 +43,10 @@ export function StatsCards({
       title: "নিবন্ধিত গ্রাহক",
       value: userCount.toLocaleString("bn-BD"),
       icon: User,
-      description: blogCount !== undefined ? `ব্লগ আর্টিকেল: ${blogCount.toLocaleString("bn-BD")}টি` : "সক্রিয় গ্রাহক অ্যাকাউন্ট",
+      description:
+        blogCount !== undefined
+          ? `ব্লগ আর্টিকেল: ${blogCount.toLocaleString("bn-BD")}টি`
+          : "সক্রিয় গ্রাহক অ্যাকাউন্ট",
       color: "text-purple-600 bg-purple-500/10",
     },
   ];

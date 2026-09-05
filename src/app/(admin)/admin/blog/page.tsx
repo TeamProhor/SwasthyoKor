@@ -18,7 +18,8 @@ export default async function AdminBlogPage() {
             ব্লগ ও কনটেন্ট পরিচালনা
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            এসইও ও এআই সার্চ (GEO) এর জন্য হেলথ গাইড আর্টিকেল লিখুন, সম্পাদনা করুন ও পরিচালনা করুন।
+            এসইও ও এআই সার্চ (GEO) এর জন্য হেলথ গাইড আর্টিকেল লিখুন, সম্পাদনা করুন ও
+            পরিচালনা করুন।
           </p>
         </div>
       </div>

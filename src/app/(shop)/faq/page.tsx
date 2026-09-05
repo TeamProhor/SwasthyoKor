@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GENERAL_FAQS } from "@/lib/content/blog-data";
-import { getStoreSettings } from "@/lib/db/queries";
-import { baseUrl } from "@/lib/utils";
-import { HelpCircle, CallCalling, ArrowRight, Sparkles } from "@/components/icons";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  CallCalling,
+  HelpCircle,
+  Sparkles,
+} from "@/components/icons";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { GENERAL_FAQS } from "@/lib/content/blog-data";
+import { getStoreSettings } from "@/lib/db/queries";
+import { baseUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "সচরাচর জিজ্ঞাসিত প্রশ্নাবলী (FAQ) | স্বাস্থ্যকর",
@@ -65,14 +70,18 @@ export default async function FAQPage() {
             সচরাচর জিজ্ঞাসিত প্রশ্নাবলী (FAQ)
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-            স্বাস্থ্যকর (SwasthyoKor) থেকে অর্ডার, পণ্যের গুণগত মান, ডেলিভারি ও লেনদেন সংক্রান্ত সব তথ্যের স্পষ্ট উত্তর।
+            স্বাস্থ্যকর (SwasthyoKor) থেকে অর্ডার, পণ্যের গুণগত মান, ডেলিভারি ও লেনদেন
+            সংক্রান্ত সব তথ্যের স্পষ্ট উত্তর।
           </p>
         </div>
 
         {/* Categorized FAQs with shadcn Accordion */}
         <div className="flex flex-col gap-6">
           {GENERAL_FAQS.map((categoryGroup) => (
-            <Card key={categoryGroup.category} className="overflow-hidden py-0 p-0">
+            <Card
+              key={categoryGroup.category}
+              className="overflow-hidden py-0 p-0"
+            >
               <CardContent className="p-5 sm:p-6">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="size-4 text-emerald-600 dark:text-emerald-400" />
@@ -107,7 +116,8 @@ export default async function FAQPage() {
               আপনার প্রশ্নের উত্তর খুঁজে পাননি?
             </h3>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-md mb-6">
-              আমাদের কাস্টমার কেয়ার টিম সবসময় আপনার সহায়তায় প্রস্তুত। সরাসরি কল বা হোয়াটসঅ্যাপে মেসেজ দিন।
+              আমাদের কাস্টমার কেয়ার টিম সবসময় আপনার সহায়তায় প্রস্তুত। সরাসরি কল বা হোয়াটসঅ্যাপে
+              মেসেজ দিন।
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Button

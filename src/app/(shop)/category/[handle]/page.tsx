@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Category } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product";
-import { getCollection, getCollectionProducts, getCollections } from "@/lib/db/queries";
+import { Button } from "@/components/ui/button";
+import {
+  getCollection,
+  getCollectionProducts,
+  getCollections,
+} from "@/lib/db/queries";
 
 export async function generateMetadata(props: {
   params: Promise<{ handle: string }>;
@@ -15,7 +19,8 @@ export async function generateMetadata(props: {
 
   return {
     title: `${collection.title} | স্বাস্থ্যকর`,
-    description: collection.description || `${collection.title} এর সেরা অর্গানিক পণ্যসমূহ।`,
+    description:
+      collection.description || `${collection.title} এর সেরা অর্গানিক পণ্যসমূহ।`,
   };
 }
 
@@ -38,11 +43,17 @@ export default async function CategoryDetailPage(props: {
       {/* Category Header Banner */}
       <div className="flex flex-col gap-3 border-b border-border/60 pb-6">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Link href="/" className="hover:text-foreground">হোম</Link>
+          <Link href="/" className="hover:text-foreground">
+            হোম
+          </Link>
           <span>/</span>
-          <Link href="/category" className="hover:text-foreground">ক্যাটাগরি</Link>
+          <Link href="/category" className="hover:text-foreground">
+            ক্যাটাগরি
+          </Link>
           <span>/</span>
-          <span className="font-semibold text-foreground">{collection.title}</span>
+          <span className="font-semibold text-foreground">
+            {collection.title}
+          </span>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -51,7 +62,8 @@ export default async function CategoryDetailPage(props: {
               {collection.title}
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
-              {collection.description || "সেরা মানের ও খাঁটি উপাদানে প্রস্তুত স্বাস্থ্যকর পণ্য সম্ভার।"}
+              {collection.description ||
+                "সেরা মানের ও খাঁটি উপাদানে প্রস্তুত স্বাস্থ্যকর পণ্য সম্ভার।"}
             </p>
           </div>
 
@@ -86,7 +98,9 @@ export default async function CategoryDetailPage(props: {
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border/80 p-12 text-center bg-card">
           <Category className="size-10 text-muted-foreground mb-3" />
-          <h3 className="text-base font-bold text-foreground">এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি</h3>
+          <h3 className="text-base font-bold text-foreground">
+            এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি
+          </h3>
           <p className="text-xs text-muted-foreground mt-1">
             শীঘ্রই নতুন স্টক যুক্ত করা হবে।
           </p>

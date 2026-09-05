@@ -2,12 +2,12 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CartModal } from "@/components/cart";
 import LogoSquare from "@/components/logo-square";
+import { ThemeToggler } from "@/components/theme-toggler";
 import { getMenu } from "@/lib/db/queries";
 import type { Menu } from "@/lib/types";
-import { ThemeToggler } from "@/components/theme-toggler";
 import { HeaderAuth } from "./HeaderAuth";
-import { MobileSearch } from "./MobileSearch";
 import MobileMenu from "./MobileMenu";
+import { MobileSearch } from "./MobileSearch";
 import Search, { SearchSkeleton } from "./Search";
 
 export async function Header() {
@@ -23,11 +23,7 @@ export async function Header() {
             <MobileMenu menu={menu} />
           </Suspense>
         </div>
-        <Link
-          href="/"
-          prefetch={true}
-          className="flex items-center gap-2"
-        >
+        <Link href="/" prefetch={true} className="flex items-center gap-2">
           <LogoSquare />
           <span className="text-base sm:text-lg font-bold tracking-tight text-emerald-800 dark:text-emerald-300">
             {siteName}

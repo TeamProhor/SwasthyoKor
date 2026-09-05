@@ -1,10 +1,15 @@
+import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { desc, eq } from "drizzle-orm";
 import { Box, Calendar, Package, Receipt } from "@/components/icons";
-import { Button } from "@/components/ui/button";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { ListCard } from "@/components/shared";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { orders } from "@/lib/db/schema";
@@ -17,12 +22,34 @@ export const metadata = {
 
 const STATUS_MAP: Record<
   string,
-  { label: string; badge: string; variant: "default" | "secondary" | "outline" | "destructive" }
+  {
+    label: string;
+    badge: string;
+    variant: "default" | "secondary" | "outline" | "destructive";
+  }
 > = {
-  confirmed:  { label: "কনফার্মড",    badge: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400",    variant: "outline" },
-  shipped:    { label: "ডেলিভারিতে", badge: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400", variant: "outline" },
-  delivered:  { label: "ডেলিভার্ড",  badge: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400", variant: "outline" },
-  cancelled:  { label: "বাতিল",      badge: "bg-red-500/10 text-red-600 border-red-500/20 dark:text-red-400",         variant: "destructive" },
+  confirmed: {
+    label: "কনফার্মড",
+    badge: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400",
+    variant: "outline",
+  },
+  shipped: {
+    label: "ডেলিভারিতে",
+    badge:
+      "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
+    variant: "outline",
+  },
+  delivered: {
+    label: "ডেলিভার্ড",
+    badge:
+      "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400",
+    variant: "outline",
+  },
+  cancelled: {
+    label: "বাতিল",
+    badge: "bg-red-500/10 text-red-600 border-red-500/20 dark:text-red-400",
+    variant: "destructive",
+  },
 };
 
 export default async function UserOrdersPage() {

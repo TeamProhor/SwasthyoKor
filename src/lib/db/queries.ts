@@ -575,11 +575,20 @@ export async function getOrder(id: string): Promise<Order | null> {
   return {
     id: row.id,
     email: row.email,
+    phone: row.phone,
+    customerName: row.customerName,
+    shippingAddress: row.shippingAddress,
+    paymentMethod: row.paymentMethod,
+    paymentStatus: row.paymentStatus,
+    paymentInvoiceId: row.paymentInvoiceId,
+    paymentTrxId: row.paymentTrxId,
+    paymentSenderNumber: row.paymentSenderNumber,
     totalAmount: row.totalAmount,
     totalCurrency: row.totalCurrency,
     status: row.status,
     items: row.items,
     createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
   };
 }
 

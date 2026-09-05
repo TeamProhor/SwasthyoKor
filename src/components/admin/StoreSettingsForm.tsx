@@ -1,14 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Store, Truck, CheckCircle as CheckCircle2 } from "@/components/icons";
+import {
+  CheckCircle as CheckCircle2,
+  Save,
+  Store,
+  Truck,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { StoreSettings } from "@/lib/db/schema";
 
-export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreSettings }) {
+export function StoreSettingsForm({
+  initialSettings,
+}: {
+  initialSettings: StoreSettings;
+}) {
   const [formData, setFormData] = useState({
     storeName: initialSettings.storeName,
     storePhone: initialSettings.storePhone,
@@ -44,7 +59,9 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "সেটিংস সংরক্ষণ ব্যর্থ হয়েছে।");
+      setError(
+        err instanceof Error ? err.message : "সেটিংস সংরক্ষণ ব্যর্থ হয়েছে।",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -70,7 +87,9 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
             <Store className="size-5" />
-            <CardTitle className="text-base font-bold text-foreground">স্টোর সাধারণ তথ্য</CardTitle>
+            <CardTitle className="text-base font-bold text-foreground">
+              স্টোর সাধারণ তথ্য
+            </CardTitle>
           </div>
           <CardDescription className="text-xs">
             আপনার ব্র্যান্ড নাম ও কাস্টমারদের জন্য যোগাযোগের তথ্য।
@@ -79,21 +98,29 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="storeName" className="text-xs font-semibold">স্টোরের নাম</Label>
+              <Label htmlFor="storeName" className="text-xs font-semibold">
+                স্টোরের নাম
+              </Label>
               <Input
                 id="storeName"
                 value={formData.storeName}
-                onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, storeName: e.target.value })
+                }
                 required
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="storeEmail" className="text-xs font-semibold">সাপোর্ট ইমেইল</Label>
+              <Label htmlFor="storeEmail" className="text-xs font-semibold">
+                সাপোর্ট ইমেইল
+              </Label>
               <Input
                 id="storeEmail"
                 type="email"
                 value={formData.storeEmail}
-                onChange={(e) => setFormData({ ...formData, storeEmail: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, storeEmail: e.target.value })
+                }
                 required
               />
             </div>
@@ -101,21 +128,29 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="storePhone" className="text-xs font-semibold">হটলাইন / মোবাইল</Label>
+              <Label htmlFor="storePhone" className="text-xs font-semibold">
+                হটলাইন / মোবাইল
+              </Label>
               <Input
                 id="storePhone"
                 value={formData.storePhone}
-                onChange={(e) => setFormData({ ...formData, storePhone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, storePhone: e.target.value })
+                }
                 placeholder="018XXXXXXXX"
                 required
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="whatsappNumber" className="text-xs font-semibold">হোয়াটসঅ্যাপ নম্বর (কান্ট্রি কোড সহ)</Label>
+              <Label htmlFor="whatsappNumber" className="text-xs font-semibold">
+                হোয়াটসঅ্যাপ নম্বর (কান্ট্রি কোড সহ)
+              </Label>
               <Input
                 id="whatsappNumber"
                 value={formData.whatsappNumber}
-                onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, whatsappNumber: e.target.value })
+                }
                 placeholder="88018XXXXXXXX"
                 required
               />
@@ -123,11 +158,15 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="storeAddress" className="text-xs font-semibold">অফিস / গুদামের ঠিকানা</Label>
+            <Label htmlFor="storeAddress" className="text-xs font-semibold">
+              অফিস / গুদামের ঠিকানা
+            </Label>
             <Input
               id="storeAddress"
               value={formData.storeAddress}
-              onChange={(e) => setFormData({ ...formData, storeAddress: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, storeAddress: e.target.value })
+              }
               required
             />
           </div>
@@ -139,7 +178,9 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
         <CardHeader className="pb-4">
           <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
             <Truck className="size-5" />
-            <CardTitle className="text-base font-bold text-foreground">ডেলিভারি চার্জ ও ফ্রি শিপিং</CardTitle>
+            <CardTitle className="text-base font-bold text-foreground">
+              ডেলিভারি চার্জ ও ফ্রি শিপিং
+            </CardTitle>
           </div>
           <CardDescription className="text-xs">
             চেকআউটে এলাকা অনুযায়ী স্বয়ংক্রিয়ভাবে শিপিং ফি গণনা হবে।
@@ -148,32 +189,59 @@ export function StoreSettingsForm({ initialSettings }: { initialSettings: StoreS
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="insideDhakaFee" className="text-xs font-semibold">ঢাকার ভেতরে ডেলিভারি চার্জ (৳)</Label>
+              <Label htmlFor="insideDhakaFee" className="text-xs font-semibold">
+                ঢাকার ভেতরে ডেলিভারি চার্জ (৳)
+              </Label>
               <Input
                 id="insideDhakaFee"
                 type="number"
                 value={formData.insideDhakaFee}
-                onChange={(e) => setFormData({ ...formData, insideDhakaFee: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    insideDhakaFee: Number(e.target.value),
+                  })
+                }
                 required
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="outsideDhakaFee" className="text-xs font-semibold">ঢাকার বাইরে ডেলিভারি চার্জ (৳)</Label>
+              <Label
+                htmlFor="outsideDhakaFee"
+                className="text-xs font-semibold"
+              >
+                ঢাকার বাইরে ডেলিভারি চার্জ (৳)
+              </Label>
               <Input
                 id="outsideDhakaFee"
                 type="number"
                 value={formData.outsideDhakaFee}
-                onChange={(e) => setFormData({ ...formData, outsideDhakaFee: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    outsideDhakaFee: Number(e.target.value),
+                  })
+                }
                 required
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="freeShippingMinAmount" className="text-xs font-semibold">ফ্রি শিপিং ন্যূনতম অর্ডার (৳)</Label>
+              <Label
+                htmlFor="freeShippingMinAmount"
+                className="text-xs font-semibold"
+              >
+                ফ্রি শিপিং ন্যূনতম অর্ডার (৳)
+              </Label>
               <Input
                 id="freeShippingMinAmount"
                 type="number"
                 value={formData.freeShippingMinAmount}
-                onChange={(e) => setFormData({ ...formData, freeShippingMinAmount: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    freeShippingMinAmount: Number(e.target.value),
+                  })
+                }
                 required
               />
             </div>

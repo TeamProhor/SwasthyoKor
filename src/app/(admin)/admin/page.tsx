@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CreateProductDialog, StatsCards } from "@/components/admin";
-import { Box, Receipt, BookOpen } from "@/components/icons";
+import { BookOpen, Box, Receipt } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,7 +10,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { db } from "@/lib/db";
-import { collections, orders, products, users, blogs } from "@/lib/db/schema";
+import { blogs, collections, orders, products, users } from "@/lib/db/schema";
 
 export const metadata = {
   title: "অ্যাডমিন ওভারভিউ | স্বাস্থ্যকর",

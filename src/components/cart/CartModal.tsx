@@ -205,7 +205,10 @@ export function CartModal() {
                 </div>
 
                 <form action={checkout}>
-                  <CheckoutButton totalAmount={cart.cost.totalAmount.amount} currencyCode={cart.cost.totalAmount.currencyCode} />
+                  <CheckoutButton
+                    totalAmount={cart.cost.totalAmount.amount}
+                    currencyCode={cart.cost.totalAmount.currencyCode}
+                  />
                 </form>
 
                 <p className="text-[11px] text-center text-muted-foreground mt-2.5">
@@ -220,7 +223,12 @@ export function CartModal() {
   );
 }
 
-function CheckoutButton({ totalAmount, currencyCode }: { totalAmount: string; currencyCode: string }) {
+function CheckoutButton({
+  totalAmount,
+}: {
+  totalAmount: string;
+  currencyCode?: string;
+}) {
   const { pending } = useFormStatus();
 
   return (
@@ -235,7 +243,9 @@ function CheckoutButton({ totalAmount, currencyCode }: { totalAmount: string; cu
         <>
           <BagShopping className="size-4" />
           <span>অর্ডার সম্পন্ন করুন</span>
-          <span className="ml-auto font-mono">৳{parseFloat(totalAmount).toLocaleString('bn-BD')}</span>
+          <span className="ml-auto font-mono">
+            ৳{parseFloat(totalAmount).toLocaleString("bn-BD")}
+          </span>
         </>
       )}
     </button>

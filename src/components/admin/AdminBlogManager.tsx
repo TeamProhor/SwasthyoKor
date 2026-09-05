@@ -1,15 +1,20 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { SearchNormal, Trash2 } from "@/components/icons";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useMemo, useState, useTransition } from "react";
+import {
+  BookOpen,
+  Clock,
+  Edit,
+  Export2 as ExternalLink,
+  Add as Plus,
+  SearchNormal,
+  Trash2,
+} from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -17,15 +22,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Add as Plus, Clock, Export2 as ExternalLink, BookOpen, Edit } from "@/components/icons";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   createBlogAction,
-  updateBlogAction,
   deleteBlogAction,
+  updateBlogAction,
 } from "@/lib/actions/admin";
 import type { BlogPost } from "@/lib/db/queries";
 
-export function AdminBlogManager({ initialPosts }: { initialPosts: BlogPost[] }) {
+export function AdminBlogManager({
+  initialPosts,
+}: {
+  initialPosts: BlogPost[];
+}) {
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [query, setQuery] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -194,7 +205,9 @@ export function AdminBlogManager({ initialPosts }: { initialPosts: BlogPost[] })
               <FieldGroup className="gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor="blog-title">আর্টিকেল শিরোনাম *</FieldLabel>
+                    <FieldLabel htmlFor="blog-title">
+                      আর্টিকেল শিরোনাম *
+                    </FieldLabel>
                     <Input
                       id="blog-title"
                       required
@@ -215,7 +228,9 @@ export function AdminBlogManager({ initialPosts }: { initialPosts: BlogPost[] })
                   </Field>
 
                   <Field>
-                    <FieldLabel htmlFor="blog-slug">ইউআরএল স্ল্যাগ (Slug) *</FieldLabel>
+                    <FieldLabel htmlFor="blog-slug">
+                      ইউআরএল স্ল্যাগ (Slug) *
+                    </FieldLabel>
                     <Input
                       id="blog-slug"
                       required

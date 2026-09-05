@@ -29,7 +29,11 @@ export function CreateProductDialog({
 
     // Compress client-side to WebP if image file is selected
     const imageFile = formData.get("image") as File | null;
-    if (imageFile && imageFile.size > 0 && imageFile.type.startsWith("image/")) {
+    if (
+      imageFile &&
+      imageFile.size > 0 &&
+      imageFile.type.startsWith("image/")
+    ) {
       const compressedWebpFile = await compressImageClient(imageFile);
       formData.set("image", compressedWebpFile);
     }
@@ -102,7 +106,9 @@ export function CreateProductDialog({
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="prod-compare-price">পূর্বের মূল্য (ঐচ্ছিক)</FieldLabel>
+              <FieldLabel htmlFor="prod-compare-price">
+                পূর্বের মূল্য (ঐচ্ছিক)
+              </FieldLabel>
               <Input
                 id="prod-compare-price"
                 name="compareAtPrice"
@@ -131,9 +137,7 @@ export function CreateProductDialog({
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="prod-image">
-              পণ্যের ছবি
-            </FieldLabel>
+            <FieldLabel htmlFor="prod-image">পণ্যের ছবি</FieldLabel>
             <Input
               id="prod-image"
               name="image"

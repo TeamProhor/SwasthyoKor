@@ -247,6 +247,18 @@ export const orders = pgTable(
   {
     id: varchar("id", { length: 255 }).primaryKey(),
     email: varchar("email", { length: 255 }),
+    phone: varchar("phone", { length: 50 }),
+    customerName: varchar("customer_name", { length: 255 }),
+    shippingAddress: text("shipping_address"),
+    paymentMethod: varchar("payment_method", { length: 50 })
+      .notNull()
+      .default("cod"), // 'cod' | 'online' (bkash/nagad/etc)
+    paymentStatus: varchar("payment_status", { length: 50 })
+      .notNull()
+      .default("pending"), // 'pending' | 'paid' | 'failed'
+    paymentInvoiceId: varchar("payment_invoice_id", { length: 255 }),
+    paymentTrxId: varchar("payment_trx_id", { length: 255 }),
+    paymentSenderNumber: varchar("payment_sender_number", { length: 50 }),
     totalAmount: real("total_amount").notNull(),
     totalCurrency: varchar("total_currency", { length: 10 })
       .notNull()
@@ -267,13 +279,19 @@ export const orders = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (table) => [
     index("orders_created_at_idx").on(table.createdAt),
     index("orders_email_idx").on(table.email),
     index("orders_status_idx").on(table.status),
+    index("orders_payment_invoice_idx").on(table.paymentInvoiceId),
   ],
 );
+
+export type OrderModel = typeof orders.$inferSelect;
 
 // ─── Authentication Schema ──────────────────────────────────────────────────
 

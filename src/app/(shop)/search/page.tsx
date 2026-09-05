@@ -1,5 +1,5 @@
-import { ProductCard } from "@/components/product";
 import { BoxSearch } from "@/components/icons";
+import { ProductCard } from "@/components/product";
 import {
   Empty,
   EmptyDescription,

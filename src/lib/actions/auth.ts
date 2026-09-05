@@ -27,7 +27,7 @@ export async function requestMagicLinkAction(formData: FormData) {
   if (currentSession) redirect("/dashboard");
 
   const email = (formData.get("email") as string)?.toLowerCase().trim();
-  if (!email || !email.includes("@")) {
+  if (!email?.includes("@")) {
     return { success: false, error: "একটি বৈধ ইমেইল ঠিকানা দিন।" };
   }
 
@@ -88,7 +88,7 @@ export async function loginWithPasswordAction(formData: FormData) {
     where: and(eq(accounts.userId, user.id), eq(accounts.provider, "email")),
   });
 
-  if (!account || !account.passwordHash) {
+  if (!account?.passwordHash) {
     return {
       success: false,
       error: "এই অ্যাকাউন্টের জন্য কোনো পাসওয়ার্ড সেট করা নেই। ম্যাজিক লিংক ব্যবহার করুন।",

@@ -2,12 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBlog } from "@/lib/db/queries";
-import { baseUrl } from "@/lib/utils";
 import {
-  Clock,
-  Calendar,
   ArrowLeft,
+  Calendar,
+  Clock,
   ShieldCheck,
   ShoppingBag,
 } from "@/components/icons";
@@ -15,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { getBlog } from "@/lib/db/queries";
+import { baseUrl } from "@/lib/utils";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -255,9 +255,15 @@ export default async function BlogPostPage(props: {
             // 4. Bullet lists
             if (cleanPara.includes("1. **") || cleanPara.includes("- **")) {
               return (
-                <div key={`list-${cleanPara.slice(0, 32)}`} className="my-3 space-y-2">
+                <div
+                  key={`list-${cleanPara.slice(0, 32)}`}
+                  className="my-3 space-y-2"
+                >
                   {cleanPara.split("\n").map((item: string) => (
-                    <p key={`item-${item}`} className="leading-relaxed text-muted-foreground">
+                    <p
+                      key={`item-${item}`}
+                      className="leading-relaxed text-muted-foreground"
+                    >
                       {item}
                     </p>
                   ))}
@@ -267,7 +273,10 @@ export default async function BlogPostPage(props: {
 
             // 5. Standard paragraph
             return (
-              <p key={`p-${cleanPara.slice(0, 32)}`} className="mb-4 text-muted-foreground leading-relaxed">
+              <p
+                key={`p-${cleanPara.slice(0, 32)}`}
+                className="mb-4 text-muted-foreground leading-relaxed"
+              >
                 {cleanPara}
               </p>
             );
@@ -283,40 +292,47 @@ export default async function BlogPostPage(props: {
                 <span>সম্পর্কিত স্বাস্থ্যকর পণ্য</span>
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                {post.relatedProducts.map((p: { title: string; handle: string; price: string; image: string }) => (
-                  <div
-                    key={p.handle}
-                    className="flex items-center justify-between gap-4 w-full"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-muted">
-                        <Image
-                          src={p.image}
-                          alt={p.title}
-                          fill
-                          className="object-cover"
-                        />
+                {post.relatedProducts.map(
+                  (p: {
+                    title: string;
+                    handle: string;
+                    price: string;
+                    image: string;
+                  }) => (
+                    <div
+                      key={p.handle}
+                      className="flex items-center justify-between gap-4 w-full"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-muted">
+                          <Image
+                            src={p.image}
+                            alt={p.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-foreground text-sm sm:text-base">
+                            {p.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground">
+                            ১০০% প্রাকৃতিক ও ল্যাব টেস্টেড
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-foreground text-sm sm:text-base">
-                          {p.title}
-                        </h4>
-                        <p className="text-xs text-muted-foreground">
-                          ১০০% প্রাকৃতিক ও ল্যাব টেস্টেড
-                        </p>
-                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
+                        render={
+                          <Link href={`/product/${p.handle}`}>
+                            অর্ডার করুন {p.price}
+                          </Link>
+                        }
+                      />
                     </div>
-                    <Button
-                      size="sm"
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
-                      render={
-                        <Link href={`/product/${p.handle}`}>
-                          অর্ডার করুন {p.price}
-                        </Link>
-                      }
-                    />
-                  </div>
-                ))}
+                  ),
+                )}
               </div>
             </CardContent>
           </Card>

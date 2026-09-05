@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useTransition } from "react";
-import { Trash2, Edit, Add } from "@/components/icons";
+import { Add, Edit, Trash2 } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -12,17 +12,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createHeroBannerAction,
-  updateHeroBannerAction,
   deleteHeroBannerAction,
+  updateHeroBannerAction,
 } from "@/lib/actions/admin";
-import { compressImageClient } from "@/lib/image";
 import type { HeroBanner } from "@/lib/db/schema";
+import { compressImageClient } from "@/lib/image";
 
-export function AdminBannersManager({
-  banners,
-}: {
-  banners: HeroBanner[];
-}) {
+export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<HeroBanner | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -36,7 +32,11 @@ export function AdminBannersManager({
     const formData = new FormData(formElement);
 
     const imageFile = formData.get("image") as File | null;
-    if (imageFile && imageFile.size > 0 && imageFile.type.startsWith("image/")) {
+    if (
+      imageFile &&
+      imageFile.size > 0 &&
+      imageFile.type.startsWith("image/")
+    ) {
       const compressedWebpFile = await compressImageClient(imageFile);
       formData.set("image", compressedWebpFile);
     }
@@ -60,7 +60,11 @@ export function AdminBannersManager({
     formData.append("id", editingBanner.id);
 
     const imageFile = formData.get("image") as File | null;
-    if (imageFile && imageFile.size > 0 && imageFile.type.startsWith("image/")) {
+    if (
+      imageFile &&
+      imageFile.size > 0 &&
+      imageFile.type.startsWith("image/")
+    ) {
       const compressedWebpFile = await compressImageClient(imageFile);
       formData.set("image", compressedWebpFile);
     }
@@ -109,7 +113,9 @@ export function AdminBannersManager({
           <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4">
             <FieldGroup className="gap-3.5">
               <Field>
-                <FieldLabel htmlFor="create-title">ব্যানার টাইটেল (বড় লেখা) *</FieldLabel>
+                <FieldLabel htmlFor="create-title">
+                  ব্যানার টাইটেল (বড় লেখা) *
+                </FieldLabel>
                 <Input
                   id="create-title"
                   name="title"
@@ -120,7 +126,9 @@ export function AdminBannersManager({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="create-highlight">হাইলাইট টেক্সট (রঙিন লেখা) *</FieldLabel>
+                <FieldLabel htmlFor="create-highlight">
+                  হাইলাইট টেক্সট (রঙিন লেখা) *
+                </FieldLabel>
                 <Input
                   id="create-highlight"
                   name="highlight"
@@ -131,7 +139,9 @@ export function AdminBannersManager({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="create-subtitle">সাবটাইটেল / সংক্ষিপ্ত বিবরণ *</FieldLabel>
+                <FieldLabel htmlFor="create-subtitle">
+                  সাবটাইটেল / সংক্ষিপ্ত বিবরণ *
+                </FieldLabel>
                 <Textarea
                   id="create-subtitle"
                   name="subtitle"
@@ -144,7 +154,9 @@ export function AdminBannersManager({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="create-link">লিঙ্ক (টার্গেট URL) *</FieldLabel>
+                  <FieldLabel htmlFor="create-link">
+                    লিঙ্ক (টার্গেট URL) *
+                  </FieldLabel>
                   <Input
                     id="create-link"
                     name="link"
@@ -155,7 +167,9 @@ export function AdminBannersManager({
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="create-color">হাইলাইট রঙ (Tailwind Color)</FieldLabel>
+                  <FieldLabel htmlFor="create-color">
+                    হাইলাইট রঙ (Tailwind Color)
+                  </FieldLabel>
                   <select
                     id="create-color"
                     name="accentColor"
@@ -172,7 +186,9 @@ export function AdminBannersManager({
               </div>
 
               <Field>
-                <FieldLabel htmlFor="create-image">ব্যানার ইমেজ ফাইল (বা ইমেজ URL) *</FieldLabel>
+                <FieldLabel htmlFor="create-image">
+                  ব্যানার ইমেজ ফাইল (বা ইমেজ URL) *
+                </FieldLabel>
                 <Input
                   id="create-image"
                   name="image"
@@ -183,7 +199,9 @@ export function AdminBannersManager({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="create-imageUrl">অথবা ছবির সরাসরি ওয়েব লিঙ্ক (URL)</FieldLabel>
+                <FieldLabel htmlFor="create-imageUrl">
+                  অথবা ছবির সরাসরি ওয়েব লিঙ্ক (URL)
+                </FieldLabel>
                 <Input
                   id="create-imageUrl"
                   name="imageUrl"
@@ -236,7 +254,8 @@ export function AdminBannersManager({
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3 text-white">
                 <div className="text-sm font-black">
-                  {banner.title} <span className={banner.accentColor}>{banner.highlight}</span>
+                  {banner.title}{" "}
+                  <span className={banner.accentColor}>{banner.highlight}</span>
                 </div>
                 <p className="text-[11px] text-neutral-200 line-clamp-1 mt-0.5">
                   {banner.subtitle}
@@ -336,7 +355,9 @@ export function AdminBannersManager({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="edit-link">লিঙ্ক (টার্গেট URL) *</FieldLabel>
+                  <FieldLabel htmlFor="edit-link">
+                    লিঙ্ক (টার্গেট URL) *
+                  </FieldLabel>
                   <Input
                     id="edit-link"
                     name="link"
@@ -364,7 +385,9 @@ export function AdminBannersManager({
               </div>
 
               <Field>
-                <FieldLabel htmlFor="edit-image">নতুন ব্যানার ইমেজ ফাইল (ঐচ্ছিক)</FieldLabel>
+                <FieldLabel htmlFor="edit-image">
+                  নতুন ব্যানার ইমেজ ফাইল (ঐচ্ছিক)
+                </FieldLabel>
                 <Input
                   id="edit-image"
                   name="image"
@@ -375,7 +398,9 @@ export function AdminBannersManager({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-imageUrl">অথবা নতুন ইমেজ URL (ঐচ্ছিক)</FieldLabel>
+                <FieldLabel htmlFor="edit-imageUrl">
+                  অথবা নতুন ইমেজ URL (ঐচ্ছিক)
+                </FieldLabel>
                 <Input
                   id="edit-imageUrl"
                   name="imageUrl"

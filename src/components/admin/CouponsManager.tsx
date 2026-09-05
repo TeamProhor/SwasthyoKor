@@ -1,16 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { Add as Plus, Tag, Trash2, Copy, Check } from "@/components/icons";
+import { Check, Copy, Add as Plus, Tag, Trash2 } from "@/components/icons";
 import { ResponsiveDialog } from "@/components/shared/ResponsiveDialog";
 import { Button } from "@/components/ui/button";
-import { Card, } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { Coupon } from "@/lib/db/schema";
 
-export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] }) {
+export function CouponsManager({
+  initialCoupons,
+}: {
+  initialCoupons: Coupon[];
+}) {
   const [coupons, setCoupons] = useState<Coupon[]>(initialCoupons);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +85,9 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
 
       if (res.ok) {
         setCoupons((prev) =>
-          prev.map((c) => (c.id === id ? { ...c, isActive: !currentStatus } : c)),
+          prev.map((c) =>
+            c.id === id ? { ...c, isActive: !currentStatus } : c,
+          ),
         );
       }
     } catch (err) {
@@ -116,7 +129,10 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
           title="নতুন কুপন কোড তৈরি"
           description="কুপন কোড, ডিসকাউন্টের পরিমাণ ও শর্তাবলী পূরণ করুন।"
           trigger={
-            <Button size="sm" className="rounded-xl bg-emerald-600 font-bold text-white shadow-xs hover:bg-emerald-500">
+            <Button
+              size="sm"
+              className="rounded-xl bg-emerald-600 font-bold text-white shadow-xs hover:bg-emerald-500"
+            >
               <Plus className="size-4" />
               <span>নতুন কুপন</span>
             </Button>
@@ -130,11 +146,18 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
             )}
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="code" className="text-xs font-semibold">কুপন কোড (যেমন: EID10, HEALTH20)</Label>
+              <Label htmlFor="code" className="text-xs font-semibold">
+                কুপন কোড (যেমন: EID10, HEALTH20)
+              </Label>
               <Input
                 id="code"
                 value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    code: e.target.value.toUpperCase(),
+                  })
+                }
                 placeholder="EID10"
                 required
               />
@@ -145,7 +168,9 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
                 <Label className="text-xs font-semibold">ডিসকাউন্ট ধরন</Label>
                 <select
                   value={formData.discountType}
-                  onChange={(e) => setFormData({ ...formData, discountType: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, discountType: e.target.value })
+                  }
                   className="rounded-xl border border-input bg-background px-3 py-2 text-xs font-medium"
                 >
                   <option value="percentage">শতকরা হার (%)</option>
@@ -153,14 +178,24 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
                 </select>
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="discountValue" className="text-xs font-semibold">
-                  {formData.discountType === "percentage" ? "ডিসকাউন্ট (%)" : "ডিসকাউন্ট (৳)"}
+                <Label
+                  htmlFor="discountValue"
+                  className="text-xs font-semibold"
+                >
+                  {formData.discountType === "percentage"
+                    ? "ডিসকাউন্ট (%)"
+                    : "ডিসকাউন্ট (৳)"}
                 </Label>
                 <Input
                   id="discountValue"
                   type="number"
                   value={formData.discountValue}
-                  onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      discountValue: Number(e.target.value),
+                    })
+                  }
                   required
                 />
               </div>
@@ -168,21 +203,41 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="minOrderAmount" className="text-xs font-semibold">ন্যূনতম অর্ডার (৳)</Label>
+                <Label
+                  htmlFor="minOrderAmount"
+                  className="text-xs font-semibold"
+                >
+                  ন্যূনতম অর্ডার (৳)
+                </Label>
                 <Input
                   id="minOrderAmount"
                   type="number"
                   value={formData.minOrderAmount}
-                  onChange={(e) => setFormData({ ...formData, minOrderAmount: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      minOrderAmount: Number(e.target.value),
+                    })
+                  }
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="maxDiscountAmount" className="text-xs font-semibold">সর্বোচ্চ ছাড় (৳, ঐচ্ছিক)</Label>
+                <Label
+                  htmlFor="maxDiscountAmount"
+                  className="text-xs font-semibold"
+                >
+                  সর্বোচ্চ ছাড় (৳, ঐচ্ছিক)
+                </Label>
                 <Input
                   id="maxDiscountAmount"
                   type="number"
                   value={formData.maxDiscountAmount}
-                  onChange={(e) => setFormData({ ...formData, maxDiscountAmount: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      maxDiscountAmount: e.target.value,
+                    })
+                  }
                   placeholder="সীমাহীন"
                 />
               </div>
@@ -204,7 +259,9 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
           <div className="flex size-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 mb-3">
             <Tag className="size-6" />
           </div>
-          <h3 className="text-base font-bold text-foreground">কোনো কুপন তৈরি করা হয়নি</h3>
+          <h3 className="text-base font-bold text-foreground">
+            কোনো কুপন তৈরি করা হয়নি
+          </h3>
           <p className="text-xs text-muted-foreground mt-1 max-w-sm">
             কাস্টমারদের আকৃষ্ট করতে প্রোমোকোড ও ছাড় অফার তৈরি করুন।
           </p>
@@ -218,7 +275,9 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
                 <TableHead className="font-bold text-xs">ডিসকাউন্ট</TableHead>
                 <TableHead className="font-bold text-xs">শর্তাবলী</TableHead>
                 <TableHead className="font-bold text-xs">স্ট্যাটাস</TableHead>
-                <TableHead className="text-right font-bold text-xs">অ্যাকশন</TableHead>
+                <TableHead className="text-right font-bold text-xs">
+                  অ্যাকশন
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -251,12 +310,16 @@ export function CouponsManager({ initialCoupons }: { initialCoupons: Coupon[] })
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     ন্যূনতম অর্ডার ৳{coupon.minOrderAmount}
-                    {coupon.maxDiscountAmount ? ` (সর্বোচ্চ ৳${coupon.maxDiscountAmount})` : ""}
+                    {coupon.maxDiscountAmount
+                      ? ` (সর্বোচ্চ ৳${coupon.maxDiscountAmount})`
+                      : ""}
                   </TableCell>
                   <TableCell>
                     <button
                       type="button"
-                      onClick={() => handleToggleActive(coupon.id, coupon.isActive)}
+                      onClick={() =>
+                        handleToggleActive(coupon.id, coupon.isActive)
+                      }
                       className={`cursor-pointer rounded-full px-2.5 py-0.5 text-[10px] font-bold transition-colors ${
                         coupon.isActive
                           ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"

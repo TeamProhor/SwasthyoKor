@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Loader, Search as SearchIcon, ArrowRight } from "@/components/icons";
+import { ArrowRight, Loader, Search as SearchIcon } from "@/components/icons";
 import {
   InputGroup,
   InputGroupAddon,
@@ -63,7 +63,10 @@ export default function Search() {
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -108,7 +111,11 @@ export default function Search() {
             {isLoading ? (
               <Loader className="size-4 animate-spin text-emerald-600" />
             ) : (
-              <button type="submit" aria-label="Search" className="cursor-pointer">
+              <button
+                type="submit"
+                aria-label="Search"
+                className="cursor-pointer"
+              >
                 <SearchIcon className="size-4 text-muted-foreground hover:text-foreground" />
               </button>
             )}
@@ -181,7 +188,11 @@ export function SearchSkeleton() {
   return (
     <div className="w-full">
       <InputGroup className="rounded-xl border bg-card text-sm">
-        <InputGroupInput placeholder="পণ্য খুঁজুন..." disabled className="px-3.5 py-2" />
+        <InputGroupInput
+          placeholder="পণ্য খুঁজুন..."
+          disabled
+          className="px-3.5 py-2"
+        />
         <InputGroupAddon align="inline-end" className="pr-3">
           <SearchIcon className="size-4 text-muted-foreground" />
         </InputGroupAddon>

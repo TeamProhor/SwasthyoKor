@@ -42,7 +42,8 @@ export function ProductsList({
         item.price.includes(query);
 
       const matchCategory =
-        selectedCollection === "all" || item.collectionId === selectedCollection;
+        selectedCollection === "all" ||
+        item.collectionId === selectedCollection;
 
       return matchSearch && matchCategory;
     });
@@ -65,7 +66,8 @@ export function ProductsList({
           text: `৳${item.price}`,
           variant: "default",
         },
-        ...(item.compareAtPrice && Number(item.compareAtPrice) > Number(item.price)
+        ...(item.compareAtPrice &&
+        Number(item.compareAtPrice) > Number(item.price)
           ? [
               {
                 text: `পূর্বের: ৳${item.compareAtPrice}`,

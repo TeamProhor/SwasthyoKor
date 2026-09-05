@@ -1,4 +1,4 @@
-import { ShieldCheck, Truck, RestartCircle, Award } from "@/components/icons";
+import { Award, RestartCircle, ShieldCheck, Truck } from "@/components/icons";
 
 const FEATURES = [
   {
@@ -38,7 +38,9 @@ export function TrustFeaturesBar() {
                 <Icon className="size-6" />
               </div>
               <div className="flex flex-col">
-                <h3 className="text-sm font-bold text-foreground">{item.title}</h3>
+                <h3 className="text-sm font-bold text-foreground">
+                  {item.title}
+                </h3>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                   {item.description}
                 </p>

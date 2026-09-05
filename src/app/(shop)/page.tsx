@@ -90,46 +90,46 @@ export default async function HomePage() {
         }}
       />
       <div className="flex flex-col gap-2 sm:gap-4">
-      {/* 1. Hero 16:9 Banner Slider */}
-      <HeroSection slides={banners} />
+        {/* 1. Hero 16:9 Banner Slider */}
+        <HeroSection slides={banners} />
 
-      {/* 2. Top Circular Category Badges */}
-      <CategorySlider />
+        {/* 2. Top Circular Category Badges */}
+        <CategorySlider />
 
-      {/* 3. Flash Deals / আজকের সেরা অফার */}
-      <Suspense fallback={null}>
-        <FlashDealsSection />
-      </Suspense>
-
-      {/* 4. Editorial 3-Item Featured Bento Grid */}
-      <div className="mx-auto w-full max-w-7xl px-4 py-2 sm:py-4">
-        <Suspense
-          fallback={
-            <div className="grid gap-3 sm:gap-4 md:grid-cols-6 md:grid-rows-2">
-              <Skeleton className="h-[280px] sm:h-[380px] md:h-[480px] rounded-2xl md:col-span-4 md:row-span-2" />
-              <Skeleton className="h-[180px] sm:h-[220px] rounded-2xl md:col-span-2 md:row-span-1" />
-              <Skeleton className="h-[180px] sm:h-[220px] rounded-2xl md:col-span-2 md:row-span-1" />
-            </div>
-          }
-        >
-          <ThreeItemGrid />
+        {/* 3. Flash Deals / আজকের সেরা অফার */}
+        <Suspense fallback={null}>
+          <FlashDealsSection />
         </Suspense>
+
+        {/* 4. Editorial 3-Item Featured Bento Grid */}
+        <div className="mx-auto w-full max-w-7xl px-4 py-2 sm:py-4">
+          <Suspense
+            fallback={
+              <div className="grid gap-3 sm:gap-4 md:grid-cols-6 md:grid-rows-2">
+                <Skeleton className="h-[280px] sm:h-[380px] md:h-[480px] rounded-2xl md:col-span-4 md:row-span-2" />
+                <Skeleton className="h-[180px] sm:h-[220px] rounded-2xl md:col-span-2 md:row-span-1" />
+                <Skeleton className="h-[180px] sm:h-[220px] rounded-2xl md:col-span-2 md:row-span-1" />
+              </div>
+            }
+          >
+            <ThreeItemGrid />
+          </Suspense>
+        </div>
+
+        {/* 5. Category-wise Dedicated Showcase Grids (Honey, Ghee/Oils, Superfoods, Nuts) */}
+        <Suspense fallback={null}>
+          <CategoryShowcaseSection />
+        </Suspense>
+
+        {/* 6. Continuous Auto-scrolling Product Carousel */}
+        <CollectionTabsSection />
+
+        {/* 7. Trust & Guarantee Feature Bar */}
+        <TrustFeaturesBar />
+
+        {/* 8. Reseller / Wholesale Program Card */}
+        <ResellerBanner />
       </div>
-
-      {/* 5. Category-wise Dedicated Showcase Grids (Honey, Ghee/Oils, Superfoods, Nuts) */}
-      <Suspense fallback={null}>
-        <CategoryShowcaseSection />
-      </Suspense>
-
-      {/* 6. Continuous Auto-scrolling Product Carousel */}
-      <CollectionTabsSection />
-
-      {/* 7. Trust & Guarantee Feature Bar */}
-      <TrustFeaturesBar />
-
-      {/* 8. Reseller / Wholesale Program Card */}
-      <ResellerBanner />
-    </div>
     </>
   );
 }
