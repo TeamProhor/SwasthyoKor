@@ -50,10 +50,10 @@ export default async function CheckoutProductPage(props: {
   const finalTotal = unitPrice * quantity;
 
   return (
-    <div className="min-h-screen bg-neutral-50/60 dark:bg-neutral-950 py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
+    <div className="min-h-screen bg-neutral-50/60 dark:bg-neutral-950 py-5 px-3 sm:py-8 sm:px-6 lg:px-8 flex flex-col justify-between">
       <div className="max-w-4xl mx-auto w-full">
         {/* Minimal Header */}
-        <div className="flex items-center justify-between pb-6 border-b border-border/80 mb-8">
+        <div className="flex items-center justify-between pb-4 sm:pb-6 border-b border-border/80 mb-5 sm:mb-8">
           <Link
             href="/"
             className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-extrabold text-xl tracking-tight"
@@ -63,16 +63,16 @@ export default async function CheckoutProductPage(props: {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8">
           {/* Left Column: Delivery Form */}
-          <div className="lg:col-span-7 space-y-6">
-            <Card className="border-border/80 bg-card rounded-2xl shadow-xs">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-bold text-foreground">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
+            <Card className="border-border/80 bg-card rounded-xl sm:rounded-2xl shadow-xs py-0 gap-0">
+              <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-border/50">
+                <CardTitle className="text-base sm:text-lg font-bold text-foreground">
                   ডেলিভারির ঠিকানা ও তথ্য
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-3.5 sm:p-6 pt-3 sm:pt-4">
                 <DirectCheckoutForm
                   handle={product.handle}
                   quantity={quantity}
@@ -85,14 +85,14 @@ export default async function CheckoutProductPage(props: {
           </div>
 
           {/* Right Column: Order Summary */}
-          <div className="lg:col-span-5 space-y-6">
-            <Card className="border-border/80 bg-card rounded-2xl shadow-xs sticky top-8">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-base font-bold text-foreground">
+          <div className="lg:col-span-5 space-y-4 sm:space-y-6">
+            <Card className="border-border/80 bg-card rounded-xl sm:rounded-2xl shadow-xs sticky top-8 py-0 gap-0">
+              <CardHeader className="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-border/50">
+                <CardTitle className="text-sm sm:text-base font-bold text-foreground">
                   অর্ডার সারাংশ
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-3.5 sm:p-6 pt-3 sm:pt-4 space-y-3.5 sm:space-y-4">
                 {/* Product row */}
                 <div className="flex items-center gap-3">
                   <div className="relative size-16 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-neutral-100 dark:bg-neutral-900">
