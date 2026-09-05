@@ -51,9 +51,9 @@ export function CartModal() {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="flex h-full w-full max-w-md flex-col justify-between bg-white/95 p-6 text-black backdrop-blur-xl dark:bg-neutral-950/95 dark:text-white"
+          className="flex h-full w-full max-w-md flex-col justify-between bg-white/95 p-3.5 sm:p-6 text-black backdrop-blur-xl dark:bg-neutral-950/95 dark:text-white"
         >
-          <div className="flex items-center justify-between border-b border-border/80 pb-4">
+          <div className="flex items-center justify-between border-b border-border/80 pb-3 sm:pb-4">
             <div className="flex items-center gap-2">
               <BagShopping className="size-5 text-emerald-600 dark:text-emerald-400" />
               <SheetTitle className="text-base font-bold text-foreground">
@@ -85,7 +85,7 @@ export function CartModal() {
             </div>
           ) : (
             <div className="flex flex-1 flex-col justify-between overflow-hidden">
-              <ul className="flex-1 overflow-y-auto divide-y divide-border/60 py-2">
+              <ul className="flex-1 overflow-y-auto divide-y divide-border/60 py-1 sm:py-2">
                 {cart.lines
                   .sort((a, b) =>
                     a.merchandise.product.title.localeCompare(
@@ -109,10 +109,13 @@ export function CartModal() {
                     );
 
                     return (
-                      <li key={`${item.merchandise.id}-${i}`} className="py-4">
-                        <div className="relative flex items-center justify-between gap-3">
-                          <div className="flex flex-1 items-center gap-3 min-w-0">
-                            <div className="relative size-16 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-neutral-100 dark:bg-neutral-900">
+                      <li
+                        key={`${item.merchandise.id}-${i}`}
+                        className="py-2.5 sm:py-4"
+                      >
+                        <div className="relative flex items-center justify-between gap-2.5 sm:gap-3">
+                          <div className="flex flex-1 items-center gap-2.5 sm:gap-3 min-w-0">
+                            <div className="relative size-14 sm:size-16 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-neutral-100 dark:bg-neutral-900">
                               {item.merchandise.product.featuredImage ? (
                                 <Image
                                   className="size-full object-cover"
@@ -132,16 +135,16 @@ export function CartModal() {
                               <Link
                                 href={merchandiseUrl}
                                 onClick={closeCart}
-                                className="text-sm font-semibold text-foreground hover:text-emerald-600 transition-colors line-clamp-1"
+                                className="text-xs sm:text-sm font-semibold text-foreground hover:text-emerald-600 transition-colors line-clamp-1"
                               >
                                 {item.merchandise.product.title}
                               </Link>
                               {item.merchandise.title !== DEFAULT_OPTION ? (
-                                <span className="text-xs text-muted-foreground mt-0.5">
+                                <span className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
                                   {item.merchandise.title}
                                 </span>
                               ) : null}
-                              <div className="mt-1">
+                              <div className="mt-0.5 sm:mt-1">
                                 <Price
                                   className="text-xs font-bold text-emerald-600 dark:text-emerald-400"
                                   amount={item.cost.totalAmount.amount}
@@ -153,8 +156,8 @@ export function CartModal() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2 shrink-0">
-                            <div className="flex h-8 items-center rounded-lg border border-border bg-muted/40">
+                          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                            <div className="flex h-7 sm:h-8 items-center rounded-lg border border-border bg-muted/40">
                               <EditItemQuantityButton
                                 item={item}
                                 type="minus"
@@ -173,7 +176,7 @@ export function CartModal() {
                   })}
               </ul>
 
-              <div className="border-t border-border pt-4 text-sm bg-background/50">
+              <div className="border-t border-border pt-3 sm:pt-4 text-sm bg-background/50">
                 <div className="space-y-2 mb-3">
                   <div className="flex items-center justify-between text-muted-foreground text-xs">
                     <p>ভ্যাট ও ট্যাক্স</p>

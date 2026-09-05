@@ -40,10 +40,10 @@ export default async function OrderSuccessPage({
   const isPaid = order.paymentStatus === "paid" || payment === "success";
 
   return (
-    <div className="min-h-screen bg-neutral-50/60 dark:bg-neutral-950 py-8 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
+    <div className="min-h-screen bg-neutral-50/60 dark:bg-neutral-950 py-5 px-3 sm:py-8 sm:px-6 lg:px-8 flex flex-col justify-between">
       <div className="max-w-xl mx-auto w-full">
         {/* Minimal Header */}
-        <div className="flex items-center justify-between pb-6 border-b border-border/80 mb-8">
+        <div className="flex items-center justify-between pb-4 sm:pb-6 border-b border-border/80 mb-5 sm:mb-8">
           <Link
             href="/"
             className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-extrabold text-xl tracking-tight"
@@ -53,23 +53,23 @@ export default async function OrderSuccessPage({
           </Link>
         </div>
 
-        <Card className="border-border/80 bg-card rounded-2xl shadow-xs overflow-hidden">
-          <CardHeader className="text-center pb-2 pt-6">
+        <Card className="border-border/80 bg-card rounded-xl sm:rounded-2xl shadow-xs overflow-hidden py-0 gap-0">
+          <CardHeader className="text-center p-4 sm:p-6 pb-2 sm:pb-3">
             <div
-              className={`mx-auto mb-3 flex size-16 items-center justify-center rounded-2xl ${
+              className={`mx-auto mb-3 flex size-14 sm:size-16 items-center justify-center rounded-xl sm:rounded-2xl ${
                 isPaid
                   ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                   : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
               }`}
             >
-              <CheckCircle className="size-9" />
+              <CheckCircle className="size-8 sm:size-9" />
             </div>
-            <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+            <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
               {isPaid
                 ? "পেমেন্ট সফল! অর্ডার নিশ্চিত হয়েছে"
                 : "পেমেন্ট অসম্পূর্ণ বা অপেক্ষমাণ"}
             </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground pt-1">
+            <CardDescription className="text-xs sm:text-sm text-muted-foreground pt-1">
               অর্ডার ট্র্যাকিং নম্বর:{" "}
               <span className="font-mono font-bold text-foreground bg-muted px-2 py-0.5 rounded-md">
                 #{orderNumber}
@@ -77,10 +77,10 @@ export default async function OrderSuccessPage({
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-6 pt-4">
+          <CardContent className="p-3.5 sm:p-6 pt-2 sm:pt-4 space-y-4 sm:space-y-6">
             {/* Status Alert */}
             {isPaid ? (
-              <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
+              <div className="rounded-lg sm:rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 sm:p-3.5 text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
                 <p className="font-bold text-sm text-emerald-900 dark:text-emerald-200">
                   ✓ অনলাইনে সম্পূর্ণ মূল্য পরিশোধিত হয়েছে
                 </p>
@@ -96,7 +96,7 @@ export default async function OrderSuccessPage({
                 ) : null}
               </div>
             ) : payment === "cancelled" || payment === "failed" ? (
-              <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-3.5 text-xs text-red-800 dark:text-red-300 space-y-1">
+              <div className="rounded-lg sm:rounded-xl border border-red-500/40 bg-red-500/10 p-3 sm:p-3.5 text-xs text-red-800 dark:text-red-300 space-y-1">
                 <p className="font-bold text-sm mb-0.5">
                   অনলাইন পেমেন্ট সম্পন্ন হয়নি
                 </p>
@@ -106,21 +106,21 @@ export default async function OrderSuccessPage({
                 </p>
               </div>
             ) : (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300">
+              <div className="rounded-lg sm:rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 sm:p-3.5 text-xs text-amber-800 dark:text-amber-300">
                 <p className="font-semibold text-sm mb-0.5">পেমেন্ট যাচাই চলছে:</p>
                 <p>আপনার পেমেন্ট কনফার্মেশন পাওয়ার সাথে সাথেই অর্ডার প্রসেস শুরু হবে।</p>
               </div>
             )}
 
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2.5 sm:mb-3">
                 অর্ডারকৃত পণ্যের তালিকা
               </h3>
-              <ul className="divide-y divide-border/60 rounded-xl border border-border/60 bg-muted/20 px-4">
+              <ul className="divide-y divide-border/60 rounded-lg sm:rounded-xl border border-border/60 bg-muted/20 px-3 sm:px-4">
                 {order.items.map((item, i) => (
                   <li
                     key={`${item.productHandle}-${item.variantTitle}-${i}`}
-                    className="flex items-center justify-between py-3.5 text-sm"
+                    className="flex items-center justify-between py-2.5 sm:py-3.5 text-sm"
                   >
                     <div className="min-w-0 flex-1 pr-3">
                       <Link
@@ -189,18 +189,18 @@ export default async function OrderSuccessPage({
             <Separator />
 
             <div className="flex items-center justify-between pt-1">
-              <span className="text-base font-bold text-foreground">
+              <span className="text-sm sm:text-base font-bold text-foreground">
                 সর্বমোট প্রদেয় মূল্য
               </span>
               <Price
-                className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400"
+                className="text-lg sm:text-xl font-extrabold text-emerald-600 dark:text-emerald-400"
                 amount={order.totalAmount.toFixed(2)}
                 currencyCode={order.totalCurrency}
               />
             </div>
           </CardContent>
 
-          <CardFooter className="pt-2 pb-6 px-6">
+          <CardFooter className="p-3.5 sm:p-6 pt-2 pb-4 sm:pb-6">
             <Button
               render={
                 <Link href="/">
@@ -209,7 +209,7 @@ export default async function OrderSuccessPage({
                 </Link>
               }
               size="lg"
-              className="w-full rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 h-11 text-base shadow-xs cursor-pointer"
+              className="w-full rounded-lg sm:rounded-xl bg-emerald-600 font-semibold text-white hover:bg-emerald-700 h-11 text-sm sm:text-base shadow-xs cursor-pointer"
             />
           </CardFooter>
         </Card>

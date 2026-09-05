@@ -248,7 +248,7 @@ export function ProductDescription({ product }: { product: Product }) {
           <div>
             <span className="text-muted-foreground">ডেলিভারি: </span>
             <span className="font-bold text-foreground">
-              {product.deliveryInfo || "সারা দেশে ক্যাশ অন ডেলিভারি"}
+              {product.deliveryInfo || "সারা দেশে দ্রুত হোম ডেলিভারি"}
             </span>
           </div>
         </div>
@@ -258,8 +258,7 @@ export function ProductDescription({ product }: { product: Product }) {
           <Button
             render={
               <Link href={`/checkout/${product.handle}?quantity=${quantity}`}>
-                সরাসরি অর্ডার করুন — ৳{totalPrice.toLocaleString("bn-BD")} (ক্যাশ অন
-                ডেলিভারি)
+                সরাসরি অর্ডার করুন — ৳{totalPrice.toLocaleString("bn-BD")}
               </Link>
             }
             size="lg"
@@ -307,7 +306,7 @@ export function ProductDescription({ product }: { product: Product }) {
           </div>
 
           <p className="text-[11px] text-center text-muted-foreground pt-1">
-            🔒 ক্যাশ অন ডেলিভারি সুবিধা • পণ্য দেখে মূল্য পরিশোধ • ১০০% মান নিশ্চয়তা
+            🔒 ১০০% নিরাপদ অনলাইন পেমেন্ট (বিকাশ/নগদ/কার্ড) • ১০০% খাঁটি পণ্য নিশ্চয়তা
           </p>
         </div>
 
@@ -339,10 +338,10 @@ export function ProductDescription({ product }: { product: Product }) {
             <RestartSquare className="size-4.5 text-emerald-600 shrink-0 mb-1" />
             <div className="flex flex-col gap-0.5 justify-center flex-1">
               <span className="text-[11px] font-bold text-foreground leading-tight">
-                ক্যাশ অন ডেলিভারি
+                নিরাপদ পেমেন্ট
               </span>
               <span className="text-[9.5px] text-muted-foreground leading-tight">
-                দেখে পেমেন্ট করুন
+                বিকাশ, নগদ ও কার্ড
               </span>
             </div>
           </div>
@@ -351,7 +350,7 @@ export function ProductDescription({ product }: { product: Product }) {
 
       {/* ──── Sticky Bottom Action Bar — Mobile Only ──── */}
       <div className="fixed bottom-0 inset-x-0 z-30 lg:hidden">
-        <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl px-3 sm:px-4 py-2.5 sm:py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
           {/* Price + Quantity summary line */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
