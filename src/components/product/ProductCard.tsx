@@ -82,14 +82,14 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         </div>
 
         {/* Action Button */}
-        <div className="pt-1.5 sm:pt-3 mt-1 sm:mt-1.5 border-t-0 sm:border-t sm:border-border/50">
+        <div className="pt-2 sm:pt-3 mt-1.5 sm:mt-2 border-t-0 sm:border-t sm:border-border/50">
           <Button
             render={<Link href={`/product/${product.handle}`} />}
             size="sm"
-            className="w-full rounded-lg sm:rounded-xl bg-emerald-600 font-bold text-white text-[11px] sm:text-xs hover:bg-emerald-500 shadow-none sm:shadow-2xs h-7 sm:h-9"
+            className="w-full rounded-lg sm:rounded-xl bg-emerald-600 font-bold text-white text-xs sm:text-sm hover:bg-emerald-700 shadow-xs h-9 sm:h-10 cursor-pointer"
           >
-            <ShoppingBag className="size-3 sm:size-3.5" />
-            <span>বিস্তারিত দেখুন</span>
+            <ShoppingBag className="size-3.5 sm:size-4 shrink-0" />
+            <span>অর্ডার করুন</span>
           </Button>
         </div>
       </div>

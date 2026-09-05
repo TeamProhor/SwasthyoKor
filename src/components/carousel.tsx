@@ -24,7 +24,7 @@ export async function Carousel() {
           {carouselProducts.map((product, i) => (
             <li
               key={`${product.handle}-${i}`}
-              className="group relative h-[210px] sm:h-[260px] w-[68vw] max-w-[280px] sm:max-w-[340px] flex-none overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md sm:w-1/2 md:w-1/3 lg:w-1/4"
+              className="group relative h-[210px] sm:h-[260px] w-[68vw] max-w-[280px] sm:max-w-[340px] flex-none overflow-hidden rounded-2xl border-0 sm:border border-border/60 bg-muted/20 sm:bg-card transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md sm:w-1/2 md:w-1/3 lg:w-1/4"
             >
               <ProductQuickView product={product} className="size-full">
                 <Link

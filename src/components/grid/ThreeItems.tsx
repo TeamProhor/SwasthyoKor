@@ -19,7 +19,7 @@ function ThreeItemGridItem({
     <ProductQuickView
       product={item}
       className={cn(
-        "relative group overflow-hidden rounded-2xl border border-neutral-200/80 bg-neutral-50/50 transition-all duration-300 hover:border-emerald-500/50 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-emerald-500/50",
+        "relative group overflow-hidden rounded-2xl border-0 sm:border border-neutral-200/80 bg-neutral-50/50 transition-all duration-300 hover:border-emerald-500/50 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-emerald-500/50",
         size === "full"
           ? "min-h-[260px] sm:min-h-[360px] md:min-h-[480px] md:col-span-4 md:row-span-2"
           : "min-h-[160px] sm:min-h-[200px] md:min-h-[230px] md:col-span-2 md:row-span-1",
