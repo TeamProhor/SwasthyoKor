@@ -65,7 +65,7 @@ export function ResponsiveDialog({
           </DrawerTrigger>
         )}
         <DrawerContent className={cn("max-h-[92vh] flex flex-col", className)}>
-          <div className="overflow-y-auto flex flex-col gap-5 px-6 pb-8 pt-4">
+          <div className="overflow-y-auto flex flex-col gap-4 px-4 sm:px-6 pb-6 pt-2">
             {(title || description) && (
               <DrawerHeader className="text-center px-0 pt-2 pb-2">
                 {title && <DrawerTitle>{title}</DrawerTitle>}

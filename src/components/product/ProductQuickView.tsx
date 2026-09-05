@@ -45,9 +45,13 @@ export function ProductQuickView({
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Only intercept and open Drawer on mobile
-    if (isMobile) {
+    // Intercept and open Drawer on mobile screen
+    if (
+      typeof window !== "undefined" &&
+      (window.innerWidth < 768 || isMobile)
+    ) {
       e.preventDefault();
+      e.stopPropagation();
       setOpen(true);
     }
   };
@@ -58,127 +62,123 @@ export function ProductQuickView({
         {children}
       </div>
 
-      {isMobile && (
-        <ResponsiveDialog
-          open={open}
-          onOpenChange={setOpen}
-          className="max-h-[85vh]"
-        >
-          <div className="flex flex-col gap-4">
-            {/* Product Header: Image & Main Info */}
-            <div className="flex items-center gap-4">
-              <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-neutral-100 dark:bg-neutral-900">
-                {product.featuredImage?.url ? (
-                  <Image
-                    src={product.featuredImage.url}
-                    alt={product.title}
-                    fill
-                    sizes="80px"
-                    className="size-full object-cover"
-                  />
-                ) : null}
-              </div>
+      <ResponsiveDialog
+        open={open}
+        onOpenChange={setOpen}
+        className="max-h-[85vh]"
+      >
+        <div className="flex flex-col gap-4">
+          {/* Product Header: Image & Main Info */}
+          <div className="flex items-center gap-4">
+            <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-neutral-100 dark:bg-neutral-900">
+              {product.featuredImage?.url ? (
+                <Image
+                  src={product.featuredImage.url}
+                  alt={product.title}
+                  fill
+                  sizes="80px"
+                  className="size-full object-cover"
+                />
+              ) : null}
+            </div>
 
-              <div className="flex flex-col min-w-0 flex-1">
-                {product.rating && product.rating > 0 ? (
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] text-amber-500 font-bold">
-                      ★ {product.rating.toFixed(1)} (
-                      {product.reviewCount && product.reviewCount > 0
-                        ? product.reviewCount.toLocaleString("bn-BD")
-                        : "১"}
-                      )
-                    </span>
-                  </div>
-                ) : null}
-                <h3 className="line-clamp-2 text-sm sm:text-base font-bold text-foreground">
-                  {product.title}
-                </h3>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
-                    <Price
-                      amount={
-                        defaultVariant?.price.amount ??
-                        product.priceRange.minVariantPrice.amount
-                      }
-                      currencyCode={
-                        defaultVariant?.price.currencyCode ??
-                        product.priceRange.minVariantPrice.currencyCode
-                      }
-                    />
-                  </span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                      isAvailable
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                        : "bg-red-500/10 text-red-500"
-                    }`}
-                  >
-                    {isAvailable ? "ইন স্টক" : "স্টক শেষ"}
+            <div className="flex flex-col min-w-0 flex-1">
+              {product.rating && product.rating > 0 ? (
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[10px] text-amber-500 font-bold">
+                    ★ {product.rating.toFixed(1)} (
+                    {product.reviewCount && product.reviewCount > 0
+                      ? product.reviewCount.toLocaleString("bn-BD")
+                      : "১"}
+                    )
                   </span>
                 </div>
+              ) : null}
+              <h3 className="line-clamp-2 text-sm sm:text-base font-bold text-foreground">
+                {product.title}
+              </h3>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
+                  <Price
+                    amount={
+                      defaultVariant?.price.amount ??
+                      product.priceRange.minVariantPrice.amount
+                    }
+                    currencyCode={
+                      defaultVariant?.price.currencyCode ??
+                      product.priceRange.minVariantPrice.currencyCode
+                    }
+                  />
+                </span>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                    isAvailable
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                      : "bg-red-500/10 text-red-500"
+                  }`}
+                >
+                  {isAvailable ? "ইন স্টক" : "স্টক শেষ"}
+                </span>
               </div>
             </div>
-
-            {/* Description snippet */}
-            {product.description && (
-              <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                {product.description}
-              </p>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-2 pt-1">
-              <Button
-                render={
-                  <Link href={`/checkout/${product.handle}`}>
-                    সরাসরি অর্ডার করুন (ক্যাশ অন ডেলিভারি)
-                  </Link>
-                }
-                size="lg"
-                className="w-full rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed shadow-xs"
-                disabled={!isAvailable}
-                onClick={() => setOpen(false)}
-              />
-
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full rounded-xl border-border font-bold text-xs sm:text-sm"
-                disabled={!isAvailable || addCartItem.isPending}
-                onClick={handleAddToCart}
-              >
-                {addCartItem.isPending ? (
-                  <Spinner className="size-4 text-current" />
-                ) : (
-                  <BagShopping data-icon="inline-start" />
-                )}
-                {isAvailable
-                  ? addCartItem.isPending
-                    ? "কার্টে যুক্ত হচ্ছে..."
-                    : "কার্টে যোগ করুন"
-                  : "স্টক শেষ"}
-              </Button>
-
-              <p className="text-[11px] text-center text-muted-foreground pt-0.5">
-                🔒 পণ্য হাতে পেয়ে দেখে মূল্য পরিশোধ সুবিধা
-              </p>
-
-              <Button
-                render={
-                  <Link href={`/product/${product.handle}`}>
-                    সম্পূর্ণ বিবরণ ও গ্রাহক রিভিউ দেখুন
-                  </Link>
-                }
-                variant="ghost"
-                size="sm"
-                className="w-full text-xs text-muted-foreground"
-                onClick={() => setOpen(false)}
-              />
-            </div>
           </div>
-        </ResponsiveDialog>
-      )}
+
+          {/* Description snippet */}
+          {product.description && (
+            <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+              {product.description}
+            </p>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-2 pt-1">
+            <Button
+              render={
+                <Link href={`/checkout/${product.handle}`}>সরাসরি অর্ডার করুন</Link>
+              }
+              size="lg"
+              className="w-full rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed shadow-xs h-11 text-sm cursor-pointer"
+              disabled={!isAvailable}
+              onClick={() => setOpen(false)}
+            />
+
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full rounded-xl border-border font-bold text-xs sm:text-sm h-11 cursor-pointer"
+              disabled={!isAvailable || addCartItem.isPending}
+              onClick={handleAddToCart}
+            >
+              {addCartItem.isPending ? (
+                <Spinner className="size-4 text-current" />
+              ) : (
+                <BagShopping data-icon="inline-start" />
+              )}
+              {isAvailable
+                ? addCartItem.isPending
+                  ? "কার্টে যুক্ত হচ্ছে..."
+                  : "কার্টে যোগ করুন"
+                : "স্টক শেষ"}
+            </Button>
+
+            <p className="text-[11px] text-center text-muted-foreground pt-0.5">
+              🔒 ১০০% নিরাপদ অনলাইন পেমেন্ট (বিকাশ/নগদ/কার্ড) • ১০০% খাঁটি পণ্য
+            </p>
+
+            <Button
+              render={
+                <Link href={`/product/${product.handle}`}>
+                  সম্পূর্ণ বিবরণ ও গ্রাহক রিভিউ দেখুন →
+                </Link>
+              }
+              variant="ghost"
+              size="sm"
+              className="w-full text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+              onClick={() => setOpen(false)}
+            />
+          </div>
+        </div>
+      </ResponsiveDialog>
     </>
   );
 }
