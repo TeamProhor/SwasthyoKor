@@ -15,6 +15,13 @@
       "when": 1788422931588,
       "tag": "0001_mysterious_lord_tyger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788965801329,
+      "tag": "0002_bouncy_tinkerer",
+      "breakpoints": true
     }
   ]
 }

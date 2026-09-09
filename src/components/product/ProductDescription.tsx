@@ -18,11 +18,16 @@ import { Spinner } from "@/components/ui/spinner";
 import { useCart } from "@/hooks/use-cart";
 import type { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { BulkQuantitySelector } from "./BulkQuantitySelector";
 import { VariantSelector } from "./VariantSelector";
 
 export function ProductDescription({ product }: { product: Product }) {
   const { addCartItem } = useCart();
+  const isBulk = product.sellingMode === "gram" || product.sellingMode === "piece";
   const [quantity, setQuantity] = useState(1);
+  // Bulk mode quantity (grams or pieces)
+  const [bulkQuantity, setBulkQuantity] = useState(product.minimumOrderQuantity ?? 100);
+
 
   // Initialize selectedOptions with the first variant's options
   const [selectedOptions, setSelectedOptions] = useState<
@@ -46,32 +51,58 @@ export function ProductDescription({ product }: { product: Product }) {
   };
 
   const variant =
-    product.variants.find((variant) =>
-      variant.selectedOptions.every(
-        (option) => selectedOptions[option.name.toLowerCase()] === option.value,
-      ),
-    ) ?? product.variants[0];
+    product.variants.find((variant) => {
+      if (variant.selectedOptions.length > 0) {
+        return variant.selectedOptions.every(
+          (option) =>
+            selectedOptions[option.name.toLowerCase()] === option.value,
+        );
+      }
+      return selectedOptions["পরিমাণ"] === variant.title;
+    }) ?? product.variants[0];
 
-  const currentPriceNum = Number(
-    variant?.price.amount ?? product.priceRange.minVariantPrice.amount,
-  );
-  const compareAtPriceNum = variant?.compareAtPrice?.amount
-    ? Number(variant.compareAtPrice.amount)
-    : undefined;
+  // ── Price / availability (works for both packaged and bulk modes) ──
+  const currentPriceNum = isBulk
+    ? product.pricePerUnit ?? 0
+    : Number(variant?.price.amount ?? product.priceRange.minVariantPrice.amount);
 
-  const totalPrice = currentPriceNum * quantity;
+  const compareAtPriceNum = isBulk
+    ? product.compareAtPricePerUnit
+    : variant?.compareAtPrice?.amount
+      ? Number(variant.compareAtPrice.amount)
+      : undefined;
+
+  // For bulk: total = (bulkQuantity/100)*pricePerUnit (gram) or bulkQuantity*pricePerUnit (piece)
+  const totalPrice = isBulk
+    ? product.sellingMode === "gram"
+      ? Math.round((bulkQuantity / 100) * currentPriceNum)
+      : Math.round(bulkQuantity * currentPriceNum)
+    : currentPriceNum * quantity;
+
   const productSku = `SW-${product.handle.slice(0, 6).toUpperCase()}`;
 
   const handleAddToCart = () => {
-    if (!variant) return;
-    for (let i = 0; i < quantity; i++) {
-      addCartItem.mutate({ variant, product });
+    if (isBulk) {
+      // For bulk, treat bulkQuantity as the "quantity" on a synthetic variant
+      if (product.variants[0]) {
+        addCartItem.mutate({ variant: product.variants[0], product });
+      }
+    } else {
+      if (!variant) return;
+      for (let i = 0; i < quantity; i++) {
+        addCartItem.mutate({ variant, product });
+      }
     }
   };
 
   const whatsappNumber = "8801812345678";
+  const bulkLabel = isBulk
+    ? product.sellingMode === "gram"
+      ? `${bulkQuantity} গ্রাম`
+      : `${bulkQuantity} পিস`
+    : `${quantity}টি`;
   const whatsappOrderMsg = encodeURIComponent(
-    `আসসালামু আলাইকুম, আমি স্বাস্থ্যকর থেকে "${product.title}" (${variant?.title || "ডিফল্ট"}) ${quantity}টি অর্ডার করতে চাই। মোট মূল্য: ৳${totalPrice}।`,
+    `আসসালামু আলাইকুম, আমি স্বাস্থ্যকর থেকে "${product.title}" ${isBulk ? bulkLabel : `(${variant?.title || "ডিফল্ট"}) ${quantity}টি`} অর্ডার করতে চাই। মোট মূল্য: ৳${totalPrice}।`,
   );
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappOrderMsg}`;
 
@@ -81,35 +112,55 @@ export function ProductDescription({ product }: { product: Product }) {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const isAvailable = product.availableForSale && variant?.availableForSale;
+  const isAvailable = isBulk
+    ? (product.bulkStockQuantity ?? 0) > 0
+    : product.availableForSale &&
+      (variant?.availableForSale ?? true) &&
+      (variant?.inventoryQuantity ?? 15) > 0;
+  const stockQuantity = isBulk ? product.bulkStockQuantity : (variant?.inventoryQuantity ?? 15);
+  const isLowStock = isAvailable && (isBulk ? stockQuantity <= 500 : stockQuantity <= 5);
+
 
   return (
     <>
       <div className="flex flex-col gap-4 sm:gap-5 pb-28 lg:pb-0">
         {/* ──── Section 1: Product Header ──── */}
         <div className="flex flex-col border-b border-border/25 pb-4 sm:pb-5">
-          {/* SKU & Stock */}
+          {/* SKU & Stock (only for packaged mode; bulk shows stock in selector) */}
           <div className="flex items-center justify-between gap-2 mb-1.5 text-xs text-muted-foreground">
             <span className="font-mono font-semibold">
               প্রোডাক্ট কোড: {productSku}
             </span>
-            <span
-              className={cn(
-                "font-medium flex items-center gap-1",
-                isAvailable
-                  ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-rose-500",
-              )}
-            >
+            {!isBulk && (
               <span
                 className={cn(
-                  "size-1.5 rounded-full",
-                  isAvailable ? "bg-emerald-500 animate-pulse" : "bg-rose-500",
+                  "font-bold flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px]",
+                  !isAvailable
+                    ? "bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400 border border-rose-200 dark:border-rose-900"
+                    : isLowStock
+                      ? "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400 border border-amber-200 dark:border-amber-900 animate-pulse"
+                      : "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900",
                 )}
-              />
-              {isAvailable ? "ইন স্টক" : "স্টক শেষ"}
-            </span>
+              >
+                <span
+                  className={cn(
+                    "size-2 rounded-full",
+                    !isAvailable
+                      ? "bg-rose-500"
+                      : isLowStock
+                        ? "bg-amber-500"
+                        : "bg-emerald-500 animate-pulse",
+                  )}
+                />
+                {!isAvailable
+                  ? "স্টক শেষ (Out of Stock)"
+                  : isLowStock
+                    ? `⚡ মাত্র ${stockQuantity}টি বাকি আছে!`
+                    : `ইন স্টক (${stockQuantity}টি স্টকে আছে)`}
+              </span>
+            )}
           </div>
+
 
           {/* Product Title */}
           <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-foreground leading-snug">
@@ -170,45 +221,68 @@ export function ProductDescription({ product }: { product: Product }) {
           </div>
         </div>
 
-        {/* ──── Section 2: Variant Selector ──── */}
-        <VariantSelector
-          options={product.options}
-          variants={product.variants}
-          selectedOptions={selectedOptions}
-          onOptionSelect={handleOptionSelect}
-        />
+        {/* ──── Section 2: Variant Selector OR Bulk Quantity Selector ──── */}
+        {isBulk ? (
+          <BulkQuantitySelector
+            sellingMode={product.sellingMode as "gram" | "piece"}
+            pricePerUnit={product.pricePerUnit ?? 0}
+            stockQuantity={product.bulkStockQuantity}
+            minimumOrderQuantity={product.minimumOrderQuantity}
+            quantity={bulkQuantity}
+            onQuantityChange={setBulkQuantity}
+            disabled={!isAvailable}
+          />
+        ) : (
+          <>
+            <VariantSelector
+              options={product.options}
+              variants={product.variants}
+              selectedOptions={selectedOptions}
+              onOptionSelect={handleOptionSelect}
+            />
 
-        {/* ──── Section 3: Simple Quantity Selector ──── */}
-        <div className="flex items-center gap-3 pt-1">
-          <span className="text-xs font-bold text-foreground">পরিমাণ:</span>
-          <div className="flex items-center rounded-xl border border-border bg-card p-1 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              disabled={quantity <= 1}
-              className="flex size-7 items-center justify-center rounded-lg hover:bg-muted active:scale-95 disabled:opacity-40 cursor-pointer"
-              aria-label="Decrease quantity"
-            >
-              <Minus className="size-3.5 text-foreground" />
-            </button>
-            <span className="w-9 text-center text-xs font-bold text-foreground font-mono">
-              {quantity}
-            </span>
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => q + 1)}
-              className="flex size-7 items-center justify-center rounded-lg hover:bg-muted active:scale-95 cursor-pointer"
-              aria-label="Increase quantity"
-            >
-              <Plus className="size-3.5 text-foreground" />
-            </button>
-          </div>
-          {quantity > 1 && (
-            <span className="text-xs text-muted-foreground font-medium">
-              মোট: ৳{totalPrice.toLocaleString("bn-BD")}
-            </span>
-          )}
-        </div>
+            {/* ──── Section 3: Quantity Stepper (packaged mode only) ──── */}
+            <div className="flex items-center gap-3 pt-1">
+              <span className="text-xs font-bold text-foreground">অর্ডার সংখ্যা:</span>
+              <div className="flex items-center rounded-xl border border-border bg-card p-1 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={!isAvailable || quantity <= 1}
+                  className="flex size-7 items-center justify-center rounded-lg hover:bg-muted active:scale-95 disabled:opacity-40 cursor-pointer"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="size-3.5 text-foreground" />
+                </button>
+                <span className="w-9 text-center text-xs font-bold text-foreground font-mono">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setQuantity((q) => Math.min(Math.max(1, stockQuantity), q + 1))
+                  }
+                  disabled={!isAvailable || quantity >= stockQuantity}
+                  className="flex size-7 items-center justify-center rounded-lg hover:bg-muted active:scale-95 disabled:opacity-40 cursor-pointer"
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="size-3.5 text-foreground" />
+                </button>
+              </div>
+              {quantity > 1 && (
+                <span className="text-xs text-muted-foreground font-medium">
+                  মোট: ৳{totalPrice.toLocaleString("bn-BD")}
+                </span>
+              )}
+              {isLowStock && (
+                <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                  (সর্বোচ্চ {stockQuantity}টি নিতে পারবেন)
+                </span>
+              )}
+            </div>
+          </>
+        )}
+
 
         {/* ──── Section 4: Description ──── */}
         {product.descriptionHtml ? (
@@ -257,7 +331,9 @@ export function ProductDescription({ product }: { product: Product }) {
         <div className="hidden lg:flex flex-col gap-2.5 pt-2">
           <Button
             render={
-              <Link href={`/checkout/${product.handle}?quantity=${quantity}`}>
+              <Link href={isBulk
+                ? `/checkout/${product.handle}?bulkQty=${bulkQuantity}`
+                : `/checkout/${product.handle}?quantity=${quantity}`}>
                 সরাসরি অর্ডার করুন — ৳{totalPrice.toLocaleString("bn-BD")}
               </Link>
             }
@@ -357,53 +433,64 @@ export function ProductDescription({ product }: { product: Product }) {
               <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 font-mono">
                 ৳{totalPrice.toLocaleString("bn-BD")}
               </span>
+              {isBulk && (
+                <span className="text-xs text-muted-foreground font-medium">
+                  ({bulkQuantity} {product.sellingMode === "gram" ? "গ্রাম" : "পিস"})
+                </span>
+              )}
             </div>
 
-            {/* Compact quantity stepper */}
-            <div className="flex items-center rounded-lg border border-border bg-card p-0.5 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                disabled={quantity <= 1}
-                className="flex size-7 items-center justify-center rounded-md hover:bg-muted active:scale-95 disabled:opacity-40 cursor-pointer"
-                aria-label="Decrease quantity"
-              >
-                <Minus className="size-3.5" />
-              </button>
-              <span className="w-7 text-center text-xs font-bold font-mono">
-                {quantity}
-              </span>
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => q + 1)}
-                className="flex size-7 items-center justify-center rounded-md hover:bg-muted active:scale-95 cursor-pointer"
-                aria-label="Increase quantity"
-              >
-                <Plus className="size-3.5" />
-              </button>
-            </div>
+            {/* Pack quantity stepper — only for packaged mode */}
+            {!isBulk && (
+              <div className="flex items-center rounded-lg border border-border bg-card p-0.5 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                  className="flex size-7 items-center justify-center rounded-md hover:bg-muted active:scale-95 disabled:opacity-40 cursor-pointer"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="size-3.5" />
+                </button>
+                <span className="w-7 text-center text-xs font-bold font-mono">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="flex size-7 items-center justify-center rounded-md hover:bg-muted active:scale-95 cursor-pointer"
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="size-3.5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Action buttons row */}
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="shrink-0 rounded-xl border-border h-11 px-3 font-bold disabled:cursor-not-allowed"
-              disabled={!isAvailable || addCartItem.isPending}
-              onClick={handleAddToCart}
-            >
-              {addCartItem.isPending ? (
-                <Spinner className="size-4 text-current" />
-              ) : (
-                <ShoppingBag className="size-4 text-emerald-600" />
-              )}
-              <span className="sr-only sm:not-sr-only">কার্ট</span>
-            </Button>
+            {!isBulk && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="shrink-0 rounded-xl border-border h-11 px-3 font-bold disabled:cursor-not-allowed"
+                disabled={!isAvailable || addCartItem.isPending}
+                onClick={handleAddToCart}
+              >
+                {addCartItem.isPending ? (
+                  <Spinner className="size-4 text-current" />
+                ) : (
+                  <ShoppingBag className="size-4 text-emerald-600" />
+                )}
+                <span className="sr-only sm:not-sr-only">কার্ট</span>
+              </Button>
+            )}
 
             <Button
               render={
-                <Link href={`/checkout/${product.handle}?quantity=${quantity}`}>
+                <Link href={isBulk
+                  ? `/checkout/${product.handle}?bulkQty=${bulkQuantity}`
+                  : `/checkout/${product.handle}?quantity=${quantity}`}>
                   সরাসরি অর্ডার — ৳{totalPrice.toLocaleString("bn-BD")}
                 </Link>
               }

@@ -3,7 +3,6 @@ import {
   Box,
   Category,
   Home,
-  Location,
   Receipt,
   ShoppingBag,
   SliderHorizontal,
@@ -17,12 +16,6 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { name: "ড্যাশবোর্ড", path: "/dashboard", exact: true, icon: Home },
   { name: "অর্ডারসমূহ", path: "/dashboard/orders", exact: false, icon: Box },
   {
-    name: "সংরক্ষিত ঠিকানা",
-    path: "/dashboard/addresses",
-    exact: false,
-    icon: Location,
-  },
-  {
     name: "প্রোফাইল ও সেটিংস",
     path: "/dashboard/profile",
     exact: false,
@@ -33,7 +26,6 @@ export const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
 export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { name: "ওভারভিউ", path: "/admin", exact: true, icon: Home },
   { name: "পণ্যসমূহ", path: "/admin/products", exact: false, icon: Box },
-  { name: "ইনভেন্টরি ও স্টক", path: "/admin/inventory", exact: false, icon: Box },
   { name: "অর্ডারসমূহ", path: "/admin/orders", exact: false, icon: Receipt },
   {
     name: "কালেকশন ও ক্যাটাগরি",

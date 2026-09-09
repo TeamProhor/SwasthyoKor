@@ -11,6 +11,7 @@ import { checkoutDirectProduct } from "@/lib/actions/checkout";
 interface DirectCheckoutFormProps {
   handle: string;
   quantity: number;
+  bulkQty?: number;
   finalTotal: number;
   initialName?: string;
   initialPhone?: string;
@@ -19,6 +20,7 @@ interface DirectCheckoutFormProps {
 export function DirectCheckoutForm({
   handle,
   quantity,
+  bulkQty,
   finalTotal,
   initialName = "",
   initialPhone = "",
@@ -83,6 +85,9 @@ export function DirectCheckoutForm({
     <form action={checkoutDirectProduct} className="space-y-3 sm:space-y-4">
       <input type="hidden" name="handle" value={handle} />
       <input type="hidden" name="quantity" value={quantity.toString()} />
+      {bulkQty !== undefined && bulkQty > 0 && (
+        <input type="hidden" name="bulkQty" value={bulkQty.toString()} />
+      )}
       <input type="hidden" name="paymentMethod" value="online" />
       <input
         type="hidden"

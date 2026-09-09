@@ -1,12 +1,12 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { getCart } from "@/lib/db/queries";
-import { cartItems, carts, orders } from "@/lib/db/schema";
+import { cartItems, carts, orders, productVariants } from "@/lib/db/schema";
 import { createPaymentCharge } from "@/lib/uddoktapay";
 
 const APP_URL =
@@ -50,6 +50,19 @@ export async function checkout(): Promise<void> {
     updatedAt: now,
   });
 
+  // Auto-deduct stock quantity for ordered cart variants
+  for (const line of cart.lines) {
+    if (line.merchandise.id) {
+      await db
+        .update(productVariants)
+        .set({
+          inventoryQuantity: sql`GREATEST(0, ${productVariants.inventoryQuantity} - ${line.quantity})`,
+          availableForSale: sql`CASE WHEN ${productVariants.inventoryQuantity} - ${line.quantity} <= 0 THEN false ELSE ${productVariants.availableForSale} END`,
+        })
+        .where(eq(productVariants.id, line.merchandise.id));
+    }
+  }
+
   // Clear cart
   await db.delete(cartItems).where(eq(cartItems.cartId, cartId));
   await db.delete(carts).where(eq(carts.id, cartId));
@@ -84,7 +97,8 @@ export async function checkout(): Promise<void> {
 
 export async function checkoutDirectProduct(formData: FormData): Promise<void> {
   const handle = formData.get("handle") as string;
-  const quantity = Math.max(1, Number(formData.get("quantity") || 1));
+  const rawQuantity = Math.max(1, Number(formData.get("quantity") || 1));
+  const rawBulkQty = Number(formData.get("bulkQty") || 0);
   const name = (formData.get("name") as string)?.trim() || "";
   const phone = (formData.get("phone") as string)?.trim() || "";
   const address = (formData.get("address") as string)?.trim() || "";
@@ -103,15 +117,40 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
     redirect("/search");
   }
 
-  const variant = product.variants[0];
-  const priceAmount = variant
-    ? Number(variant.price.amount)
-    : Number(product.priceRange.minVariantPrice.amount);
-  const priceCurrency = variant
-    ? variant.price.currencyCode
-    : product.priceRange.minVariantPrice.currencyCode;
+  const isBulk = product.sellingMode === "gram" || product.sellingMode === "piece";
 
-  const rawSubtotal = priceAmount * quantity;
+  let priceAmount: number;
+  let priceCurrency: string;
+  let quantity: number;
+  let variantTitle: string;
+
+  if (isBulk) {
+    // Bulk mode: quantity is the number of grams or pieces ordered
+    quantity = rawBulkQty > 0 ? rawBulkQty : (product.minimumOrderQuantity ?? 100);
+    const pricePerUnit = product.pricePerUnit ?? 0;
+
+    priceAmount = product.sellingMode === "gram"
+      ? Math.round((quantity / 100) * pricePerUnit)   // total price for ordered grams
+      : Math.round(quantity * pricePerUnit);           // total price for ordered pieces
+
+    priceCurrency = "BDT";
+    variantTitle = product.sellingMode === "gram"
+      ? `${quantity} গ্রাম`
+      : `${quantity} পিস`;
+  } else {
+    // Packaged mode: quantity is number of packs
+    quantity = rawQuantity;
+    const variant = product.variants[0];
+    priceAmount = variant
+      ? Number(variant.price.amount)
+      : Number(product.priceRange.minVariantPrice.amount);
+    priceCurrency = variant
+      ? variant.price.currencyCode
+      : product.priceRange.minVariantPrice.currencyCode;
+    variantTitle = variant?.title || "Default Title";
+  }
+
+  const rawSubtotal = isBulk ? priceAmount : priceAmount * quantity;
   let discountAmount = 0;
   let validatedCouponCode: string | null = null;
 
@@ -137,10 +176,7 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
     ) {
       if (coupon.discountType === "percentage") {
         discountAmount = (rawSubtotal * coupon.discountValue) / 100;
-        if (
-          coupon.maxDiscountAmount &&
-          discountAmount > coupon.maxDiscountAmount
-        ) {
+        if (coupon.maxDiscountAmount && discountAmount > coupon.maxDiscountAmount) {
           discountAmount = coupon.maxDiscountAmount;
         }
       } else {
@@ -155,6 +191,7 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
   const now = new Date();
   const orderId = crypto.randomUUID();
 
+  // For bulk, priceAmount in items = the per-unit price, quantity = grams/pieces ordered
   await db.insert(orders).values({
     id: orderId,
     email: user?.email || null,
@@ -172,9 +209,9 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
       {
         productHandle: product.handle,
         productTitle: product.title,
-        variantTitle: variant?.title || "Default Title",
-        quantity,
-        priceAmount,
+        variantTitle,
+        quantity: isBulk ? 1 : quantity,   // For bulk: qty=1, unit price = total (already computed)
+        priceAmount: isBulk ? rawSubtotal : priceAmount,
         priceCurrency,
       },
     ],
@@ -182,7 +219,33 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
     updatedAt: now,
   });
 
-  // Redirect directly to UddoktaPay for full online payment
+  // Deduct stock
+  if (isBulk) {
+    const { products } = await import("@/lib/db/schema");
+    // Atomically deduct from bulkStockQuantity
+    await db
+      .update(products)
+      .set({
+        bulkStockQuantity: sql`GREATEST(0, ${products.bulkStockQuantity} - ${quantity})`,
+        availableForSale: sql`CASE WHEN ${products.bulkStockQuantity} - ${quantity} > 0 THEN true ELSE false END`,
+        updatedAt: now,
+      })
+      .where(eq(products.id, product.id));
+  } else {
+    // Packaged: deduct from variant inventory
+    const variant = product.variants[0];
+    if (variant?.id) {
+      await db
+        .update(productVariants)
+        .set({
+          inventoryQuantity: sql`GREATEST(0, ${productVariants.inventoryQuantity} - ${quantity})`,
+          availableForSale: sql`CASE WHEN ${productVariants.inventoryQuantity} - ${quantity} <= 0 THEN false ELSE ${productVariants.availableForSale} END`,
+        })
+        .where(eq(productVariants.id, variant.id));
+    }
+  }
+
+  // Redirect to UddoktaPay
   let paymentUrl = "";
   try {
     const charge = await createPaymentCharge({
@@ -209,3 +272,4 @@ export async function checkoutDirectProduct(formData: FormData): Promise<void> {
 
   redirect(`/order/${orderId}`);
 }
+

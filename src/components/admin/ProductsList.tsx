@@ -1,10 +1,16 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { SearchNormal, Trash2 } from "@/components/icons";
+import { Check, SearchNormal, Trash2 } from "@/components/icons";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { deleteProductAction } from "@/lib/actions/admin";
+import { Spinner } from "@/components/ui/spinner";
+import {
+  deleteProductAction,
+  toggleProductAvailabilityAction,
+} from "@/lib/actions/admin";
+import { calculateTotalStock, getProductUnitLabel } from "@/lib/types";
 import { EditProductDialog, type EditProductItem } from "./EditProductDialog";
 import { QuickList, type QuickListItem } from "./QuickList";
 
@@ -17,8 +23,12 @@ export function ProductsList({
 }) {
   const [query, setQuery] = useState("");
   const [selectedCollection, setSelectedCollection] = useState<string>("all");
+  const [stockFilter, setStockFilter] = useState<
+    "all" | "in_stock" | "low_stock" | "out_of_stock"
+  >("all");
   const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const handleDelete = (id: string) => {
     if (!confirm("আপনি কি নিশ্চিতভাবে এই পণ্যটি মুছে ফেলতে চান?")) return;
@@ -29,9 +39,47 @@ export function ProductsList({
     });
   };
 
+  const handleToggleStock = (id: string, currentAvailable: boolean) => {
+    setTogglingId(id);
+    startTransition(async () => {
+      await toggleProductAvailabilityAction(id, !currentAvailable);
+      setTogglingId(null);
+    });
+  };
+
   const collectionMap = useMemo(
     () => new Map(collections.map((c) => [c.id, c.title])),
     [collections],
+  );
+
+  const inStockCount = useMemo(
+    () =>
+      products.filter((p) => {
+        const isBulk = p.sellingMode === "gram" || p.sellingMode === "piece";
+        const qty = isBulk ? (p.bulkStockQuantity ?? 0) : (p.inventoryQuantity ?? 15);
+        const lowThreshold = isBulk ? (p.sellingMode === "gram" ? 500 : 5) : 5;
+        return p.available && qty > lowThreshold;
+      }).length,
+    [products],
+  );
+  const lowStockCount = useMemo(
+    () =>
+      products.filter((p) => {
+        const isBulk = p.sellingMode === "gram" || p.sellingMode === "piece";
+        const qty = isBulk ? (p.bulkStockQuantity ?? 0) : (p.inventoryQuantity ?? 15);
+        const lowThreshold = isBulk ? (p.sellingMode === "gram" ? 500 : 5) : 5;
+        return p.available && qty > 0 && qty <= lowThreshold;
+      }).length,
+    [products],
+  );
+  const outOfStockCount = useMemo(
+    () =>
+      products.filter((p) => {
+        const isBulk = p.sellingMode === "gram" || p.sellingMode === "piece";
+        const qty = isBulk ? (p.bulkStockQuantity ?? 0) : (p.inventoryQuantity ?? 15);
+        return !p.available || qty <= 0;
+      }).length,
+    [products],
   );
 
   const filteredProducts = useMemo(() => {
@@ -45,32 +93,120 @@ export function ProductsList({
         selectedCollection === "all" ||
         item.collectionId === selectedCollection;
 
-      return matchSearch && matchCategory;
+      const isBulk = item.sellingMode === "gram" || item.sellingMode === "piece";
+      const qty = isBulk ? (item.bulkStockQuantity ?? 0) : (item.inventoryQuantity ?? 15);
+      const lowThreshold = isBulk ? (item.sellingMode === "gram" ? 500 : 5) : 5;
+      const isAvailable = item.available && qty > 0;
+
+      const matchStock =
+        stockFilter === "all" ||
+        (stockFilter === "in_stock" && isAvailable && qty > lowThreshold) ||
+        (stockFilter === "low_stock" && isAvailable && qty <= lowThreshold) ||
+        (stockFilter === "out_of_stock" && !isAvailable);
+
+      return matchSearch && matchCategory && matchStock;
     });
-  }, [products, query, selectedCollection]);
+  }, [products, query, selectedCollection, stockFilter]);
 
   const items: QuickListItem[] = filteredProducts.map((item) => {
     const colTitle = item.collectionId
       ? collectionMap.get(item.collectionId)
       : undefined;
 
+    const isBulk = item.sellingMode === "gram" || item.sellingMode === "piece";
+    const qty = isBulk
+      ? (item.bulkStockQuantity ?? 0)
+      : (item.inventoryQuantity ?? 15);
+    const isAvailable = item.available && qty > 0;
+
+    let badgeText = "ইন স্টক";
+    let badgeVariant: QuickListItem["badgeVariant"] = "success";
+
+    if (!isAvailable) {
+      badgeText = isBulk
+        ? item.sellingMode === "gram"
+          ? `স্টক শেষ (${qty} গ্রাম)`
+          : `স্টক শেষ (${qty} পিস)`
+        : `স্টক শেষ (${qty})`;
+      badgeVariant = "destructive";
+    } else if (isBulk) {
+      if (item.sellingMode === "gram") {
+        const kg = (qty / 1000).toFixed(1);
+        badgeText =
+          qty <= 500
+            ? `⚡ মাত্র ${qty} গ্রাম বাকি`
+            : qty >= 1000
+              ? `ইন স্টক (${kg} কেজি)`
+              : `ইন স্টক (${qty} গ্রাম)`;
+        badgeVariant = qty <= 500 ? "default" : "success";
+      } else {
+        badgeText =
+          qty <= 5
+            ? `⚡ মাত্র ${qty} পিস বাকি`
+            : `ইন স্টক (${qty} পিস)`;
+        badgeVariant = qty <= 5 ? "default" : "success";
+      }
+    } else if (qty <= 5) {
+      badgeText = `⚡ মাত্র ${qty}টি বাকি`;
+      badgeVariant = "default";
+    } else {
+      badgeText = `ইন স্টক (${qty} টি)`;
+      badgeVariant = "success";
+    }
+
+    const priceLabel = isBulk
+      ? item.sellingMode === "gram"
+        ? `৳${item.price} / ১০০ গ্রাম`
+        : `৳${item.price} / পিস`
+      : `৳${item.price}`;
+
     return {
       id: item.id,
       title: item.title,
       subtitle: `/${item.handle}`,
       logoUrl: item.imageUrl,
-      badgeText: item.available ? "ইন স্টক" : "স্টক শেষ",
-      badgeVariant: item.available ? "success" : "destructive",
+      badgeText,
+      badgeVariant,
       tags: [
         {
-          text: `৳${item.price}`,
+          text: priceLabel,
           variant: "default",
         },
+        ...(item.sellingMode && item.sellingMode !== "packaged"
+          ? [
+              {
+                text: item.sellingMode === "gram" ? "⚖️ গ্রাম ভিত্তিক" : "🥚 পিস ভিত্তিক",
+                variant: "secondary" as const,
+              },
+            ]
+          : item.unit
+            ? [
+                {
+                  text: getProductUnitLabel(item.unit),
+                  variant: "secondary" as const,
+                },
+              ]
+            : []),
         ...(item.compareAtPrice &&
         Number(item.compareAtPrice) > Number(item.price)
           ? [
               {
                 text: `পূর্বের: ৳${item.compareAtPrice}`,
+                variant: "secondary" as const,
+              },
+            ]
+          : []),
+        ...(!isBulk && item.variants && item.variants.length > 0
+          ? [
+              {
+                text: `${item.variants.length}টি প্যাক (${item.variants
+                  .map((v) => `${v.title || "প্যাক"}: ${v.inventoryQuantity ?? 0}`)
+                  .join(", ")}) — মোট স্টক: ${
+                  calculateTotalStock(
+                    item.variants,
+                    (item.unit as any) || "gram",
+                  ).totalBulkFormatted
+                }`,
                 variant: "secondary" as const,
               },
             ]
@@ -84,9 +220,34 @@ export function ProductsList({
             ]
           : []),
       ],
+
       actions: (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+
+          {/* Quick Stock Toggle Button */}
+          <Button
+            type="button"
+            variant={isAvailable ? "default" : "outline"}
+            size="sm"
+            disabled={isPending && togglingId === item.id}
+            onClick={() => handleToggleStock(item.id, isAvailable)}
+            className={`h-7 px-2.5 rounded-full text-xs font-semibold cursor-pointer ${
+              isAvailable
+                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                : "text-muted-foreground"
+            }`}
+            title={isAvailable ? "স্টক শেষ মার্ক করুন" : "ইন স্টক মার্ক করুন"}
+          >
+            {togglingId === item.id ? (
+              <Spinner className="size-3 mr-1" />
+            ) : isAvailable ? (
+              <Check className="size-3 mr-1" />
+            ) : null}
+            <span>{isAvailable ? "ইন স্টক" : "স্টক শেষ"}</span>
+          </Button>
+
           <EditProductDialog product={item} collections={collections} />
+
           <Button
             variant="ghost"
             size="sm"
@@ -104,9 +265,9 @@ export function ProductsList({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ─── Search & Filter Bar ─── */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
-        <div className="relative w-full sm:flex-1">
+      {/* ─── Search, Category & Stock Filter Bar ─── */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="relative flex-1">
           <SearchNormal className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
           <Input
             value={query}
@@ -132,11 +293,51 @@ export function ProductsList({
         )}
       </div>
 
+      {/* ─── Stock Status Filter Tabs ─── */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <Button
+          type="button"
+          variant={stockFilter === "all" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setStockFilter("all")}
+          className="rounded-full text-xs h-7 px-3 cursor-pointer"
+        >
+          সকল পণ্য ({products.length})
+        </Button>
+        <Button
+          type="button"
+          variant={stockFilter === "in_stock" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setStockFilter("in_stock")}
+          className="rounded-full text-xs h-7 px-3 cursor-pointer"
+        >
+          ইন স্টক ({inStockCount})
+        </Button>
+        <Button
+          type="button"
+          variant={stockFilter === "low_stock" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setStockFilter("low_stock")}
+          className="rounded-full text-xs h-7 px-3 cursor-pointer border-amber-500/40 text-amber-600 dark:text-amber-400"
+        >
+          ⚡ কম স্টক ({lowStockCount})
+        </Button>
+        <Button
+          type="button"
+          variant={stockFilter === "out_of_stock" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setStockFilter("out_of_stock")}
+          className="rounded-full text-xs h-7 px-3 cursor-pointer"
+        >
+          স্টক শেষ ({outOfStockCount})
+        </Button>
+      </div>
+
       {/* ─── Products QuickList ─── */}
       <QuickList
         items={items}
         emptyMessage={
-          query || selectedCollection !== "all"
+          query || selectedCollection !== "all" || stockFilter !== "all"
             ? "অনুসন্ধানের সাথে মেলে এমন কোনো পণ্য পাওয়া যায়নি।"
             : "কোনো পণ্য পাওয়া যায়নি। আপনার স্টোরে পণ্য যোগ করতে 'নতুন পণ্য যোগ করুন' বাটনে ক্লিক করুন।"
         }

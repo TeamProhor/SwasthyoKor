@@ -110,10 +110,10 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
             </Alert>
           )}
 
-          <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4">
-            <FieldGroup className="gap-3.5">
+          <form onSubmit={handleCreateSubmit} className="flex flex-col gap-3 sm:gap-4">
+            <FieldGroup className="gap-3 sm:gap-4">
               <Field>
-                <FieldLabel htmlFor="create-title">
+                <FieldLabel htmlFor="create-title" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   ব্যানার টাইটেল (বড় লেখা) *
                 </FieldLabel>
                 <Input
@@ -121,12 +121,12 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                   name="title"
                   placeholder="যেমন: ১০০% খাঁটি সুন্দরবন মধু ও"
                   required
-                  className="rounded-xl"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="create-highlight">
+                <FieldLabel htmlFor="create-highlight" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   হাইলাইট টেক্সট (রঙিন লেখা) *
                 </FieldLabel>
                 <Input
@@ -134,12 +134,12 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                   name="highlight"
                   placeholder="যেমন: গাওয়া ঘি"
                   required
-                  className="rounded-xl"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="create-subtitle">
+                <FieldLabel htmlFor="create-subtitle" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   সাবটাইটেল / সংক্ষিপ্ত বিবরণ *
                 </FieldLabel>
                 <Textarea
@@ -148,13 +148,13 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                   rows={2}
                   placeholder="প্রকৃতির নিখাদ দান, কোনো কৃত্রিম মিষ্টি ছাড়া সরাসরি সুন্দরবন থেকে..."
                   required
-                  className="rounded-xl text-xs"
+                  className="text-xs sm:text-sm rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="create-link">
+                  <FieldLabel htmlFor="create-link" className="text-xs sm:text-sm font-semibold text-foreground/90">
                     লিঙ্ক (টার্গেট URL) *
                   </FieldLabel>
                   <Input
@@ -162,19 +162,19 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                     name="link"
                     defaultValue="/search?q=মধু"
                     required
-                    className="rounded-xl font-mono text-xs"
+                    className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                   />
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="create-color">
+                  <FieldLabel htmlFor="create-color" className="text-xs sm:text-sm font-semibold text-foreground/90">
                     হাইলাইট রঙ (Tailwind Color)
                   </FieldLabel>
                   <select
                     id="create-color"
                     name="accentColor"
                     defaultValue="text-amber-400"
-                    className="w-full rounded-xl border border-input bg-background px-3 py-2 text-xs text-foreground"
+                    className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
                   >
                     <option value="text-amber-400">হলুদ / আম্বার (Amber)</option>
                     <option value="text-emerald-400">সবুজ (Emerald)</option>
@@ -186,7 +186,7 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
               </div>
 
               <Field>
-                <FieldLabel htmlFor="create-image">
+                <FieldLabel htmlFor="create-image" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   ব্যানার ইমেজ ফাইল (বা ইমেজ URL) *
                 </FieldLabel>
                 <Input
@@ -194,33 +194,37 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                   name="image"
                   type="file"
                   accept="image/*"
-                  className="rounded-xl file:mr-3 file:rounded-lg file:border-0 file:bg-muted file:px-2.5 file:py-1 file:text-xs file:font-semibold"
+                  className="h-10 text-xs rounded-lg sm:rounded-xl file:mr-2.5 file:rounded-md file:border-0 file:bg-muted file:px-2 file:py-1 file:text-xs file:font-semibold"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="create-imageUrl">
-                  অথবা ছবির সরাসরি ওয়েব লিঙ্ক (URL)
+                <FieldLabel htmlFor="create-imageUrl" className="text-xs sm:text-sm font-semibold text-foreground/90">
+                  অথবা ছবির সরাসরি লিঙ্ক (URL)
                 </FieldLabel>
                 <Input
                   id="create-imageUrl"
                   name="imageUrl"
                   placeholder="https://images.unsplash.com/..."
-                  className="rounded-xl font-mono text-xs"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                 />
               </Field>
             </FieldGroup>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsCreateOpen(false)}
-                className="rounded-xl"
+                className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-4"
               >
                 বাতিল
               </Button>
-              <Button type="submit" disabled={isPending} className="rounded-xl">
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-5"
+              >
                 {isPending ? (
                   <>
                     <Spinner className="size-4 mr-1" />
@@ -317,45 +321,51 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
             </Alert>
           )}
 
-          <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
-            <FieldGroup className="gap-3.5">
+          <form onSubmit={handleEditSubmit} className="flex flex-col gap-3 sm:gap-4">
+            <FieldGroup className="gap-3 sm:gap-4">
               <Field>
-                <FieldLabel htmlFor="edit-title">ব্যানার টাইটেল *</FieldLabel>
+                <FieldLabel htmlFor="edit-title" className="text-xs sm:text-sm font-semibold text-foreground/90">
+                  ব্যানার টাইটেল *
+                </FieldLabel>
                 <Input
                   id="edit-title"
                   name="title"
                   defaultValue={editingBanner.title}
                   required
-                  className="rounded-xl"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-highlight">হাইলাইট টেক্সট *</FieldLabel>
+                <FieldLabel htmlFor="edit-highlight" className="text-xs sm:text-sm font-semibold text-foreground/90">
+                  হাইলাইট টেক্সট *
+                </FieldLabel>
                 <Input
                   id="edit-highlight"
                   name="highlight"
                   defaultValue={editingBanner.highlight}
                   required
-                  className="rounded-xl"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-subtitle">সাবটাইটেল *</FieldLabel>
+                <FieldLabel htmlFor="edit-subtitle" className="text-xs sm:text-sm font-semibold text-foreground/90">
+                  সাবটাইটেল *
+                </FieldLabel>
                 <Textarea
                   id="edit-subtitle"
                   name="subtitle"
                   rows={2}
                   defaultValue={editingBanner.subtitle}
                   required
-                  className="rounded-xl text-xs"
+                  className="text-xs sm:text-sm rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="edit-link">
+                  <FieldLabel htmlFor="edit-link" className="text-xs sm:text-sm font-semibold text-foreground/90">
                     লিঙ্ক (টার্গেট URL) *
                   </FieldLabel>
                   <Input
@@ -363,17 +373,19 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                     name="link"
                     defaultValue={editingBanner.link}
                     required
-                    className="rounded-xl font-mono text-xs"
+                    className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                   />
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="edit-color">হাইলাইট রঙ</FieldLabel>
+                  <FieldLabel htmlFor="edit-color" className="text-xs sm:text-sm font-semibold text-foreground/90">
+                    হাইলাইট রঙ
+                  </FieldLabel>
                   <select
                     id="edit-color"
                     name="accentColor"
                     defaultValue={editingBanner.accentColor}
-                    className="w-full rounded-xl border border-input bg-background px-3 py-2 text-xs text-foreground"
+                    className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
                   >
                     <option value="text-amber-400">হলুদ / আম্বার (Amber)</option>
                     <option value="text-emerald-400">সবুজ (Emerald)</option>
@@ -385,7 +397,7 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
               </div>
 
               <Field>
-                <FieldLabel htmlFor="edit-image">
+                <FieldLabel htmlFor="edit-image" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   নতুন ব্যানার ইমেজ ফাইল (ঐচ্ছিক)
                 </FieldLabel>
                 <Input
@@ -393,33 +405,37 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                   name="image"
                   type="file"
                   accept="image/*"
-                  className="rounded-xl file:mr-3 file:rounded-lg file:border-0 file:bg-muted file:px-2.5 file:py-1 file:text-xs file:font-semibold"
+                  className="h-10 text-xs rounded-lg sm:rounded-xl file:mr-2.5 file:rounded-md file:border-0 file:bg-muted file:px-2 file:py-1 file:text-xs file:font-semibold"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-imageUrl">
+                <FieldLabel htmlFor="edit-imageUrl" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   অথবা নতুন ইমেজ URL (ঐচ্ছিক)
                 </FieldLabel>
                 <Input
                   id="edit-imageUrl"
                   name="imageUrl"
                   placeholder="https://images.unsplash.com/..."
-                  className="rounded-xl font-mono text-xs"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                 />
               </Field>
             </FieldGroup>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setEditingBanner(null)}
-                className="rounded-xl"
+                className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-4"
               >
                 বাতিল
               </Button>
-              <Button type="submit" disabled={isPending} className="rounded-xl">
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-5"
+              >
                 {isPending ? (
                   <>
                     <Spinner className="size-4 mr-1" />

@@ -30,22 +30,67 @@ export default async function AdminProductsPage() {
 
   const formattedProducts = allProducts.map((prod) => {
     const img = allImages.find((i) => i.productId === prod.id);
-    const variant = allVariants.find((v) => v.productId === prod.id);
+    const prodVariants = allVariants
+      .filter((v) => v.productId === prod.id)
+      .sort((a, b) => a.position - b.position);
+    const variant = prodVariants[0];
     const prodCol = allProdCollections.find((pc) => pc.productId === prod.id);
+
+    const isBulk = prod.sellingMode === "gram" || prod.sellingMode === "piece";
+    const totalInventory = isBulk
+      ? prod.bulkStockQuantity
+      : prodVariants.reduce(
+          (acc, v) => acc + (v.inventoryQuantity ?? 15),
+          0,
+        );
+    const unit = isBulk
+      ? prod.sellingMode === "gram"
+        ? "gram"
+        : "piece"
+      : variant?.unit || "packet";
+
+    const displayPrice = isBulk
+      ? String(prod.pricePerUnit ?? 0)
+      : variant
+        ? String(variant.priceAmount)
+        : "0";
+
+    const displayComparePrice = isBulk
+      ? prod.compareAtPricePerUnit
+        ? String(prod.compareAtPricePerUnit)
+        : undefined
+      : variant?.compareAtPrice
+        ? String(variant.compareAtPrice)
+        : undefined;
+
     return {
       id: prod.id,
       title: prod.title,
       handle: prod.handle,
       description: prod.description,
       collectionId: prodCol?.collectionId,
-      price: variant ? String(variant.priceAmount) : "0",
-      compareAtPrice: variant?.compareAtPrice
-        ? String(variant.compareAtPrice)
-        : undefined,
+      price: displayPrice,
+      compareAtPrice: displayComparePrice,
+      inventoryQuantity: totalInventory,
+      unit,
+      sellingMode: prod.sellingMode,
+      bulkStockQuantity: prod.bulkStockQuantity,
+      pricePerUnit: prod.pricePerUnit ?? undefined,
+      compareAtPricePerUnit: prod.compareAtPricePerUnit ?? undefined,
+      minimumOrderQuantity: prod.minimumOrderQuantity,
       imageUrl: img?.url,
-      available: prod.availableForSale,
+      available: prod.availableForSale && totalInventory > 0,
+      variants: prodVariants.map((v) => ({
+        id: v.id,
+        title: v.title,
+        price: String(v.priceAmount),
+        compareAtPrice: v.compareAtPrice ? String(v.compareAtPrice) : undefined,
+        inventoryQuantity: v.inventoryQuantity ?? 15,
+        unit: (v.unit as any) || "packet",
+      })),
     };
   });
+
 
   const collectionsList = allCollections.map((c) => ({
     id: c.id,

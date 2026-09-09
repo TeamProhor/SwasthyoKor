@@ -101,9 +101,9 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
         </Alert>
       )}
 
-      <form onSubmit={handleUpdate} className="flex flex-col gap-4">
+      <form onSubmit={handleUpdate} className="flex flex-col gap-3 sm:gap-4">
         {/* ─── Order Summary ─── */}
-        <div className="rounded-2xl border border-border bg-muted/40 p-3.5 space-y-2 text-sm">
+        <div className="rounded-xl sm:rounded-2xl border border-border bg-muted/40 p-2.5 sm:p-3.5 space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">অর্ডার তারিখ:</span>
             <span className="font-semibold text-foreground">
@@ -125,21 +125,21 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
           {order.shippingAddress ? (
             <div className="flex items-start justify-between">
               <span className="text-muted-foreground">ঠিকানা:</span>
-              <span className="font-medium text-right text-foreground max-w-[200px]">
+              <span className="font-medium text-right text-foreground max-w-[180px] sm:max-w-[240px]">
                 {order.shippingAddress}
               </span>
             </div>
           ) : null}
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">পেমেন্ট মেথড:</span>
-            <span className="font-semibold uppercase text-xs px-2 py-0.5 rounded bg-muted">
+            <span className="font-semibold uppercase text-[10px] sm:text-xs px-2 py-0.5 rounded bg-muted">
               {order.paymentMethod || "ONLINE"}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">পেমেন্ট স্ট্যাটাস:</span>
             <span
-              className={`font-semibold text-xs px-2 py-0.5 rounded ${
+              className={`font-semibold text-[10px] sm:text-xs px-2 py-0.5 rounded ${
                 isPaid
                   ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
                   : "bg-amber-500/20 text-amber-700 dark:text-amber-300"
@@ -151,7 +151,7 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
           {order.paymentTrxId ? (
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Trx ID:</span>
-              <span className="font-mono text-xs font-bold text-foreground">
+              <span className="font-mono text-[11px] sm:text-xs font-bold text-foreground">
                 {order.paymentTrxId}
               </span>
             </div>
@@ -162,7 +162,7 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
           </div>
           <div className="flex items-center justify-between border-t border-border/60 pt-2">
             <span className="font-bold text-foreground">সর্বমোট মূল্য:</span>
-            <span className="font-bold text-base text-emerald-600 dark:text-emerald-400">
+            <span className="font-bold text-sm sm:text-base text-emerald-600 dark:text-emerald-400">
               ৳{order.totalAmount.toLocaleString("bn-BD")}
             </span>
           </div>
@@ -170,10 +170,10 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
 
         {/* ─── Order Items List ─── */}
         <div>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+          <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
             অর্ডারের আইটেমসমূহ ({order.items.length})
           </h4>
-          <div className="max-h-48 overflow-y-auto space-y-1.5 divide-y divide-border/40 rounded-xl border border-border bg-card p-2">
+          <div className="max-h-48 overflow-y-auto space-y-1 divide-y divide-border/40 rounded-lg sm:rounded-xl border border-border bg-card p-2">
             {order.items.map((item, idx) => (
               <div
                 key={`${item.productHandle}-${idx}`}
@@ -183,11 +183,11 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
                   <p className="font-semibold text-foreground truncate">
                     {item.productTitle}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground">
                     পরিমাণ: {item.quantity} | মূল্য: ৳{item.priceAmount}
                   </p>
                 </div>
-                <div className="font-bold text-foreground shrink-0">
+                <div className="font-bold text-foreground shrink-0 text-xs sm:text-sm">
                   ৳{(item.priceAmount * item.quantity).toLocaleString("bn-BD")}
                 </div>
               </div>
@@ -198,14 +198,17 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
         {/* ─── Status Update Select ─── */}
         <FieldGroup className="gap-2">
           <Field>
-            <FieldLabel htmlFor={`order-status-${order.id}`}>
+            <FieldLabel
+              htmlFor={`order-status-${order.id}`}
+              className="text-xs sm:text-sm font-semibold text-foreground/90"
+            >
               স্ট্যাটাস পরিবর্তন করুন
             </FieldLabel>
             <select
               id={`order-status-${order.id}`}
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full rounded-xl border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring cursor-pointer"
+              className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-card px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring cursor-pointer"
             >
               <option value="confirmed">কনফার্মড (Confirmed)</option>
               <option value="shipped">ডেলিভারিতে পাঠানো হয়েছে (Shipped)</option>
@@ -215,19 +218,19 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
           </Field>
         </FieldGroup>
 
-        <div className="flex items-center justify-end gap-2 pt-2">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
           <Button
             type="button"
             variant="outline"
             onClick={() => setOpen(false)}
-            className="rounded-xl"
+            className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-4"
           >
             বাতিল
           </Button>
           <Button
             type="submit"
             disabled={isPending}
-            className="rounded-xl cursor-pointer"
+            className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-5 cursor-pointer"
           >
             {isPending ? (
               <>

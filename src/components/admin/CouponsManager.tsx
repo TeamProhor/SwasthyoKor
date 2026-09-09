@@ -138,15 +138,15 @@ export function CouponsManager({
             </Button>
           }
         >
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
             {error && (
-              <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-2.5 text-xs font-semibold text-red-600 dark:text-red-400">
+              <div className="rounded-lg sm:rounded-xl bg-red-500/10 border border-red-500/30 p-2.5 text-xs font-semibold text-red-600 dark:text-red-400">
                 {error}
               </div>
             )}
 
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="code" className="text-xs font-semibold">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="code" className="text-xs sm:text-sm font-semibold text-foreground/90">
                 কুপন কোড (যেমন: EID10, HEALTH20)
               </Label>
               <Input
@@ -160,27 +160,28 @@ export function CouponsManager({
                 }
                 placeholder="EID10"
                 required
+                className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono uppercase"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-semibold">ডিসকাউন্ট ধরন</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <Label className="text-xs sm:text-sm font-semibold text-foreground/90">ডিসকাউন্ট ধরন</Label>
                 <select
                   value={formData.discountType}
                   onChange={(e) =>
                     setFormData({ ...formData, discountType: e.target.value })
                   }
-                  className="rounded-xl border border-input bg-background px-3 py-2 text-xs font-medium"
+                  className="h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm font-medium"
                 >
                   <option value="percentage">শতকরা হার (%)</option>
                   <option value="fixed">নির্দিষ্ট টাকা (৳)</option>
                 </select>
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1">
                 <Label
                   htmlFor="discountValue"
-                  className="text-xs font-semibold"
+                  className="text-xs sm:text-sm font-semibold text-foreground/90"
                 >
                   {formData.discountType === "percentage"
                     ? "ডিসকাউন্ট (%)"
@@ -197,15 +198,16 @@ export function CouponsManager({
                     })
                   }
                   required
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
                 <Label
                   htmlFor="minOrderAmount"
-                  className="text-xs font-semibold"
+                  className="text-xs sm:text-sm font-semibold text-foreground/90"
                 >
                   ন্যূনতম অর্ডার (৳)
                 </Label>
@@ -219,12 +221,13 @@ export function CouponsManager({
                       minOrderAmount: Number(e.target.value),
                     })
                   }
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                 />
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1">
                 <Label
                   htmlFor="maxDiscountAmount"
-                  className="text-xs font-semibold"
+                  className="text-xs sm:text-sm font-semibold text-foreground/90"
                 >
                   সর্বোচ্চ ছাড় (৳, ঐচ্ছিক)
                 </Label>
@@ -239,6 +242,7 @@ export function CouponsManager({
                     })
                   }
                   placeholder="সীমাহীন"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                 />
               </div>
             </div>
@@ -246,7 +250,7 @@ export function CouponsManager({
             <Button
               type="submit"
               disabled={isLoading}
-              className="mt-2 w-full rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-500"
+              className="mt-2 h-10 sm:h-11 w-full rounded-lg sm:rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-500 text-xs sm:text-sm"
             >
               {isLoading ? "তৈরি হচ্ছে..." : "কুপন কোড প্রকাশ করুন"}
             </Button>

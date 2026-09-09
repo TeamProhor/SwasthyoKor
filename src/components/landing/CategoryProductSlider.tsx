@@ -75,15 +75,15 @@ export function CategoryProductSlider({
         </div>
       </div>
 
-      {/* Horizontal Scrollable Slider Row */}
+      {/* Horizontal Scrollable Slider Row (Full edge-to-edge without any cut) */}
       <div
         ref={scrollRef}
-        className="flex gap-3 sm:gap-4 overflow-x-auto pb-3 pt-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
+        className="-mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 flex gap-3 sm:gap-4 overflow-x-auto pb-3 pt-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
       >
         {products.map((product) => (
           <div
             key={product.handle}
-            className="w-[160px] sm:w-[210px] md:w-[240px] lg:w-[260px] shrink-0"
+            className="w-[155px] sm:w-[200px] md:w-[230px] lg:w-[250px] shrink-0"
           >
             <ProductCard product={product} />
           </div>

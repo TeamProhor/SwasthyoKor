@@ -10,12 +10,24 @@ import {
   orders,
   productCollections,
   productImages,
+  productOptions,
   products,
   productVariants,
 } from "@/lib/db/schema";
 import { uploadObject } from "@/lib/storage";
 
+import { PRODUCT_UNITS, SELLING_MODES, type ProductUnit, type SellingMode } from "@/lib/types";
+
 // ─── Products ─────────────────────────────────────────────────────────────
+
+interface VariantPayload {
+  id?: string;
+  title: string;
+  price: string | number;
+  compareAtPrice?: string | number | null;
+  inventoryQuantity: number;
+  unit?: ProductUnit;
+}
 
 export async function createProductAction(formData: FormData) {
   try {
@@ -25,21 +37,23 @@ export async function createProductAction(formData: FormData) {
       .trim()
       .replace(/[^a-z0-9]+/g, "-");
     const description = (formData.get("description") as string) || "";
-    const priceAmount = Number(formData.get("price") || 0);
-    const compareAtPriceInput = formData.get("compareAtPrice") as string;
-    const compareAtPrice = compareAtPriceInput
-      ? Number(compareAtPriceInput)
-      : null;
     const categoryId = formData.get("collectionId") as string;
     const imageFile = formData.get("image") as File | null;
     const imageUrlInput = formData.get("imageUrl") as string;
+
+    // Selling mode
+    const rawMode = (formData.get("sellingMode") as string)?.trim();
+    const sellingMode: SellingMode =
+      rawMode && SELLING_MODES.includes(rawMode as SellingMode)
+        ? (rawMode as SellingMode)
+        : "packaged";
+
+    const isBulk = sellingMode === "gram" || sellingMode === "piece";
 
     const id = `prod_${crypto.randomUUID().slice(0, 8)}`;
     const now = new Date();
 
     let finalImageUrl = imageUrlInput || "";
-
-    // Upload file if provided (compressed to WebP from browser)
     if (imageFile && imageFile.size > 0) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
       const extension =
@@ -59,16 +73,143 @@ export async function createProductAction(formData: FormData) {
         "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800";
     }
 
-    await db.insert(products).values({
-      id,
-      handle,
-      title,
-      description,
-      availableForSale: true,
-      createdAt: now,
-      updatedAt: now,
-    });
+    if (isBulk) {
+      // ── Bulk mode: gram or piece ──
+      const pricePerUnit = parseFloat(formData.get("pricePerUnit") as string) || 0;
+      const compareAtPricePerUnit = parseFloat(formData.get("compareAtPricePerUnit") as string) || null;
+      const bulkStockQuantity = parseInt(formData.get("bulkStockQuantity") as string, 10) || 0;
+      const minimumOrderQuantity = sellingMode === "piece" ? 1 : 100;
 
+      await db.insert(products).values({
+        id,
+        handle,
+        title,
+        description,
+        sellingMode,
+        bulkStockQuantity,
+        pricePerUnit,
+        compareAtPricePerUnit: compareAtPricePerUnit && compareAtPricePerUnit > 0 ? compareAtPricePerUnit : null,
+        minimumOrderQuantity,
+        availableForSale: bulkStockQuantity > 0,
+        createdAt: now,
+        updatedAt: now,
+      });
+    } else {
+      // ── Packaged mode: variants ──
+      const variantsRaw = formData.get("variants") as string | null;
+      let variantsList: VariantPayload[] = [];
+
+      if (variantsRaw) {
+        try {
+          variantsList = JSON.parse(variantsRaw);
+        } catch (e) {
+          console.error("Failed to parse variants json:", e);
+        }
+      }
+
+      if (!variantsList || variantsList.length === 0) {
+        const priceAmount = Number(formData.get("price") || 0);
+        const compareAtPriceInput = formData.get("compareAtPrice") as string;
+        const compareAtPrice = compareAtPriceInput ? Number(compareAtPriceInput) : null;
+        const inventoryQuantity = Math.max(
+          0,
+          parseInt((formData.get("inventoryQuantity") as string) || "15", 10),
+        );
+        const rawUnit = (formData.get("unit") as string)?.trim();
+        const unit: ProductUnit =
+          rawUnit && PRODUCT_UNITS.includes(rawUnit as ProductUnit)
+            ? (rawUnit as ProductUnit)
+            : "packet";
+
+        variantsList = [
+          {
+            title: "স্ট্যান্ডার্ড প্যাক",
+            price: priceAmount,
+            compareAtPrice,
+            inventoryQuantity,
+            unit,
+          },
+        ];
+      }
+
+      const totalInventory = variantsList.reduce(
+        (acc, v) => acc + (Number(v.inventoryQuantity) || 0),
+        0,
+      );
+
+      await db.insert(products).values({
+        id,
+        handle,
+        title,
+        description,
+        sellingMode: "packaged",
+        availableForSale: totalInventory > 0,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      await db.insert(productImages).values({
+        id: `img_${crypto.randomUUID().slice(0, 8)}`,
+        productId: id,
+        url: finalImageUrl,
+        altText: title,
+        width: 800,
+        height: 800,
+        position: 0,
+      });
+
+      const variantTitles = variantsList.map(
+        (v, idx) => v.title?.trim() || `প্যাক ${idx + 1}`,
+      );
+      await db.insert(productOptions).values({
+        id: `opt_${crypto.randomUUID().slice(0, 8)}`,
+        productId: id,
+        name: "পরিমাণ",
+        position: 0,
+        values: variantTitles,
+      });
+
+      for (let i = 0; i < variantsList.length; i++) {
+        const v = variantsList[i];
+        const vTitle = v.title?.trim() || `প্যাক ${i + 1}`;
+        const vPrice = Number(v.price || 0);
+        const vComparePrice = v.compareAtPrice ? Number(v.compareAtPrice) : null;
+        const vQty = Math.max(0, Number(v.inventoryQuantity) || 0);
+        const vUnit: ProductUnit =
+          v.unit && PRODUCT_UNITS.includes(v.unit as ProductUnit)
+            ? (v.unit as ProductUnit)
+            : "packet";
+
+        await db.insert(productVariants).values({
+          id: `var_${crypto.randomUUID().slice(0, 8)}`,
+          productId: id,
+          title: vTitle,
+          priceAmount: vPrice,
+          compareAtPrice: vComparePrice,
+          priceCurrency: "BDT",
+          availableForSale: vQty > 0,
+          inventoryQuantity: vQty,
+          unit: vUnit,
+          position: i,
+          selectedOptions: [{ name: "পরিমাণ", value: vTitle }],
+        });
+      }
+
+      if (categoryId) {
+        await db.insert(productCollections).values({
+          productId: id,
+          collectionId: categoryId,
+        });
+      }
+
+      revalidatePath("/admin/products");
+      revalidatePath("/search");
+      revalidatePath("/");
+
+      return { success: true, message: "পণ্য সফলভাবে তৈরি করা হয়েছে।" };
+    }
+
+    // Common for bulk mode after insert
     await db.insert(productImages).values({
       id: `img_${crypto.randomUUID().slice(0, 8)}`,
       productId: id,
@@ -79,18 +220,6 @@ export async function createProductAction(formData: FormData) {
       position: 0,
     });
 
-    await db.insert(productVariants).values({
-      id: `var_${crypto.randomUUID().slice(0, 8)}`,
-      productId: id,
-      title: "Default",
-      priceAmount,
-      compareAtPrice,
-      priceCurrency: "BDT",
-      availableForSale: true,
-      position: 0,
-      selectedOptions: [],
-    });
-
     if (categoryId) {
       await db.insert(productCollections).values({
         productId: id,
@@ -102,21 +231,22 @@ export async function createProductAction(formData: FormData) {
     revalidatePath("/search");
     revalidatePath("/");
 
-    return { success: true, message: "পণ্য সফলভাবে তৈরি করা হয়েছে।" };
+    return { success: true, message: "পণ্য সফলভাবে তৈরি করা হয়েছে।" };
   } catch (err: unknown) {
     console.error("Create product error:", err);
     return {
       success: false,
-      error: err instanceof Error ? err.message : "পণ্য তৈরি করতে সমস্যা হয়েছে।",
+      error: err instanceof Error ? err.message : "পণ্য তৈরি করতে সমস্যা হয়েছে।",
     };
   }
 }
+
 
 export async function updateProductAction(formData: FormData) {
   try {
     const id = formData.get("id") as string;
     if (!id) {
-      return { success: false, error: "পণ্যের আইডি পাওয়া যায়নি।" };
+      return { success: false, error: "পণ্যের আইডি পাওয়া যায়নি।" };
     }
 
     const title = formData.get("title") as string;
@@ -125,113 +255,168 @@ export async function updateProductAction(formData: FormData) {
       .trim()
       .replace(/[^a-z0-9]+/g, "-");
     const description = (formData.get("description") as string) || "";
-    const priceAmount = Number(formData.get("price") || 0);
-    const compareAtPriceInput = formData.get("compareAtPrice") as string;
-    const compareAtPrice = compareAtPriceInput
-      ? Number(compareAtPriceInput)
-      : null;
     const categoryId = formData.get("collectionId") as string;
-    const availableForSale = formData.get("availableForSale") === "true";
     const imageFile = formData.get("image") as File | null;
     const imageUrlInput = formData.get("imageUrl") as string;
 
+    const rawMode = (formData.get("sellingMode") as string)?.trim();
+    const sellingMode: SellingMode =
+      rawMode && SELLING_MODES.includes(rawMode as SellingMode)
+        ? (rawMode as SellingMode)
+        : "packaged";
+
+    const isBulk = sellingMode === "gram" || sellingMode === "piece";
     const now = new Date();
 
-    // 1. Update product table
-    await db
-      .update(products)
-      .set({
-        title,
-        handle,
-        description,
-        availableForSale,
-        updatedAt: now,
-      })
-      .where(eq(products.id, id));
+    if (isBulk) {
+      // ── Bulk mode update ──
+      const pricePerUnit = parseFloat(formData.get("pricePerUnit") as string) || 0;
+      const compareAtPricePerUnit = parseFloat(formData.get("compareAtPricePerUnit") as string) || null;
+      const bulkStockQuantity = parseInt(formData.get("bulkStockQuantity") as string, 10) || 0;
+      const minimumOrderQuantity = sellingMode === "piece" ? 1 : 100;
 
-    // 2. Update variant price & status
-    const existingVariants = await db
-      .select()
-      .from(productVariants)
-      .where(eq(productVariants.productId, id));
-
-    if (existingVariants.length > 0) {
       await db
-        .update(productVariants)
+        .update(products)
         .set({
-          priceAmount,
-          compareAtPrice,
-          priceCurrency: "BDT",
-          availableForSale,
+          title,
+          handle,
+          description,
+          sellingMode,
+          pricePerUnit,
+          compareAtPricePerUnit: compareAtPricePerUnit && compareAtPricePerUnit > 0 ? compareAtPricePerUnit : null,
+          bulkStockQuantity,
+          minimumOrderQuantity,
+          availableForSale: bulkStockQuantity > 0,
+          updatedAt: now,
         })
-        .where(eq(productVariants.productId, id));
+        .where(eq(products.id, id));
     } else {
-      await db.insert(productVariants).values({
-        id: `var_${crypto.randomUUID().slice(0, 8)}`,
-        productId: id,
-        title: "Default",
-        priceAmount,
-        compareAtPrice,
-        priceCurrency: "BDT",
-        availableForSale,
-        position: 0,
-        selectedOptions: [],
-      });
-    }
+      // ── Packaged mode update ──
+      const variantsRaw = formData.get("variants") as string | null;
+      let variantsList: VariantPayload[] = [];
 
-    // 3. Update image if new file or URL is provided
-    let finalImageUrl = imageUrlInput || "";
-    if (imageFile && imageFile.size > 0) {
-      const buffer = Buffer.from(await imageFile.arrayBuffer());
-      const extension =
-        imageFile.name.endsWith(".webp") || imageFile.type === "image/webp"
-          ? "webp"
-          : imageFile.name.split(".").pop() || "webp";
-      const s3Key = `products/${id}-${Date.now()}.${extension}`;
-      finalImageUrl = await uploadObject({
-        key: s3Key,
-        body: buffer,
-        contentType: imageFile.type || "image/webp",
-      });
-    }
+      if (variantsRaw) {
+        try {
+          variantsList = JSON.parse(variantsRaw);
+        } catch (e) {
+          console.error("Failed to parse variants json:", e);
+        }
+      }
 
-    if (finalImageUrl) {
-      const existingImages = await db
-        .select()
-        .from(productImages)
-        .where(eq(productImages.productId, id));
+      if (variantsList && variantsList.length > 0) {
+        const totalInventory = variantsList.reduce(
+          (acc, v) => acc + (Number(v.inventoryQuantity) || 0),
+          0,
+        );
+        const isManualOutOfStock = formData.get("availableForSale") === "false";
+        const availableForSale = !isManualOutOfStock && totalInventory > 0;
 
-      if (existingImages.length > 0) {
         await db
-          .update(productImages)
-          .set({
-            url: finalImageUrl,
-            altText: title,
-          })
-          .where(eq(productImages.productId, id));
+          .update(products)
+          .set({ title, handle, description, sellingMode: "packaged", availableForSale, updatedAt: now })
+          .where(eq(products.id, id));
+
+        const existingVariants = await db
+          .select()
+          .from(productVariants)
+          .where(eq(productVariants.productId, id));
+
+        const existingIds = new Set(existingVariants.map((v) => v.id));
+        const submittedIds = new Set(variantsList.map((v) => v.id).filter(Boolean) as string[]);
+
+        for (const existing of existingVariants) {
+          if (!submittedIds.has(existing.id)) {
+            await db.delete(productVariants).where(eq(productVariants.id, existing.id));
+          }
+        }
+
+        for (let i = 0; i < variantsList.length; i++) {
+          const v = variantsList[i];
+          const vTitle = v.title?.trim() || `প্যাক ${i + 1}`;
+          const vPrice = Number(v.price || 0);
+          const vComparePrice = v.compareAtPrice ? Number(v.compareAtPrice) : null;
+          const vQty = Math.max(0, Number(v.inventoryQuantity) || 0);
+          const vUnit: ProductUnit =
+            v.unit && PRODUCT_UNITS.includes(v.unit as ProductUnit)
+              ? (v.unit as ProductUnit)
+              : "packet";
+          const vAvailable = !isManualOutOfStock && vQty > 0;
+
+          if (v.id && existingIds.has(v.id)) {
+            await db
+              .update(productVariants)
+              .set({ title: vTitle, priceAmount: vPrice, compareAtPrice: vComparePrice, priceCurrency: "BDT", availableForSale: vAvailable, inventoryQuantity: vQty, unit: vUnit, position: i, selectedOptions: [{ name: "পরিমাণ", value: vTitle }] })
+              .where(eq(productVariants.id, v.id));
+          } else {
+            await db.insert(productVariants).values({
+              id: v.id || `var_${crypto.randomUUID().slice(0, 8)}`,
+              productId: id,
+              title: vTitle,
+              priceAmount: vPrice,
+              compareAtPrice: vComparePrice,
+              priceCurrency: "BDT",
+              availableForSale: vAvailable,
+              inventoryQuantity: vQty,
+              unit: vUnit,
+              position: i,
+              selectedOptions: [{ name: "পরিমাণ", value: vTitle }],
+            });
+          }
+        }
+
+        const variantTitles = variantsList.map((v, idx) => v.title?.trim() || `প্যাক ${idx + 1}`);
+        const existingOptions = await db.select().from(productOptions).where(eq(productOptions.productId, id));
+
+        if (existingOptions.length > 0) {
+          await db.update(productOptions).set({ name: "পরিমাণ", values: variantTitles }).where(eq(productOptions.id, existingOptions[0].id));
+        } else {
+          await db.insert(productOptions).values({ id: `opt_${crypto.randomUUID().slice(0, 8)}`, productId: id, name: "পরিমাণ", position: 0, values: variantTitles });
+        }
       } else {
-        await db.insert(productImages).values({
-          id: `img_${crypto.randomUUID().slice(0, 8)}`,
-          productId: id,
-          url: finalImageUrl,
-          altText: title,
-          width: 800,
-          height: 800,
-          position: 0,
-        });
+        // Single variant fallback
+        const priceAmount = Number(formData.get("price") || 0);
+        const compareAtPrice = formData.get("compareAtPrice") ? Number(formData.get("compareAtPrice")) : null;
+        const inventoryQuantity = Math.max(0, parseInt((formData.get("inventoryQuantity") as string) || "0", 10));
+        const availableForSale = inventoryQuantity > 0;
+
+        await db.update(products)
+          .set({ title, handle, description, sellingMode: "packaged", availableForSale, updatedAt: now })
+          .where(eq(products.id, id));
+
+        const existingVariants = await db.select().from(productVariants).where(eq(productVariants.productId, id));
+        if (existingVariants.length > 0) {
+          await db.update(productVariants)
+            .set({ priceAmount, compareAtPrice, availableForSale, inventoryQuantity })
+            .where(eq(productVariants.productId, id));
+        }
       }
     }
 
-    // 4. Update collection association
-    await db
-      .delete(productCollections)
-      .where(eq(productCollections.productId, id));
+    // Update image
+    let finalImageUrl = imageUrlInput || "";
+    if (imageFile && imageFile.size > 0) {
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const extension = imageFile.name.endsWith(".webp") || imageFile.type === "image/webp" ? "webp" : imageFile.name.split(".").pop() || "webp";
+      finalImageUrl = await uploadObject({ key: `products/${id}-${Date.now()}.${extension}`, body: buffer, contentType: imageFile.type || "image/webp" });
+    }
 
+    if (finalImageUrl) {
+      const existingImages = await db.select().from(productImages).where(eq(productImages.productId, id));
+      if (existingImages.length > 0) {
+        await db.update(productImages).set({ url: finalImageUrl, altText: title }).where(eq(productImages.productId, id));
+      } else {
+        await db.insert(productImages).values({ id: `img_${crypto.randomUUID().slice(0, 8)}`, productId: id, url: finalImageUrl, altText: title, width: 800, height: 800, position: 0 });
+      }
+    }
+
+    // Update collection
     if (categoryId) {
-      await db.insert(productCollections).values({
-        productId: id,
-        collectionId: categoryId,
-      });
+      const existingProdCol = await db.select().from(productCollections).where(eq(productCollections.productId, id));
+      if (existingProdCol.length > 0) {
+        await db.update(productCollections).set({ collectionId: categoryId }).where(eq(productCollections.productId, id));
+      } else {
+        await db.insert(productCollections).values({ productId: id, collectionId: categoryId });
+      }
     }
 
     revalidatePath("/admin/products");
@@ -239,12 +424,187 @@ export async function updateProductAction(formData: FormData) {
     revalidatePath(`/product/${handle}`);
     revalidatePath("/");
 
-    return { success: true, message: "পণ্য সফলভাবে আপডেট করা হয়েছে।" };
+    return { success: true, message: "পণ্য সফলভাবে আপডেট করা হয়েছে।" };
   } catch (err: unknown) {
     console.error("Update product error:", err);
     return {
       success: false,
-      error: err instanceof Error ? err.message : "পণ্য আপডেট করতে সমস্যা হয়েছে।",
+      error: err instanceof Error ? err.message : "পণ্য আপডেট করতে সমস্যা হয়েছে।",
+    };
+  }
+}
+
+
+
+export async function toggleProductAvailabilityAction(
+  productId: string,
+  availableForSale: boolean,
+) {
+  try {
+    const { sql } = await import("drizzle-orm");
+
+    const [prod] = await db
+      .select({
+        sellingMode: products.sellingMode,
+        bulkStock: products.bulkStockQuantity,
+      })
+      .from(products)
+      .where(eq(products.id, productId))
+      .limit(1);
+
+    const isBulk = prod?.sellingMode === "gram" || prod?.sellingMode === "piece";
+
+    if (isBulk) {
+      if (availableForSale) {
+        // Only toggle the flag — don't change bulkStockQuantity.
+        // Admin must add stock separately via adjustBulkStockAction.
+        await db
+          .update(products)
+          .set({
+            availableForSale: true,
+            updatedAt: new Date(),
+          })
+          .where(eq(products.id, productId));
+      } else {
+        await db
+          .update(products)
+          .set({
+            availableForSale: false,
+            bulkStockQuantity: 0,
+            updatedAt: new Date(),
+          })
+          .where(eq(products.id, productId));
+      }
+    } else {
+      await db
+        .update(products)
+        .set({
+          availableForSale,
+          updatedAt: new Date(),
+        })
+        .where(eq(products.id, productId));
+
+      if (availableForSale) {
+        await db
+          .update(productVariants)
+          .set({
+            availableForSale: true,
+            inventoryQuantity: sql`CASE WHEN ${productVariants.inventoryQuantity} <= 0 THEN 15 ELSE ${productVariants.inventoryQuantity} END`,
+          })
+          .where(eq(productVariants.productId, productId));
+      } else {
+        await db
+          .update(productVariants)
+          .set({
+            availableForSale: false,
+            inventoryQuantity: 0,
+          })
+          .where(eq(productVariants.productId, productId));
+      }
+    }
+
+    revalidatePath("/admin/products");
+    revalidatePath("/search");
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (err) {
+    console.error("Toggle product availability error:", err);
+    return {
+      success: false,
+      error: "স্টক স্ট্যাটাস পরিবর্তন করতে সমস্যা হয়েছে।",
+    };
+  }
+}
+
+
+export async function adjustProductStockAction(
+  productId: string,
+  delta: number,
+  variantId?: string,
+) {
+  try {
+    const { sql } = await import("drizzle-orm");
+
+    if (variantId) {
+      await db
+        .update(productVariants)
+        .set({
+          inventoryQuantity: sql`GREATEST(0, ${productVariants.inventoryQuantity} + ${delta})`,
+          availableForSale: sql`CASE WHEN (${productVariants.inventoryQuantity} + ${delta}) > 0 THEN true ELSE false END`,
+        })
+        .where(eq(productVariants.id, variantId));
+    } else {
+      await db
+        .update(productVariants)
+        .set({
+          inventoryQuantity: sql`GREATEST(0, ${productVariants.inventoryQuantity} + ${delta})`,
+          availableForSale: sql`CASE WHEN (${productVariants.inventoryQuantity} + ${delta}) > 0 THEN true ELSE false END`,
+        })
+        .where(eq(productVariants.productId, productId));
+    }
+
+    // Recalculate product availability
+    const vars = await db
+      .select({ qty: productVariants.inventoryQuantity })
+      .from(productVariants)
+      .where(eq(productVariants.productId, productId));
+
+    const totalQty = vars.reduce((sum, v) => sum + (v.qty || 0), 0);
+    await db
+      .update(products)
+      .set({
+        availableForSale: totalQty > 0,
+        updatedAt: new Date(),
+      })
+      .where(eq(products.id, productId));
+
+    revalidatePath("/admin/products");
+    revalidatePath("/search");
+    revalidatePath("/");
+
+    return { success: true, totalQuantity: totalQty };
+  } catch (err: unknown) {
+    console.error("Adjust stock error:", err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "স্টক পরিবর্তন করতে সমস্যা হয়েছে।",
+    };
+  }
+}
+
+// Adjust bulk stock for gram/piece selling mode products
+export async function adjustBulkStockAction(
+  productId: string,
+  delta: number, // positive = add, negative = remove (in grams or pieces)
+) {
+  try {
+    const { sql } = await import("drizzle-orm");
+
+    await db
+      .update(products)
+      .set({
+        bulkStockQuantity: sql`GREATEST(0, ${products.bulkStockQuantity} + ${delta})`,
+        availableForSale: sql`CASE WHEN (${products.bulkStockQuantity} + ${delta}) > 0 THEN true ELSE false END`,
+        updatedAt: new Date(),
+      })
+      .where(eq(products.id, productId));
+
+    const [updated] = await db
+      .select({ qty: products.bulkStockQuantity })
+      .from(products)
+      .where(eq(products.id, productId));
+
+    revalidatePath("/admin/products");
+    revalidatePath("/search");
+    revalidatePath("/");
+
+    return { success: true, newStock: updated?.qty ?? 0 };
+  } catch (err: unknown) {
+    console.error("Adjust bulk stock error:", err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "বাল্ক স্টক পরিবর্তন করতে সমস্যা হয়েছে।",
     };
   }
 }

@@ -50,65 +50,73 @@ export function CreateCollectionDialog() {
         </Alert>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <FieldGroup className="gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
+        <FieldGroup className="gap-3 sm:gap-4">
           <Field>
-            <FieldLabel htmlFor="col-title">কালেকশনের নাম *</FieldLabel>
+            <FieldLabel htmlFor="col-title" className="text-xs sm:text-sm font-semibold text-foreground/90">
+              কালেকশনের নাম *
+            </FieldLabel>
             <Input
               id="col-title"
               name="title"
               placeholder="যেমন: খাঁটি মধু ও ঘি"
               required
-              className="rounded-xl"
+              className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
             />
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="col-handle">হ্যান্ডেল (URL Slug) *</FieldLabel>
+            <FieldLabel htmlFor="col-handle" className="text-xs sm:text-sm font-semibold text-foreground/90">
+              হ্যান্ডেল (URL Slug) *
+            </FieldLabel>
             <Input
               id="col-handle"
               name="handle"
               placeholder="যেমন: honey-and-ghee"
               required
-              className="rounded-xl"
+              className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
             />
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="col-subtitle">
+            <FieldLabel htmlFor="col-subtitle" className="text-xs sm:text-sm font-semibold text-foreground/90">
               হোমপেজ সাবটাইটেল / ট্যাগলাইন
             </FieldLabel>
             <Input
               id="col-subtitle"
               name="subtitle"
-              placeholder="যেমন: সুন্দরবনের কাঁচা মধু, গাওয়া ঘি ও খাঁটি গুড়ের সমাহার"
-              className="rounded-xl"
+              placeholder="যেমন: সুন্দরবনের কাঁচা মধু, গাওয়া ঘি ও খাঁটি গুড়"
+              className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
             />
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="col-image">ক্যাটাগরি ছবি (Image URL)</FieldLabel>
+            <FieldLabel htmlFor="col-image" className="text-xs sm:text-sm font-semibold text-foreground/90">
+              ক্যাটাগরি ছবি (Image URL)
+            </FieldLabel>
             <Input
               id="col-image"
               name="image"
               placeholder="https://... বা ছবির লিংক"
-              className="rounded-xl"
+              className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
             />
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="col-desc">বিবরণ</FieldLabel>
+            <FieldLabel htmlFor="col-desc" className="text-xs sm:text-sm font-semibold text-foreground/90">
+              বিবরণ
+            </FieldLabel>
             <Textarea
               id="col-desc"
               name="description"
               rows={2}
               placeholder="কালেকশন সম্পর্কিত সংক্ষিপ্ত বিবরণ..."
-              className="rounded-xl"
+              className="text-xs sm:text-sm rounded-lg sm:rounded-xl"
             />
           </Field>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl border border-border/70 bg-muted/30">
-            <div className="flex items-center gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-2.5 sm:p-3.5 rounded-lg sm:rounded-xl border border-border/70 bg-muted/30">
+            <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="col-homepage"
@@ -118,13 +126,13 @@ export function CreateCollectionDialog() {
               />
               <label
                 htmlFor="col-homepage"
-                className="text-xs font-semibold text-foreground cursor-pointer"
+                className="text-xs font-semibold text-foreground cursor-pointer select-none"
               >
                 হোমপেজে শোকেস করুন
               </label>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-between sm:justify-end">
               <label
                 htmlFor="col-order"
                 className="text-xs text-muted-foreground whitespace-nowrap"
@@ -136,22 +144,26 @@ export function CreateCollectionDialog() {
                 name="displayOrder"
                 type="number"
                 defaultValue="0"
-                className="rounded-lg h-8 text-xs w-20"
+                className="rounded-lg h-8 text-xs w-20 px-2"
               />
             </div>
           </div>
         </FieldGroup>
 
-        <div className="flex items-center justify-end gap-2 pt-2">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
           <Button
             type="button"
             variant="outline"
             onClick={() => setOpen(false)}
-            className="rounded-xl"
+            className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-4"
           >
             বাতিল
           </Button>
-          <Button type="submit" disabled={isPending} className="rounded-xl">
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-5"
+          >
             {isPending ? (
               <>
                 <Spinner data-icon="inline-start" className="size-4" />

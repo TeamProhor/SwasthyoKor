@@ -57,7 +57,9 @@ function toProduct(row: ProductRow): Product {
   const variants = row.variants.map((variant) => ({
     id: variant.id,
     title: variant.title,
-    availableForSale: variant.availableForSale,
+    availableForSale: variant.availableForSale && (variant.inventoryQuantity ?? 15) > 0,
+    inventoryQuantity: variant.inventoryQuantity ?? 15,
+    unit: variant.unit ?? "packet",
     selectedOptions: variant.selectedOptions,
     price: money(variant.priceAmount, variant.priceCurrency),
     compareAtPrice: variant.compareAtPrice
@@ -65,19 +67,33 @@ function toProduct(row: ProductRow): Product {
       : undefined,
   }));
 
-  const prices = row.variants.map((variant) => variant.priceAmount);
-  const minPrice = prices.length ? Math.min(...prices) : 0;
-  const maxPrice = prices.length ? Math.max(...prices) : 0;
+  const sellingMode = (row.sellingMode ?? "packaged") as "packaged" | "gram" | "piece";
+  const isBulk = sellingMode === "gram" || sellingMode === "piece";
 
-  const comparePrices = row.variants
-    .map((variant) => variant.compareAtPrice)
-    .filter((p): p is number => typeof p === "number" && p > 0);
-  const minComparePrice = comparePrices.length
-    ? Math.min(...comparePrices)
-    : undefined;
-  const maxComparePrice = comparePrices.length
-    ? Math.max(...comparePrices)
-    : undefined;
+  let minPrice = 0;
+  let maxPrice = 0;
+  let minComparePrice: number | undefined;
+  let maxComparePrice: number | undefined;
+
+  if (isBulk) {
+    // For bulk products: display price as per-unit (100g or 1pc)
+    minPrice = row.pricePerUnit ?? 0;
+    maxPrice = row.pricePerUnit ?? 0;
+    if (row.compareAtPricePerUnit && row.compareAtPricePerUnit > 0) {
+      minComparePrice = row.compareAtPricePerUnit;
+      maxComparePrice = row.compareAtPricePerUnit;
+    }
+  } else {
+    const prices = row.variants.map((variant) => variant.priceAmount);
+    minPrice = prices.length ? Math.min(...prices) : 0;
+    maxPrice = prices.length ? Math.max(...prices) : 0;
+
+    const comparePrices = row.variants
+      .map((variant) => variant.compareAtPrice)
+      .filter((p): p is number => typeof p === "number" && p > 0);
+    minComparePrice = comparePrices.length ? Math.min(...comparePrices) : undefined;
+    maxComparePrice = comparePrices.length ? Math.max(...comparePrices) : undefined;
+  }
 
   const images = row.images.map((image) => ({
     url: image.url,
@@ -106,7 +122,12 @@ function toProduct(row: ProductRow): Product {
     description: row.description,
     descriptionHtml: row.descriptionHtml ?? undefined,
     tags: row.tags,
-    availableForSale: row.availableForSale,
+    availableForSale: isBulk ? (row.bulkStockQuantity ?? 0) > 0 : row.availableForSale,
+    sellingMode,
+    bulkStockQuantity: row.bulkStockQuantity ?? 0,
+    pricePerUnit: row.pricePerUnit ?? undefined,
+    compareAtPricePerUnit: row.compareAtPricePerUnit ?? undefined,
+    minimumOrderQuantity: row.minimumOrderQuantity ?? (sellingMode === "piece" ? 1 : 100),
     rating,
     reviewCount,
     category: firstCollection
@@ -140,6 +161,7 @@ function toProduct(row: ProductRow): Product {
     seo: { title: row.title, description: row.description },
   };
 }
+
 
 async function loadProducts(where?: SQL): Promise<Product[]> {
   const rows = await db.query.products.findMany({

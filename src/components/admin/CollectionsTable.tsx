@@ -225,34 +225,36 @@ export function CollectionsTable({
             </Alert>
           )}
 
-          <form onSubmit={handleEditSubmit} className="flex flex-col gap-4">
-            <FieldGroup className="gap-3.5">
+          <form onSubmit={handleEditSubmit} className="flex flex-col gap-3 sm:gap-4">
+            <FieldGroup className="gap-3 sm:gap-4">
               <Field>
-                <FieldLabel htmlFor="edit-col-title">কালেকশনের নাম *</FieldLabel>
+                <FieldLabel htmlFor="edit-col-title" className="text-xs sm:text-sm font-semibold text-foreground/90">
+                  কালেকশনের নাম *
+                </FieldLabel>
                 <Input
                   id="edit-col-title"
                   name="title"
                   defaultValue={editingCol.title}
                   required
-                  className="rounded-xl"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-col-subtitle">
+                <FieldLabel htmlFor="edit-col-subtitle" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   হোমপেজ সাবটাইটেল / ট্যাগলাইন
                 </FieldLabel>
                 <Input
                   id="edit-col-subtitle"
                   name="subtitle"
                   defaultValue={editingCol.subtitle || ""}
-                  placeholder="যেমন: সুন্দরবনের কাঁচা মধু, গাওয়া ঘি ও খাঁটি গুড়ের সমাহার"
-                  className="rounded-xl"
+                  placeholder="যেমন: সুন্দরবনের কাঁচা মধু, গাওয়া ঘি ও খাঁটি গুড়"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-col-handle">
+                <FieldLabel htmlFor="edit-col-handle" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   হ্যান্ডেল (URL Slug) *
                 </FieldLabel>
                 <Input
@@ -260,12 +262,12 @@ export function CollectionsTable({
                   name="handle"
                   defaultValue={editingCol.handle}
                   required
-                  className="rounded-xl font-mono text-xs"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-col-image">
+                <FieldLabel htmlFor="edit-col-image" className="text-xs sm:text-sm font-semibold text-foreground/90">
                   ক্যাটাগরি ছবি URL (Image URL)
                 </FieldLabel>
                 <Input
@@ -273,23 +275,25 @@ export function CollectionsTable({
                   name="image"
                   defaultValue={editingCol.image || ""}
                   placeholder="https://..."
-                  className="rounded-xl font-mono text-xs"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono"
                 />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="edit-col-desc">বিবরণ</FieldLabel>
+                <FieldLabel htmlFor="edit-col-desc" className="text-xs sm:text-sm font-semibold text-foreground/90">
+                  বিবরণ
+                </FieldLabel>
                 <Textarea
                   id="edit-col-desc"
                   name="description"
                   rows={2}
                   defaultValue={editingCol.description || ""}
-                  className="rounded-xl text-xs"
+                  className="text-xs sm:text-sm rounded-lg sm:rounded-xl"
                 />
               </Field>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl border border-border/70 bg-muted/30">
-                <div className="flex items-center gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-2.5 sm:p-3.5 rounded-lg sm:rounded-xl border border-border/70 bg-muted/30">
+                <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     id="edit-col-homepage"
@@ -300,13 +304,13 @@ export function CollectionsTable({
                   />
                   <label
                     htmlFor="edit-col-homepage"
-                    className="text-xs font-semibold text-foreground cursor-pointer"
+                    className="text-xs font-semibold text-foreground cursor-pointer select-none"
                   >
                     হোমপেজে শোকেস করুন
                   </label>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 justify-between sm:justify-end">
                   <label
                     htmlFor="edit-col-order"
                     className="text-xs text-muted-foreground whitespace-nowrap"
@@ -318,29 +322,33 @@ export function CollectionsTable({
                     name="displayOrder"
                     type="number"
                     defaultValue={editingCol.displayOrder || 0}
-                    className="rounded-lg h-8 text-xs w-20"
+                    className="rounded-lg h-8 text-xs w-20 px-2"
                   />
                 </div>
               </div>
             </FieldGroup>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/40">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setEditingCol(null)}
-                className="rounded-xl"
+                className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-4"
               >
                 বাতিল
               </Button>
-              <Button type="submit" disabled={isPending} className="rounded-xl">
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="h-10 text-xs sm:text-sm rounded-lg sm:rounded-xl px-5"
+              >
                 {isPending ? (
                   <>
                     <Spinner className="size-4 mr-1" />
                     <span>আপডেট হচ্ছে...</span>
                   </>
                 ) : (
-                  "আপডেট সম্পন্ন করুন"
+                  "আপডেট করুন"
                 )}
               </Button>
             </div>

@@ -64,13 +64,19 @@ export function ResponsiveDialog({
             {!React.isValidElement(trigger) ? trigger : undefined}
           </DrawerTrigger>
         )}
-        <DrawerContent className={cn("max-h-[92vh] flex flex-col", className)}>
-          <div className="overflow-y-auto flex flex-col gap-4 px-4 sm:px-6 pb-6 pt-2">
+        <DrawerContent className={cn("max-h-[92vh] flex flex-col rounded-t-2xl", className)}>
+          <div className="overflow-y-auto flex flex-col gap-3.5 px-3.5 sm:px-6 pb-5 pt-1.5">
             {(title || description) && (
-              <DrawerHeader className="text-center px-0 pt-2 pb-2">
-                {title && <DrawerTitle>{title}</DrawerTitle>}
+              <DrawerHeader className="text-left sm:text-center px-0 pt-1 pb-1.5 border-b border-border/40">
+                {title && (
+                  <DrawerTitle className="text-base font-bold text-foreground">
+                    {title}
+                  </DrawerTitle>
+                )}
                 {description && (
-                  <DrawerDescription>{description}</DrawerDescription>
+                  <DrawerDescription className="text-xs text-muted-foreground mt-0.5">
+                    {description}
+                  </DrawerDescription>
                 )}
               </DrawerHeader>
             )}
@@ -92,17 +98,21 @@ export function ResponsiveDialog({
       )}
       <DialogContent
         className={cn(
-          "sm:rounded-2xl max-h-[90vh] p-0 flex flex-col",
+          "sm:rounded-2xl max-h-[90vh] p-0 flex flex-col sm:max-w-2xl",
           className,
         )}
       >
         {/* Scrollable inner area */}
-        <div className="overflow-y-auto flex flex-col gap-6 p-6 sm:p-8">
+        <div className="overflow-y-auto flex flex-col gap-5 p-5 sm:p-7">
           {(title || description) && (
-            <DialogHeader className="text-center sm:text-center pb-2">
-              {title && <DialogTitle className="text-xl">{title}</DialogTitle>}
+            <DialogHeader className="text-left sm:text-left pb-2 border-b border-border/40">
+              {title && (
+                <DialogTitle className="text-lg sm:text-xl font-bold text-foreground">
+                  {title}
+                </DialogTitle>
+              )}
               {description && (
-                <DialogDescription className="text-center">
+                <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                   {description}
                 </DialogDescription>
               )}

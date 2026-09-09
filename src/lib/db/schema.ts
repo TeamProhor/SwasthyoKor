@@ -4,6 +4,7 @@ import {
   index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   primaryKey,
   real,
@@ -11,6 +12,28 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+
+export const productUnitEnum = pgEnum("product_unit_type", [
+  "packet",
+  "jar",
+  "bottle",
+  "piece",
+  "box",
+  "kg",
+  "gram",
+  "litre",
+  "ml",
+]);
+
+// selling_mode: 'packaged' = fixed variants (current model)
+//               'gram'     = bulk by weight: price per 100g, stock in grams
+//               'piece'    = bulk by count: price per 1 piece, stock in pieces
+export const sellingModeEnum = pgEnum("selling_mode", [
+  "packaged",
+  "gram",
+  "piece",
+]);
+
 
 export const collections = pgTable(
   "collections",
@@ -50,6 +73,16 @@ export const products = pgTable(
     descriptionHtml: text("description_html"),
     tags: jsonb("tags").$type<string[]>().notNull().default([]),
     availableForSale: boolean("available_for_sale").notNull().default(true),
+    // sellingMode: 'packaged' (default, fixed variants), 'gram' (bulk by gram), 'piece' (bulk by piece)
+    sellingMode: sellingModeEnum("selling_mode").notNull().default("packaged"),
+    // Bulk mode fields (used when sellingMode = 'gram' or 'piece')
+    bulkStockQuantity: integer("bulk_stock_quantity").notNull().default(0),
+    // pricePerUnit: price per 100 grams (gram mode) or per 1 piece (piece mode)
+    pricePerUnit: real("price_per_unit"),
+    // compareAtPricePerUnit: original/compare price per unit (for showing discounts)
+    compareAtPricePerUnit: real("compare_at_price_per_unit"),
+    // minimumOrderQuantity: min grams or pieces customer must order (default: 100g or 1pc)
+    minimumOrderQuantity: integer("minimum_order_quantity").notNull().default(100),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -60,6 +93,7 @@ export const products = pgTable(
   (table) => [
     index("products_handle_idx").on(table.handle),
     index("products_available_idx").on(table.availableForSale),
+    index("products_selling_mode_idx").on(table.sellingMode),
   ],
 );
 
@@ -107,6 +141,8 @@ export const productVariants = pgTable(
       .notNull()
       .default("BDT"),
     availableForSale: boolean("available_for_sale").notNull().default(true),
+    inventoryQuantity: integer("inventory_quantity").notNull().default(15),
+    unit: productUnitEnum("unit").notNull().default("packet"),
     position: integer("position").notNull().default(0),
     selectedOptions: jsonb("selected_options")
       .$type<{ name: string; value: string }[]>()
@@ -394,32 +430,6 @@ export const magicLinkTokens = pgTable(
   ],
 );
 
-export const userAddresses = pgTable(
-  "user_addresses",
-  {
-    id: varchar("id", { length: 255 })
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    userId: varchar("user_id", { length: 255 })
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    label: varchar("label", { length: 100 }).notNull().default("বাসা / Home"),
-    fullName: varchar("full_name", { length: 255 }).notNull(),
-    phone: varchar("phone", { length: 50 }).notNull(),
-    district: varchar("district", { length: 100 }).notNull(),
-    thana: varchar("thana", { length: 100 }).notNull(),
-    streetAddress: text("street_address").notNull(),
-    isDefault: boolean("is_default").notNull().default(false),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-  },
-  (table) => [index("user_addresses_user_idx").on(table.userId)],
-);
-
 export const coupons = pgTable(
   "coupons",
   {
@@ -523,7 +533,6 @@ export const storeSettings = pgTable("store_settings", {
 
 export type User = typeof users.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
-export type UserAddress = typeof userAddresses.$inferSelect;
 export type Coupon = typeof coupons.$inferSelect;
 export type StoreSettings = typeof storeSettings.$inferSelect;
 export type ProductReview = typeof productReviews.$inferSelect;
