@@ -66,4 +66,3 @@ export async function Header() {
   );
 }
 
-export { Header as Navbar };

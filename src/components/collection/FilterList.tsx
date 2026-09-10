@@ -108,5 +108,3 @@ export function FilterList({ list, title }: { list: Item[]; title?: string }) {
     </nav>
   );
 }
-
-export default FilterList;

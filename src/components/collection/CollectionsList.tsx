@@ -5,5 +5,3 @@ export async function CollectionsList() {
   const collections = await getCollections();
   return <FilterList list={collections} title="ক্যাটাগরি (Collections)" />;
 }
-
-export default CollectionsList;

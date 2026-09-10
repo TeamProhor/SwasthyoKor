@@ -20,5 +20,3 @@ export function GridItem(props: React.ComponentProps<"li">) {
 }
 
 Grid.Item = GridItem;
-
-export default Grid;

@@ -6,7 +6,75 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "@/lib/utils"
 import { ArrowDown2 as ChevronDownIcon, Check as CheckIcon, ArrowUp2 as ChevronUpIcon } from "@/components/icons"
 
-const Select = SelectPrimitive.Root
+function findItemsFromChildren(node: React.ReactNode, map: Map<any, React.ReactNode> = new Map()): Map<any, React.ReactNode> {
+  if (!node) return map;
+  if (Array.isArray(node)) {
+    node.forEach((child) => findItemsFromChildren(child, map));
+    return map;
+  }
+  if (React.isValidElement(node)) {
+    const props = node.props as any;
+    if (props) {
+      if ("value" in props && props.value !== undefined) {
+        map.set(props.value, props.children);
+      }
+      if (props.children) {
+        findItemsFromChildren(props.children, map);
+      }
+    }
+  }
+  return map;
+}
+
+interface SelectItemsContextValue {
+  registerItem: (value: any, label: React.ReactNode) => void;
+  unregisterItem: (value: any) => void;
+  getLabel: (value: any) => React.ReactNode | undefined;
+}
+
+const SelectItemsContext = React.createContext<SelectItemsContextValue | null>(null);
+
+function Select<Value = any, Multiple extends boolean | undefined = false>({
+  children,
+  ...props
+}: SelectPrimitive.Root.Props<Value, Multiple>) {
+  const [dynamicItemMap, setDynamicItemMap] = React.useState<Map<any, React.ReactNode>>(() => new Map());
+
+  // Recursively scan static children to extract item labels immediately without waiting for popup mount
+  const staticItemMap = React.useMemo(() => {
+    return findItemsFromChildren(children);
+  }, [children]);
+
+  const registerItem = React.useCallback((val: any, label: React.ReactNode) => {
+    setDynamicItemMap((prev) => {
+      if (prev.get(val) === label) return prev;
+      const next = new Map(prev);
+      next.set(val, label);
+      return next;
+    });
+  }, []);
+
+  const unregisterItem = React.useCallback((val: any) => {
+    setDynamicItemMap((prev) => {
+      if (!prev.has(val)) return prev;
+      const next = new Map(prev);
+      next.delete(val);
+      return next;
+    });
+  }, []);
+
+  const getLabel = React.useCallback((val: any) => {
+    return dynamicItemMap.get(val) ?? staticItemMap.get(val);
+  }, [dynamicItemMap, staticItemMap]);
+
+  return (
+    <SelectItemsContext.Provider value={{ registerItem, unregisterItem, getLabel }}>
+      <SelectPrimitive.Root {...props}>
+        {children}
+      </SelectPrimitive.Root>
+    </SelectItemsContext.Provider>
+  );
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
@@ -18,13 +86,31 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   )
 }
 
-function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+function SelectValue({ className, children, ...props }: SelectPrimitive.Value.Props) {
+  const itemsContext = React.useContext(SelectItemsContext);
+
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
       className={cn("flex flex-1 text-left", className)}
       {...props}
-    />
+    >
+      {(val: any) => {
+        if (typeof children === "function") {
+          return children(val);
+        }
+        if (children != null) {
+          return children;
+        }
+        if (itemsContext && val !== undefined) {
+          const registeredLabel = itemsContext.getLabel(val);
+          if (registeredLabel !== undefined) {
+            return registeredLabel;
+          }
+        }
+        return val;
+      }}
+    </SelectPrimitive.Value>
   )
 }
 
@@ -109,11 +195,24 @@ function SelectLabel({
 function SelectItem({
   className,
   children,
+  value,
   ...props
 }: SelectPrimitive.Item.Props) {
+  const itemsContext = React.useContext(SelectItemsContext);
+
+  React.useEffect(() => {
+    if (itemsContext && value !== undefined) {
+      itemsContext.registerItem(value, children);
+      return () => {
+        itemsContext.unregisterItem(value);
+      };
+    }
+  }, [itemsContext, value, children]);
+
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
+      value={value}
       className={cn(
         "relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className

@@ -4,6 +4,14 @@ import { useMemo, useState } from "react";
 import { Calendar, Package, SearchNormal, Sms } from "@/components/icons";
 import { ListCard } from "@/components/shared";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { type AdminOrderItem, ManageOrderDialog } from "./ManageOrderDialog";
 
@@ -74,17 +82,23 @@ export function OrdersList({ orders }: { orders: AdminOrderItem[] }) {
           />
         </div>
 
-        <select
+        <Select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="w-full sm:w-48 rounded-xl border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring cursor-pointer"
+          onValueChange={(val) => setStatusFilter(val ?? "all")}
         >
-          <option value="all">সকল স্ট্যাটাস</option>
-          <option value="confirmed">কনফার্মড</option>
-          <option value="shipped">ডেলিভারিতে</option>
-          <option value="delivered">ডেলিভার্ড</option>
-          <option value="cancelled">বাতিল</option>
-        </select>
+          <SelectTrigger className="w-full sm:w-48 h-10 rounded-xl bg-card text-sm">
+            <SelectValue placeholder="স্ট্যাটাস ফিল্টার" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="all">সকল স্ট্যাটাস</SelectItem>
+              <SelectItem value="confirmed">কনফার্মড</SelectItem>
+              <SelectItem value="shipped">ডেলিভারিতে</SelectItem>
+              <SelectItem value="delivered">ডেলিভার্ড</SelectItem>
+              <SelectItem value="cancelled">বাতিল</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Order list */}

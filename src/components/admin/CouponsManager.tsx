@@ -15,6 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Coupon } from "@/lib/db/schema";
 
 export function CouponsManager({
@@ -167,16 +175,22 @@ export function CouponsManager({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="flex flex-col gap-1">
                 <Label className="text-xs sm:text-sm font-semibold text-foreground/90">ডিসকাউন্ট ধরন</Label>
-                <select
+                <Select
                   value={formData.discountType}
-                  onChange={(e) =>
-                    setFormData({ ...formData, discountType: e.target.value })
+                  onValueChange={(val) =>
+                    setFormData({ ...formData, discountType: val ?? "percentage" })
                   }
-                  className="h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm font-medium"
                 >
-                  <option value="percentage">শতকরা হার (%)</option>
-                  <option value="fixed">নির্দিষ্ট টাকা (৳)</option>
-                </select>
+                  <SelectTrigger className="w-full h-10 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="percentage">শতকরা হার (%)</SelectItem>
+                      <SelectItem value="fixed">নির্দিষ্ট টাকা (৳)</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-1">
                 <Label

@@ -36,32 +36,15 @@ export default async function AdminProductsPage() {
     const variant = prodVariants[0];
     const prodCol = allProdCollections.find((pc) => pc.productId === prod.id);
 
-    const isBulk = prod.sellingMode === "gram" || prod.sellingMode === "piece";
-    const totalInventory = isBulk
-      ? prod.bulkStockQuantity
-      : prodVariants.reduce(
-          (acc, v) => acc + (v.inventoryQuantity ?? 15),
-          0,
-        );
-    const unit = isBulk
-      ? prod.sellingMode === "gram"
-        ? "gram"
-        : "piece"
-      : variant?.unit || "packet";
-
-    const displayPrice = isBulk
-      ? String(prod.pricePerUnit ?? 0)
-      : variant
-        ? String(variant.priceAmount)
-        : "0";
-
-    const displayComparePrice = isBulk
-      ? prod.compareAtPricePerUnit
-        ? String(prod.compareAtPricePerUnit)
-        : undefined
-      : variant?.compareAtPrice
-        ? String(variant.compareAtPrice)
-        : undefined;
+    const totalInventory = prodVariants.reduce(
+      (acc, v) => acc + (v.inventoryQuantity ?? 15),
+      0,
+    );
+    const unit = variant?.unit || "packet";
+    const displayPrice = variant ? String(variant.priceAmount) : "0";
+    const displayComparePrice = variant?.compareAtPrice
+      ? String(variant.compareAtPrice)
+      : undefined;
 
     return {
       id: prod.id,
@@ -73,11 +56,6 @@ export default async function AdminProductsPage() {
       compareAtPrice: displayComparePrice,
       inventoryQuantity: totalInventory,
       unit,
-      sellingMode: prod.sellingMode,
-      bulkStockQuantity: prod.bulkStockQuantity,
-      pricePerUnit: prod.pricePerUnit ?? undefined,
-      compareAtPricePerUnit: prod.compareAtPricePerUnit ?? undefined,
-      minimumOrderQuantity: prod.minimumOrderQuantity,
       imageUrl: img?.url,
       available: prod.availableForSale && totalInventory > 0,
       variants: prodVariants.map((v) => ({

@@ -7,6 +7,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { updateOrderStatusAction } from "@/lib/actions/admin";
 
@@ -204,17 +212,27 @@ export function ManageOrderDialog({ order }: { order: AdminOrderItem }) {
             >
               স্ট্যাটাস পরিবর্তন করুন
             </FieldLabel>
-            <select
-              id={`order-status-${order.id}`}
+            <Select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-card px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring cursor-pointer"
+              onValueChange={(val) => {
+                if (val) setStatus(val);
+              }}
             >
-              <option value="confirmed">কনফার্মড (Confirmed)</option>
-              <option value="shipped">ডেলিভারিতে পাঠানো হয়েছে (Shipped)</option>
-              <option value="delivered">ডেলিভার্ড সম্পন্ন (Delivered)</option>
-              <option value="cancelled">অর্ডার বাতিল (Cancelled)</option>
-            </select>
+              <SelectTrigger
+                id={`order-status-${order.id}`}
+                className="w-full h-10 rounded-lg sm:rounded-xl text-xs sm:text-sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="confirmed">কনফার্মড (Confirmed)</SelectItem>
+                  <SelectItem value="shipped">ডেলিভারিতে পাঠানো হয়েছে (Shipped)</SelectItem>
+                  <SelectItem value="delivered">ডেলিভার্ড সম্পন্ন (Delivered)</SelectItem>
+                  <SelectItem value="cancelled">অর্ডার বাতিল (Cancelled)</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </Field>
         </FieldGroup>
 

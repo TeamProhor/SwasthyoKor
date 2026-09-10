@@ -13,16 +13,22 @@ import { updateProductAction } from "@/lib/actions/admin";
 import { compressImageClient } from "@/lib/image";
 import {
   PRODUCT_UNITS,
-  SELLING_MODES,
-  calculateTotalStock,
   formatPackTitle,
   getDefaultAmountForUnit,
   getProductUnitCategory,
   getProductUnitLabel,
   parseAmountFromTitle,
   type ProductUnit,
-  type SellingMode,
 } from "@/lib/types";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export interface ProductVariantItem {
   id?: string;
@@ -42,11 +48,6 @@ export interface EditProductItem {
   compareAtPrice?: string;
   inventoryQuantity?: number;
   unit?: string;
-  sellingMode?: SellingMode;
-  bulkStockQuantity?: number;
-  pricePerUnit?: number;
-  compareAtPricePerUnit?: number;
-  minimumOrderQuantity?: number;
   description?: string;
   collectionId?: string;
   imageUrl?: string;
@@ -64,18 +65,6 @@ export function EditProductDialog({
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [sellingMode, setSellingMode] = useState<SellingMode>(
-    product.sellingMode || "packaged",
-  );
-  const [bulkStockQuantity, setBulkStockQuantity] = useState<number>(
-    product.bulkStockQuantity ?? 0,
-  );
-  const [pricePerUnit, setPricePerUnit] = useState<string>(
-    product.pricePerUnit !== undefined ? String(product.pricePerUnit) : "",
-  );
-  const [compareAtPricePerUnit, setCompareAtPricePerUnit] = useState<string>(
-    product.compareAtPricePerUnit !== undefined ? String(product.compareAtPricePerUnit) : "",
-  );
 
   const initialRootUnit: ProductUnit =
     (product.unit as ProductUnit) && PRODUCT_UNITS.includes(product.unit as ProductUnit)
@@ -84,7 +73,38 @@ export function EditProductDialog({
 
   const [rootUnit, setRootUnit] = useState<ProductUnit>(initialRootUnit);
 
-  const getInitialVariants = (unitToUse: ProductUnit): ProductVariantItem[] => {
+  const getAutoPackStock = (amt: number | undefined, stock: number) => {
+    if (!amt || amt <= 0 || stock <= 0) return 0;
+    return Math.floor(stock / amt);
+  };
+
+  const getInitialTotalStock = (initialUnit: ProductUnit): number => {
+    if (product.inventoryQuantity && product.inventoryQuantity > 0) {
+      return product.inventoryQuantity;
+    }
+    if (product.variants && product.variants.length > 0) {
+      return product.variants.reduce((acc, v) => {
+        const amt =
+          v.amount !== undefined && v.amount !== null
+            ? v.amount
+            : parseAmountFromTitle(v.title, initialUnit);
+        return Math.max(acc, (v.inventoryQuantity || 0) * (amt || 1));
+      }, 0) || 100;
+    }
+    return 100;
+  };
+
+  const [totalStock, setTotalStock] = useState<number>(() =>
+    getInitialTotalStock(initialRootUnit),
+  );
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(
+    product.collectionId || "",
+  );
+  const [availableForSale, setAvailableForSale] = useState<string>(
+    product.available ? "true" : "false",
+  );
+
+  const getInitialVariants = (unitToUse: ProductUnit, stock: number): ProductVariantItem[] => {
     if (product.variants && product.variants.length > 0) {
       return product.variants.map((v) => {
         const amt =
@@ -97,7 +117,7 @@ export function EditProductDialog({
           amount: amt,
           price: v.price || "0",
           compareAtPrice: v.compareAtPrice || "",
-          inventoryQuantity: v.inventoryQuantity ?? 0,
+          inventoryQuantity: getAutoPackStock(amt, stock),
           unit: unitToUse,
         };
       });
@@ -109,14 +129,14 @@ export function EditProductDialog({
         amount: defaultAmt,
         price: product.price || "0",
         compareAtPrice: product.compareAtPrice || "",
-        inventoryQuantity: product.inventoryQuantity ?? 0,
+        inventoryQuantity: getAutoPackStock(defaultAmt, stock),
         unit: unitToUse,
       },
     ];
   };
 
   const [variants, setVariants] = useState<ProductVariantItem[]>(() =>
-    getInitialVariants(initialRootUnit),
+    getInitialVariants(initialRootUnit, getInitialTotalStock(initialRootUnit)),
   );
 
   // Sync state if product changes or dialog opens
@@ -128,19 +148,24 @@ export function EditProductDialog({
           ? (product.unit as ProductUnit)
           : "jar";
       setRootUnit(u);
-      setSellingMode(product.sellingMode || "packaged");
-      setBulkStockQuantity(product.bulkStockQuantity ?? 0);
-      setPricePerUnit(
-        product.pricePerUnit !== undefined ? String(product.pricePerUnit) : "",
-      );
-      setCompareAtPricePerUnit(
-        product.compareAtPricePerUnit !== undefined
-          ? String(product.compareAtPricePerUnit)
-          : "",
-      );
-      setVariants(getInitialVariants(u));
+      const stock = getInitialTotalStock(u);
+      setTotalStock(stock);
+      setSelectedCollectionId(product.collectionId || "");
+      setAvailableForSale(product.available ? "true" : "false");
+      setVariants(getInitialVariants(u, stock));
       setError(null);
     }
+  };
+
+  const handleTotalStockChange = (newStock: number) => {
+    const validStock = Math.max(0, newStock);
+    setTotalStock(validStock);
+    setVariants((prev) =>
+      prev.map((v) => ({
+        ...v,
+        inventoryQuantity: getAutoPackStock(v.amount, validStock),
+      })),
+    );
   };
 
   // When root unit changes, update all variants with new unit and auto-regenerated titles
@@ -154,6 +179,7 @@ export function EditProductDialog({
           unit: newUnit,
           amount: amt,
           title: formatPackTitle(amt, newUnit),
+          inventoryQuantity: getAutoPackStock(amt, totalStock),
         };
       }),
     );
@@ -175,7 +201,7 @@ export function EditProductDialog({
         amount: amt,
         price: lastVar ? lastVar.price : "0",
         compareAtPrice: lastVar?.compareAtPrice || "",
-        inventoryQuantity: 0,
+        inventoryQuantity: getAutoPackStock(amt, totalStock),
         unit: rootUnit,
       },
     ]);
@@ -195,6 +221,7 @@ export function EditProductDialog({
           ...v,
           amount: num,
           title: num > 0 ? formatPackTitle(num, rootUnit) : v.title,
+          inventoryQuantity: getAutoPackStock(num, totalStock),
         };
       }),
     );
@@ -210,8 +237,6 @@ export function EditProductDialog({
     );
   };
 
-  // Real-time calculated total stock
-  const stockSummary = calculateTotalStock(variants, rootUnit);
   const unitCategory = getProductUnitCategory(rootUnit);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -220,54 +245,39 @@ export function EditProductDialog({
     const formElement = e.currentTarget;
     const formData = new FormData(formElement);
     formData.append("id", product.id);
-    formData.set("sellingMode", sellingMode);
 
-    if (sellingMode !== "packaged") {
-      formData.set("bulkStockQuantity", String(bulkStockQuantity));
-      formData.set("pricePerUnit", pricePerUnit);
-      if (compareAtPricePerUnit) {
-        formData.set("compareAtPricePerUnit", compareAtPricePerUnit);
-      }
-      const imageFile = formData.get("image") as File | null;
-      if (
-        imageFile &&
-        imageFile.size > 0 &&
-        imageFile.type.startsWith("image/")
-      ) {
-        const compressedWebpFile = await compressImageClient(imageFile);
-        formData.set("image", compressedWebpFile);
-      }
-    } else {
-      // Prepare variants with guaranteed titles and units
-      const formattedVariants = variants.map((v) => ({
-        ...v,
-        unit: rootUnit,
-        title:
-          v.title.trim() ||
-          (v.amount ? formatPackTitle(v.amount, rootUnit) : "স্ট্যান্ডার্ড"),
-      }));
+    // Prepare variants with guaranteed titles and units
+    const formattedVariants = variants.map((v) => ({
+      ...v,
+      unit: rootUnit,
+      title:
+        v.title.trim() ||
+        (v.amount ? formatPackTitle(v.amount, rootUnit) : "স্ট্যান্ডার্ড"),
+      inventoryQuantity: getAutoPackStock(v.amount, totalStock),
+    }));
 
-      formData.append("variants", JSON.stringify(formattedVariants));
-      formData.set("unit", rootUnit);
+    formData.append("variants", JSON.stringify(formattedVariants));
+    formData.set("unit", rootUnit);
+    formData.set("collectionId", selectedCollectionId);
+    formData.set("availableForSale", availableForSale);
 
-      if (formattedVariants.length > 0) {
-        formData.set("price", formattedVariants[0].price);
-        if (formattedVariants[0].compareAtPrice) {
-          formData.set("compareAtPrice", formattedVariants[0].compareAtPrice);
-        }
-        formData.set("inventoryQuantity", String(stockSummary.totalPacks));
+    if (formattedVariants.length > 0) {
+      formData.set("price", formattedVariants[0].price);
+      if (formattedVariants[0].compareAtPrice) {
+        formData.set("compareAtPrice", formattedVariants[0].compareAtPrice);
       }
+      formData.set("inventoryQuantity", String(totalStock));
+    }
 
-      // Compress client-side to WebP if image file is selected
-      const imageFile = formData.get("image") as File | null;
-      if (
-        imageFile &&
-        imageFile.size > 0 &&
-        imageFile.type.startsWith("image/")
-      ) {
-        const compressedWebpFile = await compressImageClient(imageFile);
-        formData.set("image", compressedWebpFile);
-      }
+    // Compress client-side to WebP if image file is selected
+    const imageFile = formData.get("image") as File | null;
+    if (
+      imageFile &&
+      imageFile.size > 0 &&
+      imageFile.type.startsWith("image/")
+    ) {
+      const compressedWebpFile = await compressImageClient(imageFile);
+      formData.set("image", compressedWebpFile);
     }
 
     startTransition(async () => {
@@ -338,42 +348,8 @@ export function EditProductDialog({
             />
           </Field>
 
-          {/* ──── Selling Mode ──── */}
-          <Field>
-            <FieldLabel className="text-xs sm:text-sm font-semibold text-foreground/90">
-              বিক্রয় পদ্ধতি *
-            </FieldLabel>
-            <div className="grid grid-cols-3 gap-2">
-              {(["packaged", "gram", "piece"] as const).map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setSellingMode(mode)}
-                  className={`h-10 rounded-xl border text-xs font-bold transition-colors cursor-pointer ${
-                    sellingMode === mode
-                      ? "bg-emerald-600 text-white border-emerald-600"
-                      : "bg-background border-input text-foreground hover:bg-muted"
-                  }`}
-                >
-                  {mode === "packaged"
-                    ? "📦 প্যাকেজড"
-                    : mode === "gram"
-                      ? "⚖️ গ্রাম ভিত্তিক"
-                      : "🥚 পিস ভিত্তিক"}
-                </button>
-              ))}
-            </div>
-            <p className="text-[10px] text-muted-foreground mt-1">
-              {sellingMode === "packaged"
-                ? "ফিক্সড প্যাক সাইজ — যেমন: ৫০০গ্রাম জার, ১কেজি প্যাকেট"
-                : sellingMode === "gram"
-                  ? "বাল্ক ওজন — স্টক মোট গ্রামে, গ্রাহক ১০০গ্রাম করে অর্ডার করবে"
-                  : "বাল্ক পিস — স্টক মোট পিসে, গ্রাহক ১ পিস করে অর্ডার করবে"}
-            </p>
-          </Field>
-
-          {/* ──── Root Unit, Category & Availability ──── */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+          {/* ──── Root Unit, Category, Total Stock & Availability ──── */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5 sm:gap-3">
             <Field>
               <FieldLabel
                 htmlFor={`prod-unit-${product.id}`}
@@ -381,31 +357,65 @@ export function EditProductDialog({
               >
                 <span>পণ্যের ইউনিট / টাইপ *</span>
               </FieldLabel>
-              <select
-                id={`prod-unit-${product.id}`}
-                name="rootUnitSelect"
+              <Select
                 value={rootUnit}
-                onChange={(e) =>
-                  handleRootUnitChange(e.target.value as ProductUnit)
+                onValueChange={(val) =>
+                  val && handleRootUnitChange(val as ProductUnit)
                 }
-                className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm font-medium text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
               >
-                <optgroup label="গণনা ভিত্তিক (Count / Container)">
-                  <option value="jar">জার (Jar)</option>
-                  <option value="bottle">বোতল (Bottle)</option>
-                  <option value="piece">পিস (Piece)</option>
-                  <option value="packet">প্যাকেট (Packet)</option>
-                  <option value="box">বক্স (Box)</option>
-                </optgroup>
-                <optgroup label="ওজন ভিত্তিক (Weight)">
-                  <option value="gram">গ্রাম (Gram)</option>
-                  <option value="kg">কেজি (Kg)</option>
-                </optgroup>
-                <optgroup label="ভলিউম / তরল (Volume)">
-                  <option value="ml">মি.লি. (ml)</option>
-                  <option value="litre">লিটার (Litre)</option>
-                </optgroup>
-              </select>
+                <SelectTrigger
+                  id={`prod-unit-${product.id}`}
+                  className="w-full h-10 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium"
+                >
+                  <SelectValue placeholder="ইউনিট নির্বাচন করুন" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>গণনা ভিত্তিক (Count / Container)</SelectLabel>
+                    <SelectItem value="jar">জার (Jar)</SelectItem>
+                    <SelectItem value="bottle">বোতল (Bottle)</SelectItem>
+                    <SelectItem value="piece">পিস (Piece)</SelectItem>
+                    <SelectItem value="packet">প্যাকেট (Packet)</SelectItem>
+                    <SelectItem value="box">বক্স (Box)</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>ওজন ভিত্তিক (Weight)</SelectLabel>
+                    <SelectItem value="gram">গ্রাম (Gram)</SelectItem>
+                    <SelectItem value="kg">কেজি (Kg)</SelectItem>
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>ভলিউম / তরল (Volume)</SelectLabel>
+                    <SelectItem value="ml">মি.লি. (ml)</SelectItem>
+                    <SelectItem value="litre">লিটার (Litre)</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field>
+              <FieldLabel
+                htmlFor={`prod-total-stock-${product.id}`}
+                className="text-xs sm:text-sm font-semibold text-foreground/90"
+              >
+                মোট স্টক ({getProductUnitLabel(rootUnit)}) *
+              </FieldLabel>
+              <div className="relative">
+                <Input
+                  id={`prod-total-stock-${product.id}`}
+                  type="number"
+                  min="0"
+                  value={totalStock}
+                  onChange={(e) =>
+                    handleTotalStockChange(parseInt(e.target.value, 10) || 0)
+                  }
+                  required
+                  placeholder="যেমন: 100"
+                  className="h-10 text-xs sm:text-sm px-3 rounded-lg sm:rounded-xl font-mono pr-14"
+                />
+                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground pointer-events-none">
+                  {getProductUnitLabel(rootUnit)}
+                </span>
+              </div>
             </Field>
 
             <Field>
@@ -415,19 +425,27 @@ export function EditProductDialog({
               >
                 কালেকশন / ক্যাটাগরি
               </FieldLabel>
-              <select
-                id={`prod-collection-${product.id}`}
-                name="collectionId"
-                defaultValue={product.collectionId || ""}
-                className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+              <Select
+                value={selectedCollectionId}
+                onValueChange={(val) => setSelectedCollectionId(val ?? "")}
               >
-                <option value="">কালেকশন নির্বাচন করুন</option>
-                {collections.map((col) => (
-                  <option key={col.id} value={col.id}>
-                    {col.title}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger
+                  id={`prod-collection-${product.id}`}
+                  className="w-full h-10 rounded-lg sm:rounded-xl text-xs sm:text-sm"
+                >
+                  <SelectValue placeholder="কালেকশন নির্বাচন করুন" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="">কালেকশন নেই</SelectItem>
+                    {collections.map((col) => (
+                      <SelectItem key={col.id} value={col.id}>
+                        {col.title}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </Field>
 
             <Field>
@@ -437,309 +455,156 @@ export function EditProductDialog({
               >
                 স্টক স্ট্যাটাস
               </FieldLabel>
-              <select
-                id={`prod-status-${product.id}`}
-                name="availableForSale"
-                defaultValue={product.available ? "true" : "false"}
-                className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+              <Select
+                value={availableForSale}
+                onValueChange={(val) => setAvailableForSale(val ?? "true")}
               >
-                <option value="true">ইন স্টক (In Stock)</option>
-                <option value="false">স্টক শেষ (Out of Stock)</option>
-              </select>
+                <SelectTrigger
+                  id={`prod-status-${product.id}`}
+                  className="w-full h-10 rounded-lg sm:rounded-xl text-xs sm:text-sm"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="true">ইন স্টক (In Stock)</SelectItem>
+                    <SelectItem value="false">স্টক শেষ (Out of Stock)</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </Field>
           </div>
 
-          {/* ──── Variant / Pack Sizes Section (Packaged mode) ──── */}
-          {sellingMode === "packaged" && (
-            <div className="flex flex-col gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border border-border/70 bg-muted/20 p-2.5 sm:p-4">
-              <div className="flex items-center justify-between gap-2 pb-1 border-b border-border/40">
+          {/* ──── Variant / Pack Sizes Section ──── */}
+          <div className="flex flex-col gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border border-border/70 bg-muted/20 p-2.5 sm:p-4">
+            <div className="flex items-center justify-between gap-2 pb-1 border-b border-border/40">
+              <div className="flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-semibold text-foreground/90">
                   ভ্যারিয়েন্ট / প্যাকসমূহ ({variants.length})
                 </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleAddVariant()}
-                  className="h-8 rounded-lg sm:rounded-xl text-xs font-semibold cursor-pointer shrink-0"
+                <span className="text-[11px] text-muted-foreground font-medium">
+                  (মোট {totalStock} {getProductUnitLabel(rootUnit)} থেকে অটো স্টক হিসাব হবে)
+                </span>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleAddVariant()}
+                className="h-8 rounded-lg sm:rounded-xl text-xs font-semibold cursor-pointer shrink-0"
+              >
+                <Add className="size-3.5 mr-1" />
+                <span>+ নতুন প্যাক</span>
+              </Button>
+            </div>
+
+            {/* Pack Rows */}
+            <div className="flex flex-col gap-2.5">
+              {variants.map((v, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-col gap-2 rounded-lg sm:rounded-xl border border-border bg-card p-2.5 sm:p-3 shadow-2xs"
                 >
-                  <Add className="size-3.5 mr-1" />
-                  <span>+ নতুন প্যাক</span>
-                </Button>
-              </div>
-
-              {/* Pack Rows */}
-              <div className="flex flex-col gap-2.5">
-                {variants.map((v, idx) => (
-                  <div
-                    key={idx}
-                    className="flex flex-col gap-2 rounded-lg sm:rounded-xl border border-border bg-card p-2.5 sm:p-3 shadow-2xs"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] sm:text-xs font-bold text-muted-foreground">
-                          প্যাক #{idx + 1}
-                        </span>
-                        {/* Live Generated Title Tag */}
-                        <span className="inline-flex items-center text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
-                          {v.title ||
-                            formatPackTitle(v.amount || 0, rootUnit) ||
-                            "প্যাক"}
-                        </span>
-                      </div>
-                      {variants.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveVariant(idx)}
-                          className="h-6 w-6 p-0 text-destructive hover:bg-destructive/10 cursor-pointer rounded-md"
-                          title="এই প্যাকটি মুছুন"
-                        >
-                          <Trash2 className="size-3.5" />
-                        </Button>
-                      )}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] sm:text-xs font-bold text-muted-foreground">
+                        প্যাক #{idx + 1}
+                      </span>
+                      {/* Live Generated Title Tag */}
+                      <span className="inline-flex items-center text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
+                        {v.title ||
+                          formatPackTitle(v.amount || 0, rootUnit) ||
+                          "প্যাক"}
+                      </span>
+                      {/* Live Calculated Pack Stock Badge */}
+                      <span className="inline-flex items-center text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                        ⚡ অটো স্টক: {getAutoPackStock(v.amount, totalStock)}টি প্যাক
+                      </span>
                     </div>
+                    {variants.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveVariant(idx)}
+                        className="h-6 w-6 p-0 text-destructive hover:bg-destructive/10 cursor-pointer rounded-md"
+                        title="এই প্যাকটি মুছুন"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
+                    )}
+                  </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-2.5">
-                      {/* Amount / Weight */}
-                      <div>
-                        <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
-                          পরিমাণ ({getProductUnitLabel(rootUnit)}) *
-                        </label>
-                        <div className="relative">
-                          <Input
-                            type="number"
-                            step="any"
-                            min="0"
-                            value={v.amount || ""}
-                            onChange={(e) =>
-                              handleVariantAmountChange(idx, e.target.value)
-                            }
-                            placeholder="যেমন: 500"
-                            required
-                            className="h-9 text-xs font-mono rounded-lg pr-12"
-                          />
-                          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground pointer-events-none">
-                            {getProductUnitLabel(rootUnit)}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Selling Price */}
-                      <div>
-                        <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
-                          বিক্রয় মূল্য (৳) *
-                        </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
+                    {/* Amount / Weight */}
+                    <div>
+                      <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
+                        পরিমাণ ({getProductUnitLabel(rootUnit)}) *
+                      </label>
+                      <div className="relative">
                         <Input
                           type="number"
                           step="any"
                           min="0"
-                          value={v.price}
+                          value={v.amount || ""}
                           onChange={(e) =>
-                            handleVariantFieldChange(idx, "price", e.target.value)
+                            handleVariantAmountChange(idx, e.target.value)
                           }
-                          placeholder="যেমন: 850"
+                          placeholder="যেমন: 500"
                           required
-                          className="h-9 text-xs font-mono rounded-lg"
+                          className="h-9 text-xs font-mono rounded-lg pr-12"
                         />
-                      </div>
-
-                      {/* Compare At Price */}
-                      <div>
-                        <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
-                          আগের মূল্য (৳)
-                        </label>
-                        <Input
-                          type="number"
-                          step="any"
-                          min="0"
-                          value={v.compareAtPrice || ""}
-                          onChange={(e) =>
-                            handleVariantFieldChange(
-                              idx,
-                              "compareAtPrice",
-                              e.target.value,
-                            )
-                          }
-                          placeholder="ঐচ্ছিক"
-                          className="h-9 text-xs font-mono rounded-lg"
-                        />
-                      </div>
-
-                      {/* Stock Quantity */}
-                      <div>
-                        <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
-                          স্টক (প্যাক সংখ্যা) *
-                        </label>
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleVariantFieldChange(
-                                idx,
-                                "inventoryQuantity",
-                                Math.max(0, (v.inventoryQuantity || 0) - 1),
-                              )
-                            }
-                            className="h-9 w-7 flex items-center justify-center rounded-lg border border-border bg-muted/60 hover:bg-muted text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0 select-none"
-                            title="১টি কমান"
-                          >
-                            -
-                          </button>
-                          <Input
-                            type="number"
-                            min="0"
-                            value={v.inventoryQuantity}
-                            onChange={(e) =>
-                              handleVariantFieldChange(
-                                idx,
-                                "inventoryQuantity",
-                                Math.max(0, parseInt(e.target.value, 10) || 0),
-                              )
-                            }
-                            required
-                            className="h-9 text-xs font-mono rounded-lg px-1 text-center"
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleVariantFieldChange(
-                                idx,
-                                "inventoryQuantity",
-                                (v.inventoryQuantity || 0) + 1,
-                              )
-                            }
-                            className="h-9 w-7 flex items-center justify-center rounded-lg border border-border bg-muted/60 hover:bg-muted text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0 select-none"
-                            title="১টি বাড়ান"
-                          >
-                            +
-                          </button>
-                        </div>
+                        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground pointer-events-none">
+                          {getProductUnitLabel(rootUnit)}
+                        </span>
                       </div>
                     </div>
+
+                    {/* Selling Price */}
+                    <div>
+                      <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
+                        বিক্রয় মূল্য (৳) *
+                      </label>
+                      <Input
+                        type="number"
+                        step="any"
+                        min="0"
+                        value={v.price}
+                        onChange={(e) =>
+                          handleVariantFieldChange(idx, "price", e.target.value)
+                        }
+                        placeholder="যেমন: 850"
+                        required
+                        className="h-9 text-xs font-mono rounded-lg"
+                      />
+                    </div>
+
+                    {/* Compare At Price */}
+                    <div>
+                      <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
+                        আগের মূল্য (৳)
+                      </label>
+                      <Input
+                        type="number"
+                        step="any"
+                        min="0"
+                        value={v.compareAtPrice || ""}
+                        onChange={(e) =>
+                          handleVariantFieldChange(
+                            idx,
+                            "compareAtPrice",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="ঐচ্ছিক"
+                        className="h-9 text-xs font-mono rounded-lg"
+                      />
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
-
-          {/* ──── Bulk Mode Fields (gram / piece) ──── */}
-          {sellingMode !== "packaged" && (
-            <div className="flex flex-col gap-3 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/30 dark:bg-emerald-950/20 p-3 sm:p-4">
-              <span className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-                {sellingMode === "gram"
-                  ? "⚖️ গ্রাম ভিত্তিক বাল্ক স্টক"
-                  : "🥚 পিস ভিত্তিক বাল্ক স্টক"}
-              </span>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div>
-                  <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
-                    {sellingMode === "gram"
-                      ? "প্রতি ১০০ গ্রামের মূল্য (৳) *"
-                      : "প্রতি ১ পিসের মূল্য (৳) *"}
-                  </label>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      step="any"
-                      min="0"
-                      value={pricePerUnit}
-                      onChange={(e) => setPricePerUnit(e.target.value)}
-                      placeholder={
-                        sellingMode === "gram" ? "যেমন: ৮০" : "যেমন: ১৫"
-                      }
-                      required
-                      className="h-9 text-xs font-mono rounded-lg pr-14"
-                    />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground pointer-events-none">
-                      {sellingMode === "gram" ? "৳/১০০গ" : "৳/পিস"}
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
-                    {sellingMode === "gram"
-                      ? "পূর্বের মূল্য (৳/১০০গ্রাম)"
-                      : "পূর্বের মূল্য (৳/পিস)"}
-                  </label>
-                  <Input
-                    type="number"
-                    step="any"
-                    min="0"
-                    value={compareAtPricePerUnit}
-                    onChange={(e) => setCompareAtPricePerUnit(e.target.value)}
-                    placeholder="ঐচ্ছিক"
-                    className="h-9 text-xs font-mono rounded-lg"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-[10px] sm:text-[11px] font-medium text-muted-foreground block mb-1">
-                  {sellingMode === "gram"
-                    ? "মোট স্টক (গ্রামে) *"
-                    : "মোট স্টক (পিসে) *"}
-                </label>
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setBulkStockQuantity((prev) =>
-                        Math.max(0, prev - (sellingMode === "gram" ? 100 : 1)),
-                      )
-                    }
-                    className="h-9 w-8 flex items-center justify-center rounded-lg border border-border bg-muted/60 hover:bg-muted text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0 select-none"
-                    title={sellingMode === "gram" ? "১০০ গ্রাম কমান" : "১ পিস কমান"}
-                  >
-                    -
-                  </button>
-                  <div className="relative flex-1">
-                    <Input
-                      type="number"
-                      min="0"
-                      value={bulkStockQuantity}
-                      onChange={(e) =>
-                        setBulkStockQuantity(
-                          Math.max(0, parseInt(e.target.value, 10) || 0),
-                        )
-                      }
-                      placeholder={
-                        sellingMode === "gram"
-                          ? "যেমন: 10000 (= ১০ কেজি)"
-                          : "যেমন: 200"
-                      }
-                      required
-                      className="h-9 text-xs font-mono rounded-lg pr-16 text-center"
-                    />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground pointer-events-none">
-                      {sellingMode === "gram" ? "গ্রাম" : "পিস"}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setBulkStockQuantity((prev) =>
-                        prev + (sellingMode === "gram" ? 100 : 1),
-                      )
-                    }
-                    className="h-9 w-8 flex items-center justify-center rounded-lg border border-border bg-muted/60 hover:bg-muted text-foreground text-xs font-bold transition-colors cursor-pointer shrink-0 select-none"
-                    title={sellingMode === "gram" ? "১০০ গ্রাম বাড়ান" : "১ পিস বাড়ান"}
-                  >
-                    +
-                  </button>
-                </div>
-                <p className="text-[9px] text-muted-foreground mt-1">
-                  {sellingMode === "gram"
-                    ? `বর্তমান স্টক: ${bulkStockQuantity >= 1000 ? `${(bulkStockQuantity / 1000).toFixed(1)} কেজি (${bulkStockQuantity} গ্রাম)` : `${bulkStockQuantity} গ্রাম`}`
-                    : `বর্তমান স্টক: ${bulkStockQuantity} পিস`}
-                </p>
-              </div>
-            </div>
-          )}
-
+          </div>
 
           <Field>
             <FieldLabel

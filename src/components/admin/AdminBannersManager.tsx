@@ -8,6 +8,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -21,6 +29,8 @@ import { compressImageClient } from "@/lib/image";
 export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<HeroBanner | null>(null);
+  const [createAccentColor, setCreateAccentColor] = useState("text-amber-400");
+  const [editAccentColor, setEditAccentColor] = useState("text-amber-400");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -30,6 +40,7 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
     setError(null);
     const formElement = e.currentTarget;
     const formData = new FormData(formElement);
+    formData.set("accentColor", createAccentColor);
 
     const imageFile = formData.get("image") as File | null;
     if (
@@ -58,6 +69,7 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
     const formElement = e.currentTarget;
     const formData = new FormData(formElement);
     formData.append("id", editingBanner.id);
+    formData.set("accentColor", editAccentColor);
 
     const imageFile = formData.get("image") as File | null;
     if (
@@ -170,18 +182,28 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                   <FieldLabel htmlFor="create-color" className="text-xs sm:text-sm font-semibold text-foreground/90">
                     হাইলাইট রঙ (Tailwind Color)
                   </FieldLabel>
-                  <select
-                    id="create-color"
-                    name="accentColor"
-                    defaultValue="text-amber-400"
-                    className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+                  <Select
+                    value={createAccentColor}
+                    onValueChange={(val) => {
+                      if (val) setCreateAccentColor(val);
+                    }}
                   >
-                    <option value="text-amber-400">হলুদ / আম্বার (Amber)</option>
-                    <option value="text-emerald-400">সবুজ (Emerald)</option>
-                    <option value="text-teal-400">টিয়াল (Teal)</option>
-                    <option value="text-amber-300">গোল্ডেন (Gold)</option>
-                    <option value="text-rose-400">গোলাপী / লাল (Rose)</option>
-                  </select>
+                    <SelectTrigger
+                      id="create-color"
+                      className="w-full h-10 rounded-lg sm:rounded-xl text-xs sm:text-sm"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="text-amber-400">হলুদ / আম্বার (Amber)</SelectItem>
+                        <SelectItem value="text-emerald-400">সবুজ (Emerald)</SelectItem>
+                        <SelectItem value="text-teal-400">টিয়াল (Teal)</SelectItem>
+                        <SelectItem value="text-amber-300">গোল্ডেন (Gold)</SelectItem>
+                        <SelectItem value="text-rose-400">গোলাপী / লাল (Rose)</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
               </div>
 
@@ -285,7 +307,10 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setEditingBanner(banner)}
+                  onClick={() => {
+                    setEditingBanner(banner);
+                    setEditAccentColor(banner.accentColor || "text-amber-400");
+                  }}
                   className="rounded-lg h-8 w-8 p-0 text-foreground hover:bg-muted"
                   title="সম্পাদনা করুন"
                 >
@@ -381,18 +406,28 @@ export function AdminBannersManager({ banners }: { banners: HeroBanner[] }) {
                   <FieldLabel htmlFor="edit-color" className="text-xs sm:text-sm font-semibold text-foreground/90">
                     হাইলাইট রঙ
                   </FieldLabel>
-                  <select
-                    id="edit-color"
-                    name="accentColor"
-                    defaultValue={editingBanner.accentColor}
-                    className="w-full h-10 rounded-lg sm:rounded-xl border border-input bg-background px-3 text-xs sm:text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+                  <Select
+                    value={editAccentColor}
+                    onValueChange={(val) => {
+                      if (val) setEditAccentColor(val);
+                    }}
                   >
-                    <option value="text-amber-400">হলুদ / আম্বার (Amber)</option>
-                    <option value="text-emerald-400">সবুজ (Emerald)</option>
-                    <option value="text-teal-400">টিয়াল (Teal)</option>
-                    <option value="text-amber-300">গোল্ডেন (Gold)</option>
-                    <option value="text-rose-400">গোলাপী / লাল (Rose)</option>
-                  </select>
+                    <SelectTrigger
+                      id="edit-color"
+                      className="w-full h-10 rounded-lg sm:rounded-xl text-xs sm:text-sm"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="text-amber-400">হলুদ / আম্বার (Amber)</SelectItem>
+                        <SelectItem value="text-emerald-400">সবুজ (Emerald)</SelectItem>
+                        <SelectItem value="text-teal-400">টিয়াল (Teal)</SelectItem>
+                        <SelectItem value="text-amber-300">গোল্ডেন (Gold)</SelectItem>
+                        <SelectItem value="text-rose-400">গোলাপী / লাল (Rose)</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
               </div>
 

@@ -73,16 +73,6 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             <span className="text-xs sm:text-base font-black text-emerald-600 dark:text-emerald-400">
               ৳{currentPrice.toLocaleString("bn-BD")}
             </span>
-            {product.sellingMode === "gram" && (
-              <span className="text-[9px] sm:text-[10px] text-muted-foreground font-medium">
-                /১০০গ্রাম
-              </span>
-            )}
-            {product.sellingMode === "piece" && (
-              <span className="text-[9px] sm:text-[10px] text-muted-foreground font-medium">
-                /পিস
-              </span>
-            )}
             {compareAtPrice && compareAtPrice > currentPrice && (
               <span className="text-[10px] sm:text-xs text-muted-foreground line-through decoration-rose-500/60 font-semibold">
                 ৳{compareAtPrice.toLocaleString("bn-BD")}

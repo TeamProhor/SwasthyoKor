@@ -40,9 +40,6 @@ export const PRODUCT_UNITS = [
 
 export type ProductUnit = (typeof PRODUCT_UNITS)[number];
 
-export const SELLING_MODES = ["packaged", "gram", "piece"] as const;
-export type SellingMode = (typeof SELLING_MODES)[number];
-
 
 export const PRODUCT_UNIT_DETAILS: Record<
   ProductUnit,
@@ -399,13 +396,6 @@ export type Product = {
   deliveryInfo?: string;
   rating?: number;
   reviewCount?: number;
-  // Selling mode
-  sellingMode: SellingMode;
-  // Bulk mode fields (gram / piece modes)
-  bulkStockQuantity: number;    // total grams OR total pieces in stock
-  pricePerUnit?: number;        // price per 100g (gram mode) or per 1 piece (piece mode)
-  compareAtPricePerUnit?: number;
-  minimumOrderQuantity: number; // default 100 for gram, 1 for piece
   category?: {
     id: string;
     handle: string;

@@ -254,5 +254,3 @@ function CheckoutButton({
     </button>
   );
 }
-
-export default CartModal;

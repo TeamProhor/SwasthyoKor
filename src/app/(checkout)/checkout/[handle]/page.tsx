@@ -26,7 +26,7 @@ export async function generateMetadata(props: {
 
 export default async function CheckoutProductPage(props: {
   params: Promise<{ handle: string }>;
-  searchParams: Promise<{ quantity?: string; bulkQty?: string }>;
+  searchParams: Promise<{ quantity?: string }>;
 }) {
   const { handle } = await props.params;
   const searchParams = await props.searchParams;
@@ -35,40 +35,18 @@ export default async function CheckoutProductPage(props: {
 
   if (!product) return notFound();
 
-  const isBulk = product.sellingMode === "gram" || product.sellingMode === "piece";
   const quantity = Math.max(
     1,
     parseInt(searchParams?.quantity || "1", 10) || 1,
   );
-  const bulkQty = searchParams?.bulkQty
-    ? parseInt(searchParams.bulkQty, 10) || product.minimumOrderQuantity || (product.sellingMode === "piece" ? 1 : 100)
-    : product.minimumOrderQuantity || (product.sellingMode === "piece" ? 1 : 100);
 
   const variant = product.variants[0];
-  const unitPrice = isBulk
-    ? product.pricePerUnit ?? 0
-    : variant
-      ? Number(variant.price.amount)
-      : Number(product.priceRange.minVariantPrice.amount);
+  const unitPrice = variant
+    ? Number(variant.price.amount)
+    : Number(product.priceRange.minVariantPrice.amount);
   const currencyCode = "BDT";
-
-  const finalTotal = isBulk
-    ? product.sellingMode === "gram"
-      ? Math.round((bulkQty / 100) * unitPrice)
-      : Math.round(bulkQty * unitPrice)
-    : unitPrice * quantity;
-
-  const quantityDisplay = isBulk
-    ? product.sellingMode === "gram"
-      ? `${bulkQty.toLocaleString("bn-BD")} গ্রাম`
-      : `${bulkQty.toLocaleString("bn-BD")} পিস`
-    : `${quantity.toLocaleString("bn-BD")}টি প্যাক`;
-
-  const unitPriceDisplay = isBulk
-    ? product.sellingMode === "gram"
-      ? `${unitPrice} (প্রতি ১০০ গ্রাম)`
-      : `${unitPrice} (প্রতি পিস)`
-    : unitPrice.toString();
+  const finalTotal = unitPrice * quantity;
+  const quantityDisplay = `${quantity.toLocaleString("bn-BD")}টি প্যাক`;
 
   return (
     <div className="min-h-screen bg-neutral-50/60 dark:bg-neutral-950 py-5 px-3 sm:py-8 sm:px-6 lg:px-8 flex flex-col justify-between">
@@ -97,7 +75,6 @@ export default async function CheckoutProductPage(props: {
                 <DirectCheckoutForm
                   handle={product.handle}
                   quantity={quantity}
-                  bulkQty={isBulk ? bulkQty : undefined}
                   finalTotal={finalTotal}
                   initialName={user?.name || ""}
                   initialPhone={user?.phone || ""}

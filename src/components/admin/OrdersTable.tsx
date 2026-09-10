@@ -16,6 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { updateOrderStatusAction } from "@/lib/actions/admin";
 
 interface OrderItem {
@@ -105,19 +113,27 @@ export function OrdersTable({ orders }: { orders: OrderItem[] }) {
                   </Badge>
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right">
-                  <select
-                    disabled={isPending}
-                    value={order.status}
-                    onChange={(e) =>
-                      handleStatusChange(order.id, e.target.value)
-                    }
-                    className="rounded-lg border border-input bg-background px-2 py-1 text-xs text-foreground font-medium cursor-pointer"
-                  >
-                    <option value="confirmed">কনফার্মড</option>
-                    <option value="shipped">ডেলিভারিতে</option>
-                    <option value="delivered">ডেলিভার্ড</option>
-                    <option value="cancelled">বাতিল</option>
-                  </select>
+                  <div className="flex justify-end">
+                    <Select
+                      disabled={isPending}
+                      value={order.status}
+                      onValueChange={(val) => {
+                        if (val) handleStatusChange(order.id, val);
+                      }}
+                    >
+                      <SelectTrigger size="sm" className="w-32 h-8 text-xs font-medium">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent align="end">
+                        <SelectGroup>
+                          <SelectItem value="confirmed">কনফার্মড</SelectItem>
+                          <SelectItem value="shipped">ডেলিভারিতে</SelectItem>
+                          <SelectItem value="delivered">ডেলিভার্ড</SelectItem>
+                          <SelectItem value="cancelled">বাতিল</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </TableCell>
               </TableRow>
             ))

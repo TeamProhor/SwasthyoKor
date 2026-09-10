@@ -27,35 +27,17 @@ export function ProductQuickView({
   const [open, setOpen] = React.useState(false);
   const { addCartItem } = useCart();
 
-  const isBulk = product.sellingMode === "gram" || product.sellingMode === "piece";
-
-  // Stock awareness: bulk uses bulkStockQuantity, packaged uses variant inventory
   const defaultVariant = product.variants?.[0];
-  const stockQuantity = isBulk
-    ? (product.bulkStockQuantity ?? 0)
-    : (defaultVariant?.inventoryQuantity ?? 15);
+  const stockQuantity = defaultVariant?.inventoryQuantity ?? 15;
 
-  const isAvailable = isBulk
-    ? stockQuantity > 0
-    : product.availableForSale &&
-      (defaultVariant?.availableForSale ?? true) &&
-      stockQuantity > 0;
+  const isAvailable =
+    product.availableForSale &&
+    (defaultVariant?.availableForSale ?? true) &&
+    stockQuantity > 0;
 
-  const isLowStock = isAvailable && (isBulk ? stockQuantity <= 500 : stockQuantity <= 5);
-
-  // For bulk: stock label shows grams / pieces
-  const stockLabel = isBulk
-    ? product.sellingMode === "gram"
-      ? stockQuantity >= 1000
-        ? `⚡ ${(stockQuantity / 1000).toFixed(1)} কেজি বাকি`
-        : `⚡ ${stockQuantity} গ্রাম বাকি`
-      : `⚡ ${stockQuantity} পিস বাকি`
-    : `⚡ মাত্র ${stockQuantity}টি বাকি`;
-
-  // Checkout link: pass minimumOrderQuantity for bulk products
-  const checkoutHref = isBulk
-    ? `/checkout/${product.handle}?bulkQty=${product.minimumOrderQuantity}`
-    : `/checkout/${product.handle}`;
+  const isLowStock = isAvailable && stockQuantity <= 5;
+  const stockLabel = `⚡ মাত্র ${stockQuantity}টি বাকি`;
+  const checkoutHref = `/checkout/${product.handle}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -131,23 +113,14 @@ export function ProductQuickView({
                 <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
                   <Price
                     amount={
-                      isBulk
-                        ? String(product.pricePerUnit ?? 0)
-                        : (defaultVariant?.price.amount ??
-                          product.priceRange.minVariantPrice.amount)
+                      defaultVariant?.price.amount ??
+                      product.priceRange.minVariantPrice.amount
                     }
                     currencyCode={
-                      isBulk
-                        ? "BDT"
-                        : (defaultVariant?.price.currencyCode ??
-                          product.priceRange.minVariantPrice.currencyCode)
+                      defaultVariant?.price.currencyCode ??
+                      product.priceRange.minVariantPrice.currencyCode
                     }
                   />
-                  {isBulk && (
-                    <span className="text-[10px] font-normal text-muted-foreground ml-1">
-                      /{product.sellingMode === "gram" ? "১০০ গ্রাম" : "পিস"}
-                    </span>
-                  )}
                 </span>
                 <span
                   className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
@@ -187,27 +160,25 @@ export function ProductQuickView({
               onClick={() => setOpen(false)}
             />
 
-            {/* Cart button: hidden for bulk products (they use direct checkout only) */}
-            {!isBulk && (
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full rounded-xl border-border font-bold text-xs sm:text-sm h-11 cursor-pointer"
-                disabled={!isAvailable || addCartItem.isPending}
-                onClick={handleAddToCart}
-              >
-                {addCartItem.isPending ? (
-                  <Spinner className="size-4 text-current" />
-                ) : (
-                  <BagShopping data-icon="inline-start" />
-                )}
-                {isAvailable
-                  ? addCartItem.isPending
-                    ? "কার্টে যুক্ত হচ্ছে..."
-                    : "কার্টে যোগ করুন"
-                  : "স্টক শেষ"}
-              </Button>
-            )}
+            {/* Cart button */}
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full rounded-xl border-border font-bold text-xs sm:text-sm h-11 cursor-pointer"
+              disabled={!isAvailable || addCartItem.isPending}
+              onClick={handleAddToCart}
+            >
+              {addCartItem.isPending ? (
+                <Spinner className="size-4 text-current" />
+              ) : (
+                <BagShopping data-icon="inline-start" />
+              )}
+              {isAvailable
+                ? addCartItem.isPending
+                  ? "কার্টে যুক্ত হচ্ছে..."
+                  : "কার্টে যোগ করুন"
+                : "স্টক শেষ"}
+            </Button>
 
             <p className="text-[11px] text-center text-muted-foreground pt-0.5">
               🔒 ১০০% নিরাপদ অনলাইন পেমেন্ট (বিকাশ/নগদ/কার্ড) • ১০০% খাঁটি পণ্য

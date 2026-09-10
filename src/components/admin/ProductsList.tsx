@@ -5,6 +5,14 @@ import { Check, SearchNormal, Trash2 } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import {
   deleteProductAction,
@@ -55,28 +63,23 @@ export function ProductsList({
   const inStockCount = useMemo(
     () =>
       products.filter((p) => {
-        const isBulk = p.sellingMode === "gram" || p.sellingMode === "piece";
-        const qty = isBulk ? (p.bulkStockQuantity ?? 0) : (p.inventoryQuantity ?? 15);
-        const lowThreshold = isBulk ? (p.sellingMode === "gram" ? 500 : 5) : 5;
-        return p.available && qty > lowThreshold;
+        const qty = p.inventoryQuantity ?? 15;
+        return p.available && qty > 5;
       }).length,
     [products],
   );
   const lowStockCount = useMemo(
     () =>
       products.filter((p) => {
-        const isBulk = p.sellingMode === "gram" || p.sellingMode === "piece";
-        const qty = isBulk ? (p.bulkStockQuantity ?? 0) : (p.inventoryQuantity ?? 15);
-        const lowThreshold = isBulk ? (p.sellingMode === "gram" ? 500 : 5) : 5;
-        return p.available && qty > 0 && qty <= lowThreshold;
+        const qty = p.inventoryQuantity ?? 15;
+        return p.available && qty > 0 && qty <= 5;
       }).length,
     [products],
   );
   const outOfStockCount = useMemo(
     () =>
       products.filter((p) => {
-        const isBulk = p.sellingMode === "gram" || p.sellingMode === "piece";
-        const qty = isBulk ? (p.bulkStockQuantity ?? 0) : (p.inventoryQuantity ?? 15);
+        const qty = p.inventoryQuantity ?? 15;
         return !p.available || qty <= 0;
       }).length,
     [products],
@@ -93,15 +96,13 @@ export function ProductsList({
         selectedCollection === "all" ||
         item.collectionId === selectedCollection;
 
-      const isBulk = item.sellingMode === "gram" || item.sellingMode === "piece";
-      const qty = isBulk ? (item.bulkStockQuantity ?? 0) : (item.inventoryQuantity ?? 15);
-      const lowThreshold = isBulk ? (item.sellingMode === "gram" ? 500 : 5) : 5;
+      const qty = item.inventoryQuantity ?? 15;
       const isAvailable = item.available && qty > 0;
 
       const matchStock =
         stockFilter === "all" ||
-        (stockFilter === "in_stock" && isAvailable && qty > lowThreshold) ||
-        (stockFilter === "low_stock" && isAvailable && qty <= lowThreshold) ||
+        (stockFilter === "in_stock" && isAvailable && qty > 5) ||
+        (stockFilter === "low_stock" && isAvailable && qty <= 5) ||
         (stockFilter === "out_of_stock" && !isAvailable);
 
       return matchSearch && matchCategory && matchStock;
@@ -113,39 +114,15 @@ export function ProductsList({
       ? collectionMap.get(item.collectionId)
       : undefined;
 
-    const isBulk = item.sellingMode === "gram" || item.sellingMode === "piece";
-    const qty = isBulk
-      ? (item.bulkStockQuantity ?? 0)
-      : (item.inventoryQuantity ?? 15);
+    const qty = item.inventoryQuantity ?? 15;
     const isAvailable = item.available && qty > 0;
 
     let badgeText = "ইন স্টক";
     let badgeVariant: QuickListItem["badgeVariant"] = "success";
 
     if (!isAvailable) {
-      badgeText = isBulk
-        ? item.sellingMode === "gram"
-          ? `স্টক শেষ (${qty} গ্রাম)`
-          : `স্টক শেষ (${qty} পিস)`
-        : `স্টক শেষ (${qty})`;
+      badgeText = `স্টক শেষ (${qty})`;
       badgeVariant = "destructive";
-    } else if (isBulk) {
-      if (item.sellingMode === "gram") {
-        const kg = (qty / 1000).toFixed(1);
-        badgeText =
-          qty <= 500
-            ? `⚡ মাত্র ${qty} গ্রাম বাকি`
-            : qty >= 1000
-              ? `ইন স্টক (${kg} কেজি)`
-              : `ইন স্টক (${qty} গ্রাম)`;
-        badgeVariant = qty <= 500 ? "default" : "success";
-      } else {
-        badgeText =
-          qty <= 5
-            ? `⚡ মাত্র ${qty} পিস বাকি`
-            : `ইন স্টক (${qty} পিস)`;
-        badgeVariant = qty <= 5 ? "default" : "success";
-      }
     } else if (qty <= 5) {
       badgeText = `⚡ মাত্র ${qty}টি বাকি`;
       badgeVariant = "default";
@@ -154,11 +131,7 @@ export function ProductsList({
       badgeVariant = "success";
     }
 
-    const priceLabel = isBulk
-      ? item.sellingMode === "gram"
-        ? `৳${item.price} / ১০০ গ্রাম`
-        : `৳${item.price} / পিস`
-      : `৳${item.price}`;
+    const priceLabel = `৳${item.price}`;
 
     return {
       id: item.id,
@@ -172,21 +145,14 @@ export function ProductsList({
           text: priceLabel,
           variant: "default",
         },
-        ...(item.sellingMode && item.sellingMode !== "packaged"
+        ...(item.unit
           ? [
               {
-                text: item.sellingMode === "gram" ? "⚖️ গ্রাম ভিত্তিক" : "🥚 পিস ভিত্তিক",
+                text: getProductUnitLabel(item.unit),
                 variant: "secondary" as const,
               },
             ]
-          : item.unit
-            ? [
-                {
-                  text: getProductUnitLabel(item.unit),
-                  variant: "secondary" as const,
-                },
-              ]
-            : []),
+          : []),
         ...(item.compareAtPrice &&
         Number(item.compareAtPrice) > Number(item.price)
           ? [
@@ -196,7 +162,7 @@ export function ProductsList({
               },
             ]
           : []),
-        ...(!isBulk && item.variants && item.variants.length > 0
+        ...(item.variants && item.variants.length > 0
           ? [
               {
                 text: `${item.variants.length}টি প্যাক (${item.variants
@@ -278,18 +244,24 @@ export function ProductsList({
         </div>
 
         {collections.length > 0 && (
-          <select
+          <Select
             value={selectedCollection}
-            onChange={(e) => setSelectedCollection(e.target.value)}
-            className="w-full sm:w-48 rounded-xl border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-hidden focus:ring-2 focus:ring-ring"
+            onValueChange={(val) => setSelectedCollection(val ?? "all")}
           >
-            <option value="all">সকল ক্যাটাগরি</option>
-            {collections.map((col) => (
-              <option key={col.id} value={col.id}>
-                {col.title}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full sm:w-48 h-10 rounded-xl bg-card text-sm">
+              <SelectValue placeholder="সকল ক্যাটাগরি" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">সকল ক্যাটাগরি</SelectItem>
+                {collections.map((col) => (
+                  <SelectItem key={col.id} value={col.id}>
+                    {col.title}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         )}
       </div>
 

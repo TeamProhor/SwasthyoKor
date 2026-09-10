@@ -204,5 +204,3 @@ export function ListCard({
     </Card>
   );
 }
-
-export default ListCard;
