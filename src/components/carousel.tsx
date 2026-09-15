@@ -48,9 +48,9 @@ export async function Carousel() {
                     </h3>
                     <Price
                       className="shrink-0 rounded-md bg-emerald-600 px-1.5 py-0.5 sm:px-2 text-[11px] sm:text-xs font-semibold text-white shadow-xs"
-                      amount={product.priceRange.maxVariantPrice.amount}
+                      amount={product.priceRange.minVariantPrice.amount}
                       currencyCode={
-                        product.priceRange.maxVariantPrice.currencyCode
+                        product.priceRange.minVariantPrice.currencyCode
                       }
                     />
                   </div>

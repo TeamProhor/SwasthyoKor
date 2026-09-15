@@ -63,8 +63,8 @@ function ThreeItemGridItem({
           </h3>
           <Price
             className="shrink-0 rounded-lg bg-emerald-600 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-semibold text-white shadow-xs"
-            amount={item.priceRange.maxVariantPrice.amount}
-            currencyCode={item.priceRange.maxVariantPrice.currencyCode}
+            amount={item.priceRange.minVariantPrice.amount}
+            currencyCode={item.priceRange.minVariantPrice.currencyCode}
           />
         </div>
       </Link>

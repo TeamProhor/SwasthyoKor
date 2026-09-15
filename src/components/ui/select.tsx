@@ -38,7 +38,7 @@ function Select<Value = any, Multiple extends boolean | undefined = false>({
   children,
   ...props
 }: SelectPrimitive.Root.Props<Value, Multiple>) {
-  const [dynamicItemMap, setDynamicItemMap] = React.useState<Map<any, React.ReactNode>>(() => new Map());
+  const itemsRef = React.useRef<Map<any, React.ReactNode>>(new Map());
 
   // Recursively scan static children to extract item labels immediately without waiting for popup mount
   const staticItemMap = React.useMemo(() => {
@@ -46,29 +46,24 @@ function Select<Value = any, Multiple extends boolean | undefined = false>({
   }, [children]);
 
   const registerItem = React.useCallback((val: any, label: React.ReactNode) => {
-    setDynamicItemMap((prev) => {
-      if (prev.get(val) === label) return prev;
-      const next = new Map(prev);
-      next.set(val, label);
-      return next;
-    });
+    itemsRef.current.set(val, label);
   }, []);
 
   const unregisterItem = React.useCallback((val: any) => {
-    setDynamicItemMap((prev) => {
-      if (!prev.has(val)) return prev;
-      const next = new Map(prev);
-      next.delete(val);
-      return next;
-    });
+    itemsRef.current.delete(val);
   }, []);
 
   const getLabel = React.useCallback((val: any) => {
-    return dynamicItemMap.get(val) ?? staticItemMap.get(val);
-  }, [dynamicItemMap, staticItemMap]);
+    return itemsRef.current.get(val) ?? staticItemMap.get(val);
+  }, [staticItemMap]);
+
+  const contextValue = React.useMemo(
+    () => ({ registerItem, unregisterItem, getLabel }),
+    [registerItem, unregisterItem, getLabel]
+  );
 
   return (
-    <SelectItemsContext.Provider value={{ registerItem, unregisterItem, getLabel }}>
+    <SelectItemsContext.Provider value={contextValue}>
       <SelectPrimitive.Root {...props}>
         {children}
       </SelectPrimitive.Root>

@@ -317,7 +317,7 @@ export default async function BlogPostPage(props: {
                             {p.title}
                           </h4>
                           <p className="text-xs text-muted-foreground">
-                            ১০০% প্রাকৃতিক ও ল্যাব টেস্টেড
+                            প্রাকৃতিক ও স্বাস্থ্যসম্মত খাদ্য
                           </p>
                         </div>
                       </div>

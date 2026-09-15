@@ -112,7 +112,7 @@ export async function loginWithPasswordAction(formData: FormData) {
   return { success: true };
 }
 
-export async function logoutAction() {
+async function logoutAction() {
   await deleteSession();
   redirect("/login");
 }

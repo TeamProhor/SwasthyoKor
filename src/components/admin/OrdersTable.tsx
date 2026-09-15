@@ -36,7 +36,7 @@ interface OrderItem {
   email?: string | null;
 }
 
-export function OrdersTable({ orders }: { orders: OrderItem[] }) {
+function OrdersTable({ orders }: { orders: OrderItem[] }) {
   const [isPending, startTransition] = useTransition();
 
   const handleStatusChange = (orderId: string, status: string) => {

@@ -165,7 +165,7 @@ export default async function CheckoutProductPage(props: {
                 <div className="rounded-xl border border-border/60 bg-muted/25 p-3 space-y-2 pt-3 text-[11px] text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <span className="text-emerald-600 font-bold">✓</span>
-                    <span>১০০% প্রাকৃতিক ও ল্যাব টেস্টেড খাঁটি পণ্য</span>
+                    <span>প্রাকৃতিক ও নিজস্ব তত্ত্বাবধানে সংগৃহীত খাঁটি পণ্য</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-emerald-600 font-bold">✓</span>

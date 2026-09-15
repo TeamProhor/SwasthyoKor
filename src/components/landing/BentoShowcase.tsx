@@ -9,7 +9,7 @@ const categories = [
   { label: "হেলথ", path: "/search/superfoods-wellness" },
 ];
 
-export function BentoShowcase() {
+function BentoShowcase() {
   return (
     <section
       id="collection-section"

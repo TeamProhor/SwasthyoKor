@@ -11,9 +11,9 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, priority = false }: ProductCardProps) {
-  const currentPrice = Number(product.priceRange.maxVariantPrice.amount);
-  const compareAtPrice = product.compareAtPriceRange?.maxVariantPrice?.amount
-    ? Number(product.compareAtPriceRange.maxVariantPrice.amount)
+  const currentPrice = Number(product.priceRange.minVariantPrice.amount);
+  const compareAtPrice = product.compareAtPriceRange?.minVariantPrice?.amount
+    ? Number(product.compareAtPriceRange.minVariantPrice.amount)
     : undefined;
   const savings =
     compareAtPrice && compareAtPrice > currentPrice

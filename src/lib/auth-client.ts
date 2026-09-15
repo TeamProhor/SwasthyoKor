@@ -48,6 +48,6 @@ export function useSession() {
   };
 }
 
-export const authClient = {
+const authClient = {
   useSession,
 };

@@ -110,6 +110,9 @@ export async function createProductAction(formData: FormData) {
       handle,
       title,
       description,
+      descriptionHtml: description
+        ? `<p>${description.replace(/\r\n/g, "\n").replace(/\n\n+/g, "</p><p>").replace(/\n/g, "<br/>")}</p>`
+        : null,
       availableForSale: totalInventory > 0,
       createdAt: now,
       updatedAt: now,
@@ -221,9 +224,20 @@ export async function updateProductAction(formData: FormData) {
       const isManualOutOfStock = formData.get("availableForSale") === "false";
       const availableForSale = !isManualOutOfStock && totalInventory > 0;
 
+      const descriptionHtml = description
+        ? `<p>${description.replace(/\r\n/g, "\n").replace(/\n\n+/g, "</p><p>").replace(/\n/g, "<br/>")}</p>`
+        : null;
+
       await db
         .update(products)
-        .set({ title, handle, description, availableForSale, updatedAt: now })
+        .set({
+          title,
+          handle,
+          description,
+          descriptionHtml,
+          availableForSale,
+          updatedAt: now,
+        })
         .where(eq(products.id, id));
 
       const existingVariants = await db
@@ -289,8 +303,20 @@ export async function updateProductAction(formData: FormData) {
       const inventoryQuantity = Math.max(0, parseInt((formData.get("inventoryQuantity") as string) || "0", 10));
       const availableForSale = inventoryQuantity > 0;
 
-      await db.update(products)
-        .set({ title, handle, description, availableForSale, updatedAt: now })
+      const descriptionHtml = description
+        ? `<p>${description.replace(/\r\n/g, "\n").replace(/\n\n+/g, "</p><p>").replace(/\n/g, "<br/>")}</p>`
+        : null;
+
+      await db
+        .update(products)
+        .set({
+          title,
+          handle,
+          description,
+          descriptionHtml,
+          availableForSale,
+          updatedAt: now,
+        })
         .where(eq(products.id, id));
 
       const existingVariants = await db.select().from(productVariants).where(eq(productVariants.productId, id));
@@ -392,61 +418,6 @@ export async function toggleProductAvailabilityAction(
   }
 }
 
-
-export async function adjustProductStockAction(
-  productId: string,
-  delta: number,
-  variantId?: string,
-) {
-  try {
-    const { sql } = await import("drizzle-orm");
-
-    if (variantId) {
-      await db
-        .update(productVariants)
-        .set({
-          inventoryQuantity: sql`GREATEST(0, ${productVariants.inventoryQuantity} + ${delta})`,
-          availableForSale: sql`CASE WHEN (${productVariants.inventoryQuantity} + ${delta}) > 0 THEN true ELSE false END`,
-        })
-        .where(eq(productVariants.id, variantId));
-    } else {
-      await db
-        .update(productVariants)
-        .set({
-          inventoryQuantity: sql`GREATEST(0, ${productVariants.inventoryQuantity} + ${delta})`,
-          availableForSale: sql`CASE WHEN (${productVariants.inventoryQuantity} + ${delta}) > 0 THEN true ELSE false END`,
-        })
-        .where(eq(productVariants.productId, productId));
-    }
-
-    // Recalculate product availability
-    const vars = await db
-      .select({ qty: productVariants.inventoryQuantity })
-      .from(productVariants)
-      .where(eq(productVariants.productId, productId));
-
-    const totalQty = vars.reduce((sum, v) => sum + (v.qty || 0), 0);
-    await db
-      .update(products)
-      .set({
-        availableForSale: totalQty > 0,
-        updatedAt: new Date(),
-      })
-      .where(eq(products.id, productId));
-
-    revalidatePath("/admin/products");
-    revalidatePath("/search");
-    revalidatePath("/");
-
-    return { success: true, totalQuantity: totalQty };
-  } catch (err: unknown) {
-    console.error("Adjust stock error:", err);
-    return {
-      success: false,
-      error: err instanceof Error ? err.message : "স্টক পরিবর্তন করতে সমস্যা হয়েছে।",
-    };
-  }
-}
 
 export async function deleteProductAction(productId: string) {
   try {

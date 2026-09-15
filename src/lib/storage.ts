@@ -46,13 +46,4 @@ export async function uploadObject({
   return `${endpoint}/${BUCKET_NAME}/${key}`;
 }
 
-/**
- * Generate a presigned view URL
- */
-export async function getPresignedViewUrl(key: string, expiresIn = 3600) {
-  const command = new GetObjectCommand({
-    Bucket: BUCKET_NAME,
-    Key: key,
-  });
-  return await getSignedUrl(s3, command, { expiresIn });
-}
+

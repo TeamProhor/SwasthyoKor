@@ -3,8 +3,8 @@ import { Award, RestartCircle, ShieldCheck, Truck } from "@/components/icons";
 const FEATURES = [
   {
     icon: ShieldCheck,
-    title: "১০০% ল্যাব টেস্টেড বিশুদ্ধতা",
-    description: "ফরমালিন, ক্ষতিকর প্রিজারভেটিভ ও ভেজালমুক্ত সম্পূর্ণ প্রাকৃতিক খাদ্য উপাদান",
+    title: "প্রাকৃতিক ও ভেজালমুক্ত পণ্য",
+    description: "কোনো ক্ষতিকর উপাদান ছাড়া সম্পূর্ণ প্রাকৃতিক ও স্বাস্থ্যসম্মত খাদ্যপণ্য",
   },
   {
     icon: Truck,

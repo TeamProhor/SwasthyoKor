@@ -82,7 +82,13 @@ export default async function CMSPage(props: {
         <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground">
           {page.title}
         </h1>
-        <Prose className="leading-relaxed" html={page.body} />
+        {page.body && page.body.includes("<") ? (
+          <Prose className="leading-relaxed" html={page.body} />
+        ) : (
+          <div className="text-base leading-relaxed text-foreground whitespace-pre-line">
+            {page.body}
+          </div>
+        )}
       </div>
     </>
   );

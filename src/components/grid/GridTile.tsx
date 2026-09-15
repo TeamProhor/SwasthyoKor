@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-export function GridTileImage({
+function GridTileImage({
   isInteractive = true,
   active,
   label,

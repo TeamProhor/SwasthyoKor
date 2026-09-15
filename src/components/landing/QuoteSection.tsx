@@ -1,6 +1,6 @@
 import { QuoteUp } from "@/components/icons";
 
-export function QuoteSection() {
+function QuoteSection() {
   return (
     <section
       id="kotha"

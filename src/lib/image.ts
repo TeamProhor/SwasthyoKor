@@ -62,3 +62,4 @@ export async function compressImage(
 
 // Alias for backward compatibility
 export const compressImageClient = compressImage;
+

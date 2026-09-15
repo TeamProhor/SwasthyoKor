@@ -104,7 +104,11 @@ function toProduct(row: ProductRow): Product {
     handle: row.handle,
     title: row.title,
     description: row.description,
-    descriptionHtml: row.descriptionHtml ?? undefined,
+    descriptionHtml:
+      row.descriptionHtml ||
+      (row.description
+        ? `<p>${row.description.replace(/\r\n/g, "\n").replace(/\n\n+/g, "</p><p>").replace(/\n/g, "<br/>")}</p>`
+        : undefined),
     tags: row.tags,
     availableForSale: row.availableForSale && hasInStockVariant,
     rating,

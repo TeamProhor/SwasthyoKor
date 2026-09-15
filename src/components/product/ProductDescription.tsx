@@ -245,6 +245,10 @@ export function ProductDescription({ product }: { product: Product }) {
             className="text-xs sm:text-sm leading-relaxed sm:leading-loose text-muted-foreground/90"
             html={product.descriptionHtml}
           />
+        ) : product.description ? (
+          <div className="text-xs sm:text-sm leading-relaxed sm:leading-loose text-muted-foreground/90 whitespace-pre-line">
+            {product.description}
+          </div>
         ) : null}
 
         {/* ──── Section 5: Product Meta Specs ──── */}
@@ -356,10 +360,10 @@ export function ProductDescription({ product }: { product: Product }) {
             <ShieldCheck className="size-4.5 text-emerald-600 shrink-0 mb-1" />
             <div className="flex flex-col gap-0.5 justify-center flex-1">
               <span className="text-[11px] font-bold text-foreground leading-tight">
-                ১০০% বিশুদ্ধ
+                খাঁটি ও নিরাপদ
               </span>
               <span className="text-[9.5px] text-muted-foreground leading-tight">
-                ল্যাব টেস্টেড অর্গানিক
+                প্রাকৃতিক উপাদান
               </span>
             </div>
           </div>

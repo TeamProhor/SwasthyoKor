@@ -1,31 +1,21 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": [
-    "src/app/**/*.{js,ts,jsx,tsx}",
-    "src/lib/db/seed.ts",
-    "next.config.ts"
+    "src/app/**/*.{js,ts,jsx,tsx}"
   ],
   "project": [
-    "src/**/*.{js,ts,jsx,tsx}"
+    "src/**/*.{js,ts,jsx,tsx,css}"
   ],
   "ignore": [
     "src/components/ui/**"
   ],
   "ignoreDependencies": [
     "@shadcn/react",
-    "@types/sharp",
     "cmdk",
     "input-otp",
     "react-day-picker",
     "react-resizable-panels",
-    "recharts",
-    "sharp",
-    "shadcn",
-    "tw-animate-css",
-    "wawoff2",
-    "@tailwindcss/container-queries",
-    "@tailwindcss/typography",
-    "tailwindcss"
+    "recharts"
   ],
   "ignoreExportsUsedInFile": true
 }
